@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/publiq/main/json-schema/publiq-voucher-list-schema.json",
+  "title": "VoucherList",
+  "x-generated": "2026-10-09",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/publiq-museumpassmusees-partner-openapi.yml#/components/schemas/VoucherList",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID of the voucher list. This ID can be used for logging purposes."
+    },
+    "vouchers": {
+      "type": "array",
+      "description": "List of vouchers.",
+      "items": {
+        "type": "string",
+        "minLength": 13,
+        "maxLength": 13,
+        "minItems": 1,
+        "maxItems": 10
+      }
+    }
+  },
+  "required": [
+    "id",
+    "vouchers"
+  ],
+  "x-internal": true
+}

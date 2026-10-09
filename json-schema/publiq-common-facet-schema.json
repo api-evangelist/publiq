@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/publiq/main/json-schema/publiq-common-facet-schema.json",
+  "title": "facet",
+  "description": "A single facet for a specific filter. Every facet has a human-readable name and total count to show to end-users to drill down search results.",
+  "x-generated": "2026-10-09",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/publiq-uitdatabank-search-openapi.yml#/components/schemas/common-facet",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "object",
+      "title": "name",
+      "description": "An internationalized name with one or more localized names.",
+      "minProperties": 1,
+      "properties": {
+        "nl": {
+          "type": "string",
+          "title": "name.localized",
+          "description": "A human-readable name in the `nl` (Dutch) language.",
+          "minLength": 1,
+          "maxLength": 90,
+          "pattern": "\\S"
+        },
+        "fr": {
+          "type": "string",
+          "title": "name.localized",
+          "description": "A human-readable name in the `fr` (French) language.",
+          "minLength": 1,
+          "maxLength": 90,
+          "pattern": "\\S"
+        },
+        "de": {
+          "type": "string",
+          "title": "name.localized",
+          "description": "A human-readable name in the `de` (German) language.",
+          "minLength": 1,
+          "maxLength": 90,
+          "pattern": "\\S"
+        },
+        "en": {
+          "type": "string",
+          "title": "name.localized",
+          "description": "A human-readable name in the `en` (English) language.",
+          "minLength": 1,
+          "maxLength": 90,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "count": {
+      "type": "integer",
+      "description": "Total results if the filter is applied with this value (= the key referencing this object)."
+    },
+    "children": {
+      "type": "object",
+      "description": "Children facets, in the case of filters with a hierarchy.",
+      "additionalProperties": {
+        "$ref": "#/$defs/common-facet"
+      }
+    }
+  },
+  "required": [
+    "name",
+    "count"
+  ],
+  "$defs": {
+    "common-facet": {
+      "title": "facet",
+      "description": "A single facet for a specific filter. Every facet has a human-readable name and total count to show to end-users to drill down search results.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "object",
+          "title": "name",
+          "description": "An internationalized name with one or more localized names.",
+          "minProperties": 1,
+          "properties": {
+            "nl": {
+              "type": "string",
+              "title": "name.localized",
+              "description": "A human-readable name in the `nl` (Dutch) language.",
+              "minLength": 1,
+              "maxLength": 90,
+              "pattern": "\\S"
+            },
+            "fr": {
+              "type": "string",
+              "title": "name.localized",
+              "description": "A human-readable name in the `fr` (French) language.",
+              "minLength": 1,
+              "maxLength": 90,
+              "pattern": "\\S"
+            },
+            "de": {
+              "type": "string",
+              "title": "name.localized",
+              "description": "A human-readable name in the `de` (German) language.",
+              "minLength": 1,
+              "maxLength": 90,
+              "pattern": "\\S"
+            },
+            "en": {
+              "type": "string",
+              "title": "name.localized",
+              "description": "A human-readable name in the `en` (English) language.",
+              "minLength": 1,
+              "maxLength": 90,
+              "pattern": "\\S"
+            }
+          }
+        },
+        "count": {
+          "type": "integer",
+          "description": "Total results if the filter is applied with this value (= the key referencing this object)."
+        },
+        "children": {
+          "type": "object",
+          "description": "Children facets, in the case of filters with a hierarchy.",
+          "additionalProperties": {
+            "$ref": "#/$defs/common-facet"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "count"
+      ]
+    }
+  }
+}

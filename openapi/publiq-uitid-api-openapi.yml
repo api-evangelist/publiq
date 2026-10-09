@@ -1,0 +1,232 @@
+openapi: 3.2.0
+info:
+  title: Publiq UI Ti D API
+  version: '4.0'
+  contact:
+    name: publiq helpdesk
+    email: technical-support@publiq.be
+    url: https://docs.publiq.be
+  x-refined-note:
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged UiTiD across 2 of this provider''s published API definitions: uitpas-uitpas.json, publiq-uitpas-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api-test.uitpas.be
+  description: Testing
+- url: https://api.uitpas.be
+  description: Production
+tags:
+- name: UiTiD
+paths:
+  /uitid/emails/{email}:
+    parameters:
+    - schema:
+        type: string
+      name: email
+      in: path
+      required: true
+      description: Email address the passholder wants to use to register
+    get:
+      summary: Retrieve UiTiD email address status
+      operationId: get-uitid-email
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  state:
+                    type: string
+                    enum:
+                    - UITID_UNREGISTERED
+                    - UITID_REGISTERED
+                    - UITPAS_ALREADY_LINKED
+                    description: '* `UITPAS_ALREADY_LINKED` : the user cannot use this email address to register another UiTPAS
+
+                      * `UITID_UNREGISTERED` : the user can use this email address to register their UiTPAS but must register on UiTiD first
+
+                      * `UITID_REGISTERED` : the user can use this email address to register their UiTPAS but must login on UiTiD first'
+                required:
+                - state
+                readOnly: true
+              examples:
+                Example:
+                  value:
+                    state: UITID_UNREGISTERED
+          description: 'OK
+
+
+            The email address can be used to register the passholder.'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          description: 'Too Many Requests
+
+
+            Possible error types:
+
+
+            * https://api.publiq.be/probs/uitpas/rate-limited
+
+
+            The detail property might include more information for the client developer.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Example:
+                  value:
+                    type: https://api.publiq.be/probs/uitpas/rate-limited
+                    title: Rate limited
+                    status: 429
+                    detail: Rate limited
+      description: 'Retrieves the email address status in UiTPAS and UiTiD for a given email address. This is step 3 in the process of registering an UiTPAS passholder in UiTiD.
+
+
+        The response contains a `state` property which can be one of the following values:
+
+
+        * `UITPAS_ALREADY_LINKED` : the user cannot use this email address to register another UiTPAS
+
+        * `UITID_UNREGISTERED` : the user can use this email address to register their UiTPAS but must register on UiTiD first
+
+        * `UITID_REGISTERED` : the user can use this email address to register their UiTPAS but must login on UiTiD first
+
+
+        After UiTiD authentication the client should proceed to step 4 of the process, registering UiTiD for the passholder.
+
+
+        This caller of this method, identified with client identification, does not require any permissions but please note this endpoint is rate-limited on IP address to prevent abuse.'
+      tags:
+      - UiTiD
+      parameters: []
+      security:
+      - CLIENT_IDENTIFICATION: []
+      - CLIENT_ACCESS_TOKEN: []
+      - USER_ACCESS_TOKEN: []
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+components:
+  responses:
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+  schemas:
+    Error:
+      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
+    Error_2:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+  securitySchemes:
+    USER_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A user access token, obtained by redirecting the end user to publiq's authorization server to login using the **Authorization Code OAuth Flow**. See the [authentication docs about user access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
+    CLIENT_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+    CLIENT_IDENTIFICATION:
+      name: x-client-id
+      type: apiKey
+      in: header
+    CUSTOM_TOKEN:
+      name: x-custom-token
+      type: apiKey
+      in: header
+x-refined-from:
+- uitpas-uitpas.json
+- publiq-uitpas-openapi.yml

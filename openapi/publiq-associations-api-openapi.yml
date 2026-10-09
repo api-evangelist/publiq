@@ -1,0 +1,487 @@
+openapi: 3.2.0
+info:
+  title: Publiq Associations API
+  version: '4.0'
+  contact:
+    name: publiq helpdesk
+    email: technical-support@publiq.be
+    url: https://docs.publiq.be
+  x-refined-note:
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Associations across 2 of this provider''s published API definitions: uitpas-uitpas.json, publiq-uitpas-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api-test.uitpas.be
+  description: Testing
+- url: https://api.uitpas.be
+  description: Production
+tags:
+- name: Associations
+paths:
+  /associations:
+    parameters: []
+    get:
+      summary: Get associations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssociationsPaginatedResponse'
+              examples:
+                Example:
+                  value:
+                    totalItems: 1
+                    member:
+                    - id: e8386a24-2218-4269-8b65-4de46be07991
+                      name: Ledenkaart sport
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/url/query-limit-exceeded
+
+
+            The detail property might include more information for the client developer.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      operationId: get-associations
+      description: 'Retrieve associations based on organizer and its permission on the specific association.
+
+
+        Passholders can have memberships for zero or more associations. However, only selected organizers can see (read permission) or register (write permission) these memberships. Using this endpoint, clients can retrieve which memberships they can see or register.
+
+
+        The caller of this request must have `ASSOCIATIONS` permission for the given organizer.'
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      parameters:
+      - schema:
+          type: string
+        in: query
+        name: organizerId
+        description: ID of the organizer
+        required: true
+      - schema:
+          type: string
+          enum:
+          - READ
+          - WRITE
+        in: query
+        name: permission
+        required: true
+        description: Type of association permission
+      tags:
+      - Associations
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /passholders/{passholderId}/association-memberships:
+    parameters:
+    - schema:
+        type: string
+      name: passholderId
+      in: path
+      description: Unique ID of an UiTPAS passholder.
+      required: true
+    get:
+      summary: Get association memberships of passholder
+      operationId: get-passholders-passholderId-association-memberships
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AssociationMembership'
+              examples:
+                Example:
+                  value:
+                  - association:
+                      id: e8386a24-2218-4269-8b65-4de46be07991
+                      name: Ledenkaart sport
+                    status: ACTIVE
+                    endDate: '2026-08-24'
+                    renewable: true
+                  - association:
+                      id: 61746fed-63ba-45b7-805e-c78555007420
+                      name: Medewerker ABC
+                    status: NONE
+                    renewable: false
+                  - association:
+                      id: 3e33c4ec-8f87-4eef-8101-0c27e79136ea
+                      name: Medewerker XYZ
+                    status: EXPIRED
+                    endDate: '2024-08-24'
+                    renewable: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: 'Retrieves existing and potential association memberships for a given passholder. Only memberships for associations visible to the specified organizer are returned. If the organizer has permission to register the passholder for a new association, a potential membership for that association is included in the response with the status `NONE`.
+
+
+        Memberships with an `ACTIVE` or `EXPIRED` status are eligible for renewal if their `renewable` field is set to `true`.
+
+
+        The caller of this method must have `ASSOCIATIONS` permission for the given organizer.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      tags:
+      - Associations
+      parameters:
+      - schema:
+          type: string
+        in: query
+        name: organiserId
+        description: ID of the organizer. This parameter is deprecated. Use organizerId instead.
+        deprecated: true
+      - schema:
+          type: string
+        in: query
+        name: organizerId
+        description: ID of the organizer. This parameter is mandatory.
+    post:
+      summary: Create or renew association membership of passholder
+      operationId: post-passholders-passholderId-association-memberships
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data
+
+            * https://api.publiq.be/probs/uitpas/association-not-found
+
+            * https://api.publiq.be/probs/uitpas/association-membership-renew-not-possible
+
+            * https://api.publiq.be/probs/uitpas/association-passholder-cardsystem-mismatch'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples: {}
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: 'Creates a new membership or renews an existing one for the given passholder and association. Membership creation and renewal are restricted to associations visible and editable by the specified organizer.
+
+
+        The caller of this method must have `ASSOCIATIONS` permission for the given organizer.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssociationMembership'
+            examples:
+              Example:
+                value:
+                  association:
+                    id: e8386a24-2218-4269-8b65-4de46be07991
+                  endDate: '2026-08-24'
+        description: Association membership request
+      tags:
+      - Associations
+      parameters:
+      - schema:
+          type: string
+        in: query
+        name: organizerId
+        description: ID of the organizer used to make this request
+        required: true
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /passholders/{passholderId}/association-memberships/{associationId}:
+    parameters:
+    - schema:
+        type: string
+      name: passholderId
+      in: path
+      description: Unique ID of an UiTPAS passholder.
+      required: true
+    - schema:
+        type: string
+      name: associationId
+      in: path
+      required: true
+      description: ID of the association.
+    delete:
+      summary: Delete association membership of passholder
+      operationId: delete-passholders-passholderId-association-memberships-associationId
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: 'Delete an existing membership of the passholder for the given association. Membership deletion is restricted to associations visible and editable by the specified organizer.
+
+
+        The caller of this method must have `ASSOCIATIONS` permission for the given organizer.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      tags:
+      - Associations
+      parameters:
+      - schema:
+          type: string
+        in: query
+        name: organizerId
+        description: ID of the organizer.
+        required: true
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+components:
+  responses:
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+  schemas:
+    AssociationMembership:
+      title: AssociationMembership
+      x-stoplight:
+        id: mb1bs9upl614a
+      type: object
+      x-examples: {}
+      properties:
+        association:
+          $ref: '#/components/schemas/Association'
+        status:
+          type: string
+          x-stoplight:
+            id: kdp35yno8ebht
+          enum:
+          - ACTIVE
+          - EXPIRED
+          - NONE
+          description: Status of the membership. This field is always available in responses.
+          readOnly: true
+        endDate:
+          type: string
+          x-stoplight:
+            id: eradjp82wpqv0
+          format: date
+          description: End date of the membership. This field is available in responses if status is `ACTIVE` or `EXPIRED`. This field is required in requests for association with a `CUSTOM` endDateType.
+        renewable:
+          type: boolean
+          x-stoplight:
+            id: ahns1w7wy66mj
+          description: True if this membership can currently be renewed. This fields is always available in responses.
+          readOnly: true
+        newEndDate:
+          type: string
+          x-stoplight:
+            id: lxwcvxz2cbqrz
+          format: date
+          description: 'New end date of the membership in case it is renewed or created. This field can be used to pre-fill the endDate field in a front-end UI. It is only available when: `endDateCalculation` of the association is `CUSTOM`, and the status is `NONE` (new membership) or `renewable` is true (renew membership).'
+          readOnly: true
+      required:
+      - association
+    Error:
+      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
+    Association:
+      title: Association
+      x-stoplight:
+        id: 0cqmy2cuzwux0
+      type: object
+      description: Association
+      x-examples: {}
+      properties:
+        id:
+          type: string
+          description: ID of the association
+        name:
+          type: string
+          x-stoplight:
+            id: bl1hgz5y2wooc
+          description: Name of the association. This field is always available in responses
+          readOnly: true
+        endDateType:
+          type: string
+          x-stoplight:
+            id: siqftnrb8ax7e
+          description: Indicates how end dates are set for memberships of this association. This field is always available in responses.
+          enum:
+          - CUSTOM
+          - BASED_ON_DATE_OF_BIRTH
+          - BASED_ON_REGISTRATION_DATE
+          readOnly: true
+      required:
+      - id
+    AssociationsPaginatedResponse:
+      title: AssociationsPaginatedResponse
+      x-stoplight:
+        id: ytc6u5zzkcfmv
+      type: object
+      x-tags:
+      - Models
+      description: Paginated response object for associations
+      properties:
+        totalItems:
+          type: integer
+          description: Total number of association results (can be more than the amount of results in the response).
+        member:
+          type: array
+          description: List of association results for this specific (paginated) request.
+          items:
+            $ref: '#/components/schemas/Association'
+    Error_2:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+  securitySchemes:
+    USER_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A user access token, obtained by redirecting the end user to publiq's authorization server to login using the **Authorization Code OAuth Flow**. See the [authentication docs about user access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
+    CLIENT_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+    CLIENT_IDENTIFICATION:
+      name: x-client-id
+      type: apiKey
+      in: header
+    CUSTOM_TOKEN:
+      name: x-custom-token
+      type: apiKey
+      in: header
+x-refined-from:
+- uitpas-uitpas.json
+- publiq-uitpas-openapi.yml

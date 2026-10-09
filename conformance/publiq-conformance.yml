@@ -1,0 +1,38 @@
+generated: '2026-10-09'
+method: searched
+source:
+- https://docs.publiq.be/docs/errors
+- https://docs.publiq.be/docs/authentication/methods/client-access-token
+- https://docs.publiq.be/docs/uitdatabank/search-api/pagination
+standards:
+- id: rfc7807
+  conforms: true
+  evidence: Error responses from publiq APIs follow the RFC7807 standard, also known as "Problem Details for HTTP APIs". (docs.publiq.be/docs/errors
+    format page)
+- id: oauth2
+  conforms: true
+  evidence: Client credentials (grant_type=client_credentials) and authorization code with PKCE flows at /realms/uitid/protocol/openid-connect/token
+    (authentication docs).
+- id: oidc
+  conforms: true
+  evidence: Authorization server is an OpenID Connect realm (/realms/uitid/protocol/openid-connect/...), scope openid documented on the user access
+    token page.
+- id: pagination
+  conforms: true
+  evidence: Search API offset pagination with start/limit params (docs.publiq.be/docs/uitdatabank/search-api/pagination).
+- id: json-ld-hydra
+  conforms: true
+  evidence: 'Search API paged responses carry "@context": "http://www.w3.org/ns/hydra/context.jsonld" and "@type": "PagedCollection" (pagination
+    docs example).'
+- id: openapi-3.0
+  conforms: true
+  evidence: the document declares 3.0.0
+- id: openapi-3.1
+  conforms: true
+  evidence: the document declares 3.1.0
+- id: rfc9457
+  conforms: true
+  evidence: application/problem+json on 806 response(s), e.g. POST /voucher-lists 400
+- id: idempotency
+  conforms: false
+  evidence: no idempotency key parameter on mutating operations

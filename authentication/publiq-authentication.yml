@@ -1,0 +1,83 @@
+generated: '2026-10-09'
+method: searched
+summary:
+  types:
+  - apiKey
+  - oauth2
+  - openIdConnect
+  api_key_in:
+  - header
+schemes:
+- name: CLIENT_ACCESS_TOKEN
+  type: oauth2
+  flows:
+  - clientCredentials
+  description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**.
+    See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+  sources:
+  - openapi/publiq-museumpassmusees-partner-openapi.yml
+  - openapi/publiq-uitdatabank-entry-openapi.yml
+  - openapi/publiq-uitdatabank-search-openapi.yml
+  - openapi/publiq-uitpas-openapi.yml
+  token_url: https://account.uitid.be/realms/uitid/protocol/openid-connect/token
+  token_url_test: https://account-test.uitid.be/realms/uitid/protocol/openid-connect/token
+  example_expires_in: 86400
+- name: CLIENT_IDENTIFICATION
+  type: apiKey
+  in: header
+  parameter: x-client-id
+  sources:
+  - openapi/publiq-uitdatabank-search-openapi.yml
+  - openapi/publiq-uitpas-openapi.yml
+  alt_query_param: clientId
+  note: 'Docs: "Offers no real security, so only used in APIs that expose public information" (e.g. Search API).'
+- name: CUSTOM_TOKEN
+  type: apiKey
+  in: header
+  parameter: x-custom-token
+  sources:
+  - openapi/publiq-uitpas-openapi.yml
+  note: 'UiTPAS kiosk endpoints: device id of the kiosk is passed in the x-custom-token header.'
+- name: USER_ACCESS_TOKEN
+  type: oauth2
+  flows:
+  - authorizationCode
+  pkce: true
+  description: User access token obtained by logging the user in through publiq UiTiD (Authorization Code flow with code_verifier/code_challenge); renewable with a refresh token (scope offline_access).
+  sources:
+  - openapi/publiq-uitdatabank-entry-openapi.yml
+  - openapi/publiq-uitdatabank-search-openapi.yml
+  - openapi/publiq-uitpas-openapi.yml
+derived_from: openapi/publiq-museumpassmusees-partner-openapi.yml, openapi/publiq-uitdatabank-entry-openapi.yml, openapi/publiq-uitdatabank-search-openapi.yml, openapi/publiq-uitpas-openapi.yml
+source: https://docs.publiq.be/docs/authentication
+authorization_servers:
+  test: https://account-test.uitid.be
+  production: https://account.uitid.be
+  implementation: Keycloak realm uitid (OpenID Connect); legacy /oauth/token path forwards to /realms/uitid/protocol/openid-connect/token
+support_matrix:
+- api: UiTdatabank Search API v3
+  client_identification: true
+  client_access_token: true
+  user_access_token: true
+- api: UiTdatabank Entry API v3
+  client_identification: false
+  client_access_token: true
+  user_access_token: true
+- api: UiTPAS API v4
+  client_identification: false
+  client_access_token: true
+  user_access_token: true
+- api: museumPASSmusées Partner API v1
+  client_identification: false
+  client_access_token: true
+  user_access_token: false
+- api: UiTdatabank Taxonomy API v3
+  none: true
+docs: https://docs.publiq.be/docs/authentication/methods/overview
+docs_pages:
+- https://docs.publiq.be/docs/authentication/methods/overview
+- https://github.com/cultuurnet/apidocs/blob/main/projects/authentication/docs/methods.md
+- https://github.com/cultuurnet/apidocs/blob/main/projects/authentication/docs/client-access-token.md
+- https://github.com/cultuurnet/apidocs/blob/main/projects/authentication/docs/user-access-token.md
+- https://github.com/cultuurnet/apidocs/blob/main/projects/authentication/docs/client-identification.md
+- https://github.com/cultuurnet/apidocs/blob/main/projects/authentication/docs/environments.md

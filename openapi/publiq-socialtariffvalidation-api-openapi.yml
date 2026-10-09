@@ -1,0 +1,443 @@
+openapi: 3.2.0
+info:
+  title: Publiq Social Tariff Validation API
+  version: '4.0'
+  contact:
+    name: publiq helpdesk
+    email: technical-support@publiq.be
+    url: https://docs.publiq.be
+  x-refined-note:
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged SocialTariffValidation across 2 of this provider''s published API definitions: uitpas-uitpas.json, publiq-uitpas-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api-test.uitpas.be
+  description: Testing
+- url: https://api.uitpas.be
+  description: Production
+tags:
+- name: SocialTariffValidation
+paths:
+  /social-tariff-validation/start:
+    get:
+      summary: Start Social Tariff Validation (auth)
+      tags:
+      - SocialTariffValidation
+      responses:
+        '303':
+          description: 'See Other
+
+
+            The user is redirected to the authentication flow.'
+          content: {}
+      operationId: get-social-tariff-validation-start
+      x-internal: true
+      description: 'Start the authentication for social tariff validation.
+
+
+        > **This endpoints authenticates users via the government service** `My Digital Keys`. This is independent of UiTiD authentication.
+
+
+        Only specific clients like uitpas.be are allowed to use this endpoint.
+
+
+        Clients that want to validate social tariff for a user have to follow this procedure, which is similar to the OAuth2 `authorization_code` flow with proof key for code exchange (PKCE):
+
+
+        1. Redirect the user to `/social-tariff-validation/start` (this operation) to start authentication
+
+        2. Handle the callback specified in step 1.
+
+        3. Using the code from the callback, request a `SocialTariffValidationToken` from POST /social-tariff-validation/token.
+
+        4. Using that token, request information about the user using `GET /social-tariff-validation/info`
+
+
+        Before redirecting the user in step 1, the client has to:
+
+        - generate a random `state` string to be specified in the redirect and store this `state` value in local/session storage
+
+        - generate a random `code_verifier` string and store this in local/session storage. This `code_verifier` is used to generate a `code_challenge` and again in step 3 to request the token.
+
+        - to generate the `code_challenge` the client must hash the `code_verifier` using `SHA-256` and then base64 encode the result.
+
+
+        When authentication is finished or an error occurred, the user is redirected to the specified `redirect_uri`.
+
+        In case of successful authentication, the query params include:
+
+        - `code`: the authorization code
+
+        - `state`: the original state as specified in step 1
+
+
+        Before continuing the client must validate the specified `state` matches the locally stored `state`. If not, the authentication flow must be terminated with an error. (and may be retried from the start).
+
+
+        If the state matches, the client can continue requesting the token using POST /social-tariff-validation/token.
+
+
+        In case of an error, the query params include:
+
+        - `error` containing a message to show to the user.'
+      parameters:
+      - schema:
+          type: string
+          enum:
+          - login
+        in: query
+        name: prompt
+        description: Whether to prompt the user to login, even if they have a session.
+      - schema:
+          type: string
+        in: query
+        name: state
+        required: true
+        description: Randomly generated state param. This value must be checked in the redirect_uri
+      - schema:
+          type: string
+        in: query
+        name: code_challenge
+        description: Base64 encoded SHA-256 hash of a random `code_verified` string.
+        required: true
+      - schema:
+          type: string
+        in: query
+        name: redirect_uri
+        required: true
+        description: The URL where the client can receive the redirect back. This URL must be explicitly allowed by the UiTPAS backend.
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /social-tariff-validation/token:
+    parameters: []
+    post:
+      summary: Retrieve Social Tariff Validation Token
+      operationId: post-social-tariff-validation-token
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialTariffValidationTokenResponse'
+              examples:
+                Example:
+                  value:
+                    token: wjf6pAzDbh5u5tjeomJ6RG6snJnKdRgLarQCB4xPZVxDfJwNZ7YFHrzj6SZZrpin.xmNUh4xE4r3k5oipwFNi9rvs7PrBFin6sqSVpVMoBgAuiH762sTdnGWtsTFHjyUf.mUkcBjW8nweyieZ7CnhkY2jsd6c2LrGopYV2Qg5pKFd6zYMLqERHRmbVNoacGw4t
+        '400':
+          description: 'Bad request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      x-internal: true
+      description: 'Retrieve Social Tariff Validation Token based on these values, obtained in step 1 and 2 of GET /social-tariff-validation/start.
+
+
+        - code
+
+        - code_verifier
+
+
+        > **This endpoint provides a special kind of SocialTariffValidation Token**. This is independent of UiTiD authentication.
+
+
+        This endpoint is rate limited.'
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialTariffValidationTokenRequest'
+            examples:
+              Example:
+                value:
+                  code: RBEpdV6myHxNb9WnHUrPxFv2yr3bJWmZRX4kgzH6grzfr46GrDd2RNsxkkj4PfYr
+                  codeVerifier: RtU3foq99AKbGzwbKPE8pfHei47pzvHhQd53iJ6DWBtCrK8a7pKCnBY8MiZX2TYc
+        description: Form
+      tags:
+      - SocialTariffValidation
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /social-tariff-validation:
+    parameters: []
+    get:
+      summary: Retrieve Social Tariff Validation information
+      tags:
+      - SocialTariffValidation
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialTariffValidation'
+              examples:
+                Example:
+                  value:
+                    user:
+                      inszNumber: '30071511319'
+                      familyName: User name
+                      givenName: User firstname
+                      hasSocialTariff: true
+                      postalCode: '1000'
+                      idToken: Cg6TFeFVev532XVTmZ8ywPhxGKCQfMCh.ePq3A572bCnMU8WoSfremjK6M8g2Cojp.U4unWkSZZdF5dwswwXZvXG662E9LXdda
+                      idTokenExpiresAt: '2025-04-02T14:15:22+00:00'
+                    children:
+                    - inszNumber: '30071511220'
+                      familyName: Child familyname
+                      givenName: Child firstname
+                      hasSocialTariff: true
+                      uitpasNumber: 0930012345615
+                      postalCode: '1000'
+                      idToken: 4J8Vv7LBz6McoCVeUB4SeoD75NActfij.TJkFwJqS8uYdKVDjRzdkYypxMjjZNCJB.zsgsbjZUu9o48PGs9LJYHvxDgyevF4xs
+                      idTokenExpiresAt: '2025-04-02T14:15:22+00:00'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      operationId: get-social-tariff-validation
+      x-internal: true
+      description: 'Retrieve Social Tariff Validation information using a `SocialTariffValidationToken` obtained from this flow.
+
+
+        The `SocialTariffValidationToken` must be specified in the `x-custom-token` header.
+
+
+        This endpoint is rate limited.'
+      parameters:
+      - schema:
+          type: integer
+        in: query
+        name: cardSystemId
+        description: Optional ID of the CardSystem for which the passholder is retrieving social tariff validation. This is used to determine the correct government service for the first request.
+      security:
+      - CUSTOM_TOKEN: []
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+components:
+  responses:
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+  schemas:
+    Error:
+      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
+    SocialTariffValidationTokenRequest:
+      title: SocialTariffValidationTokenRequest
+      x-stoplight:
+        id: h9f7buv9bbqp3
+      type: object
+      description: SocialTariffValidationTokenRequest
+      properties:
+        code:
+          type: string
+          x-stoplight:
+            id: aj11gec4d2o3p
+          description: code from step 2 in the authentication process
+        codeVerifier:
+          type: string
+          x-stoplight:
+            id: 9ov8etk9jcnq4
+          description: code_verifier from step 1 in the authentication process
+      required:
+      - code
+      - codeVerifier
+    SocialTariffValidation:
+      title: SocialTariffValidation
+      x-stoplight:
+        id: gryzsngewgyjv
+      type: object
+      description: SocialTariffValidation information
+      properties:
+        user:
+          $ref: '#/components/schemas/SocialTariffValidationPerson'
+        children:
+          type: array
+          x-stoplight:
+            id: f6pyicmviravx
+          description: Optional list of children of the identified persion.
+          items:
+            $ref: '#/components/schemas/SocialTariffValidationPerson'
+      required:
+      - user
+    SocialTariffValidationTokenResponse:
+      title: SocialTariffValidationTokenResponse
+      type: object
+      description: SocialTariffValidationTokenRequest
+      properties:
+        token:
+          type: string
+          x-stoplight:
+            id: aj11gec4d2o3p
+          description: code from step 2 in the authentication process
+      required:
+      - token
+    SocialTariffValidationPerson:
+      type: object
+      description: SocialTariffValidationPerson
+      properties:
+        inszNumber:
+          type: string
+          description: INSZ number of the identified person
+        familyName:
+          type: string
+          description: Family name of the identified person
+        givenName:
+          type: string
+          description: Given name of the identified person
+        hasSocialTariff:
+          type: boolean
+          description: True if the person is entitled to social tariff
+        uitpasNumber:
+          type: string
+          description: Optional `uitpasNumber` if the person with the given `inszNumber` already has an UiTPAS. If this property is not null, the user cannot proceed registration of a new passholder.
+        street:
+          type: string
+          description: Street and house number of the user if known.
+        postalCode:
+          type: string
+          description: Postal code of the user if known.
+        city:
+          type: string
+          description: City of the user if known.
+        idToken:
+          type: string
+          description: Social Tariff Validation ID token of the user used in /`POST orders` request.
+        idTokenExpiresAt:
+          type: string
+          format: date-time
+          description: Date and time until the ID token is valid. If the ID token is expired it can't be used in `POST /orders`. The client must repeat the social tariff validation flow to obtain a new ID token.
+      required:
+      - inszNumber
+      - familyName
+      - givenName
+      - hasSocialTariff
+      - idToken
+      - idTokenExpiresAt
+      title: SocialTariffValidationPerson
+    Error_2:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+  securitySchemes:
+    USER_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A user access token, obtained by redirecting the end user to publiq's authorization server to login using the **Authorization Code OAuth Flow**. See the [authentication docs about user access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
+    CLIENT_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+    CLIENT_IDENTIFICATION:
+      name: x-client-id
+      type: apiKey
+      in: header
+    CUSTOM_TOKEN:
+      name: x-custom-token
+      type: apiKey
+      in: header
+x-refined-from:
+- uitpas-uitpas.json
+- publiq-uitpas-openapi.yml

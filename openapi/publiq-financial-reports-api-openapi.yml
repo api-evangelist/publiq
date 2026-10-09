@@ -1,0 +1,586 @@
+openapi: 3.2.0
+info:
+  title: Publiq Financial reports API
+  version: '4.0'
+  contact:
+    name: publiq helpdesk
+    email: technical-support@publiq.be
+    url: https://docs.publiq.be
+  x-refined-note:
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Financial reports across 2 of this provider''s published API definitions: uitpas-uitpas.json, publiq-uitpas-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api-test.uitpas.be
+  description: Testing
+- url: https://api.uitpas.be
+  description: Production
+tags:
+- name: Financial reports
+paths:
+  /organizers/{organizerId}/financial-reports/periods:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    get:
+      summary: Get suggested financial report periods
+      tags:
+      - Financial reports
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReportPeriod'
+              examples:
+                example-1:
+                  value:
+                  - startDate: '2019-08-24'
+                    endDate: '2019-08-24'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/uitpas/organizer-not-found
+
+
+            The detail property might include more information for the client developer.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      operationId: get-organizers-financial-reports-periods
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      description: 'Retrieve suggested report periods for an organizer.
+
+
+        The caller of this request must have `ORGANIZERS_REPORTS` permission for the given organizer.'
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /organizers/{organizerId}/financial-reports:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    post:
+      summary: Start an export of a financial report
+      operationId: post-organizers-financial-reports
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+              examples:
+                Example of started export:
+                  value:
+                    status: STARTED
+                    id: 232432
+                    creationDate: '2022-06-10T12:26:30+02:00'
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/uitpas/organizer-not-found
+
+
+            The detail property might include more information for the client developer.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Financial reports
+      description: 'Starts a financial report export. The result of this request is a `reportId` that can be used to request the status of the report export and the download.
+
+
+        The caller of this request must have `ORGANIZERS_REPORTS` permission for the given organizer.'
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportPeriod'
+            examples:
+              Example:
+                value:
+                  startDate: '2019-07-01'
+                  endDate: '2019-09-30'
+        description: "The period for which to generate the financial report. \nThe `ReportPeriod` object can be retrieved using `GET /organizers/{organizerId}/financial-reports/periods` or the `startDate` and `endDate` can be customized."
+    get:
+      summary: Get financial report exports
+      operationId: get-organizers-financial-reports
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Report'
+              examples:
+                Example:
+                  value:
+                  - status: AVAILABLE
+                    id: 123456
+                    period:
+                      startDate: '2019-08-24'
+                      endDate: '2019-08-24'
+                    creationDate: '2022-06-07T10:01:32+00:00'
+                  - status: FAILED
+                    id: 345681
+                    period:
+                      startDate: '2000-01-01'
+                      endDate: '2020-06-07'
+                    creationDate: '2022-06-07T10:02:33+00:00'
+                    message: Geen financieel overzicht beschikbaar voor periode 2000/01/01 - 2000/06/07
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/uitpas/organizer-not-found
+
+
+            The detail property might include more information for the client developer.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: 'Get previously exported financial reports.
+
+
+        > Note: Reports will only be available for a limited amount of time. When they become unavailable, a new export can be requested using `POST /organizers/{organizerId}/financial-reports`
+
+
+        The caller of this request must have `ORGANIZERS_REPORTS` permission for the given organizer.'
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      tags:
+      - Financial reports
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /organizers/{organizerId}/financial-reports/{reportId}:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    - $ref: '#/components/parameters/reportId'
+    get:
+      summary: Get financial report status
+      tags:
+      - Financial reports
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+              examples:
+                Example of a started report:
+                  value:
+                    id: 23243
+                    status: STARTED
+                    creationDate: '2022-06-07T10:01:32+00:00'
+                Example of an available report:
+                  value:
+                    id: 23244
+                    status: AVAILABLE
+                    creationDate: '2022-06-07T10:01:32+00:00'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/uitpas/organizer-not-found
+
+            * https://api.publiq.be/probs/uitpas/report-not-found
+
+
+            The detail property might include more information for the client developer.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      operationId: get-organizers-financial-reports-reportId
+      description: 'Retrieve the status of a previously started report export.
+
+
+        The caller of this request must have `ORGANIZERS_REPORTS` permission for the given organizer.'
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /organizers/{organizerId}/financial-reports/{reportId}/download-link:
+    parameters:
+    - schema:
+        type: string
+      name: organizerId
+      in: path
+      required: true
+      description: Unique ID of an UiTPAS organizer. (Same as its ID in UiTdatabank)
+    - schema:
+        type: integer
+      name: reportId
+      in: path
+      required: true
+      description: Unique ID of the generated financial report.
+    get:
+      summary: Get financial report temporary download link
+      tags:
+      - Financial reports
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  downloadLink:
+                    type: string
+                    description: Download link of the report
+                required:
+                - downloadLink
+              examples:
+                Example:
+                  value:
+                    downloadLink: https://api-test.uitpas.be/some/path/to/report.zip?ts=202310231357&hash=1b5413636b41e9f774d416358060e613398b3ab017da13f3815c771a988b2d84
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/uitpas/organizer-not-found
+
+            * https://api.publiq.be/probs/uitpas/report-not-found
+
+
+            The detail property might include more information for the client developer.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      operationId: get-organizers-financial-reports-reportId-downloadLink
+      description: 'Retrieve a temporary download link of an `available` report.
+
+
+        This endpoint allows you to obtain a short-lived, hassle-free download link for your reports. After generation, this link remains active for a limited time, enabling direct report downloads without the need for additional authentication. This is in particular convenient for applications that need to offer this link to users to start the download. If you wish to download the actual report in your client application, you can use Download financial report.
+
+
+        The caller of this request must have `ORGANIZERS_REPORTS` permission for the given organizer.'
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /organizers/{organizerId}/financial-reports/{reportId}.zip:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    - $ref: '#/components/parameters/reportId'
+    get:
+      summary: Download financial report
+      responses:
+        '200':
+          description: OK
+          content:
+            application/x-zip-compressed:
+              schema:
+                type: string
+                format: binary
+              examples: {}
+          headers:
+            content-disposition:
+              schema:
+                type: string
+                example: attachment; filename="financialOverview_organizerX_20210526_1512.zip"
+              description: Header indicating that this response should be handled as a separate file download
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/uitpas/organizer-not-found
+
+            * https://api.publiq.be/probs/uitpas/report-not-found
+
+
+            The detail property might include more information for the client developer.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples: {}
+      operationId: get-organizers-financial-reports-reportId-zip
+      description: 'Retrieve the actual report zip file of an `available` report.
+
+
+        If you need a download link for your users, you can use Get financial report temporary download link instead.
+
+
+        The caller of this request must have `ORGANIZERS_REPORTS` permission for the given organizer.'
+      tags:
+      - Financial reports
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+components:
+  schemas:
+    Report:
+      type: object
+      title: Report
+      description: The status of a report export.
+      x-tags:
+      - Models
+      properties:
+        status:
+          type: string
+          enum:
+          - STARTED
+          - AVAILABLE
+          - FAILED
+          description: Whether the report has started (but not ready yet), is available for download, or failed to be created.
+        id:
+          type: integer
+          description: Unique ID of the report export. Can be used to retrieve the status of the export.
+        message:
+          type: string
+          description: Included if `status` is `FAILED`. Describes why it was not possible to export the report.
+        period:
+          $ref: '#/components/schemas/ReportPeriod'
+        creationDate:
+          type: string
+          format: date-time
+          description: Date that the report export was initially requested.
+      required:
+      - status
+      - id
+      - creationDate
+    Error:
+      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
+    ReportPeriod:
+      title: ReportPeriod
+      type: object
+      description: Date range for which to export a list of financial transactions.
+      properties:
+        startDate:
+          type: string
+          format: date
+          description: Minimum date of all transactions to include in the report. (Inclusive)
+        endDate:
+          type: string
+          format: date
+          description: Maximum date of all transactions to include in the report. (Inclusive)
+      required:
+      - startDate
+      - endDate
+      x-tags:
+      - Models
+    Error_2:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+  responses:
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+  parameters:
+    organizerId:
+      schema:
+        type: string
+      name: organizerId
+      in: path
+      required: true
+      description: Unique ID of an UiTPAS organizer. (Same as its ID in UiTdatabank)
+    reportId:
+      schema:
+        type: integer
+      name: reportId
+      in: path
+      required: true
+      description: Unique ID of the generated financial report.
+  securitySchemes:
+    USER_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A user access token, obtained by redirecting the end user to publiq's authorization server to login using the **Authorization Code OAuth Flow**. See the [authentication docs about user access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
+    CLIENT_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+    CLIENT_IDENTIFICATION:
+      name: x-client-id
+      type: apiKey
+      in: header
+    CUSTOM_TOKEN:
+      name: x-custom-token
+      type: apiKey
+      in: header
+x-refined-from:
+- uitpas-uitpas.json
+- publiq-uitpas-openapi.yml

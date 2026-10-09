@@ -1,0 +1,301 @@
+openapi: 3.2.0
+info:
+  title: Publiq Images API
+  version: '3.0'
+  contact:
+    name: publiq helpdesk
+    email: technical-support@publiq.be
+    url: https://docs.publiq.be
+  x-refined-note:
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Images across 2 of this provider''s published API definitions: uitdatabank-entry.json, publiq-uitdatabank-entry-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://io-test.uitdatabank.be
+  description: Testing
+- url: https://io.uitdatabank.be
+  description: Production
+tags:
+- name: Images
+paths:
+  /images:
+    post:
+      summary: image - upload
+      operationId: image-post
+      tags:
+      - Images
+      description: 'Uploads an image, which you can later link to one or more events, places, and organizers. Two upload methods are supported:
+
+
+        * `multipart/form-data`: upload a binary image file directly.
+
+        * `application/json`: provide a `contentUrl` pointing to an existing online image.
+
+
+        Only images up to 21 million bytes (~ 20 MB) are allowed. The expected image format is `.png`, `.jpeg` or `.gif`.'
+      requestBody:
+        description: The image to upload and its metadata to store with it.
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The image to upload.
+                description:
+                  type: string
+                  description: A description of the image.
+                copyrightHolder:
+                  type: string
+                  description: The copyrightHolder of the image.
+                language:
+                  type: string
+                  description: The language of the description. It must be exactly 2 lowercase letters long (for example "nl").
+              required:
+              - file
+              - description
+              - copyrightHolder
+              - language
+            examples:
+              Example:
+                value:
+                  file: '@"Screenshot 2017-11-28 12.37.19.png"'
+                  description: Example description
+                  copyrightHolder: Example copyrightHolder
+                  language: nl
+          application/json:
+            schema:
+              $ref: ../models/image-post.json
+            examples:
+              Example:
+                value:
+                  contentUrl: https://example.com/some_image.jpeg
+                  description: Example description
+                  copyrightHolder: Example copyrightHolder
+                  inLanguage: nl
+      responses:
+        '201':
+          description: The image was created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  '@id':
+                    type: string
+                    description: The url of the created image.
+                    example: https://io-test.uitdatabank.be/images/c71b9b61-73a9-435e-bb50-aadb05750d2d
+                  imageId:
+                    type: string
+                    description: The id of the created image.
+                    example: c71b9b61-73a9-435e-bb50-aadb05750d2d
+                    format: uuid
+                required:
+                - '@id'
+                - imageId
+              examples:
+                Example:
+                  value:
+                    '@id': https://io-test.uitdatabank.be/images/c71b9b61-73a9-435e-bb50-aadb05750d2d
+                    imageId: c71b9b61-73a9-435e-bb50-aadb05750d2d
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/file-missing
+
+            * https://api.publiq.be/probs/body/file-invalid-type
+
+            * https://api.publiq.be/probs/body/invalid-data
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /images/{imageId}:
+    parameters:
+    - $ref: '#/components/parameters/imageId'
+    get:
+      summary: image - get
+      tags:
+      - Images
+      operationId: image-get
+      responses:
+        '200':
+          description: Image details.
+          content:
+            application/json:
+              schema:
+                $ref: ../models/image.json
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: Returns the details of the image for the given `imageId`.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+components:
+  responses:
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organizer abcd1234
+    NotFound:
+      description: 'The requested resource (URL) could not be found.
+
+        This can be due to one of multiple reasons:
+
+
+        * The endpoint has a typo and/or does not exist on the API
+
+        * One of the path parameters contains a value that is invalid or does not exist
+
+        * One of the required query parameters is missing
+
+        * One of the query parameters has an invalid value
+
+
+        The `detail` property of the response should contain more specific information.
+
+
+        The `type` will always be `https://api.publiq.be/probs/url/not-found`.'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/url/not-found
+                title: URL not found
+                status: 404
+                detail: The resource with id "76C6AC08-763C-492E-A68C-CBC43A857229" was not found.
+  parameters:
+    imageId:
+      name: imageId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 365f99a4-5490-4313-8ee9-adebea2dceb0
+      description: The unique uuid of an already uploaded image.
+  schemas:
+    Error:
+      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
+    Error_2:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+  securitySchemes:
+    USER_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A user access token, obtained by redirecting the end user to publiq's authorization server to login using the **Authorization Code OAuth Flow**. See the [authentication docs about user access tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+    CLIENT_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
+x-refined-from:
+- uitdatabank-entry.json
+- publiq-uitdatabank-entry-openapi.yml

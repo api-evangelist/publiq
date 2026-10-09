@@ -1,0 +1,60 @@
+generated: '2026-10-09'
+method: searched
+schemes:
+- name: CLIENT_ACCESS_TOKEN
+  source: openapi/publiq-museumpassmusees-partner-openapi.yml
+  flows: []
+  description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**.
+    See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+- name: USER_ACCESS_TOKEN
+  source: openapi/publiq-uitdatabank-entry-openapi.yml
+  flows: []
+  description: A user access token, obtained by redirecting the end user to publiq's authorization server to login using the **Authorization Code OAuth Flow**. See the [authentication docs about user access
+    tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+- name: CLIENT_ACCESS_TOKEN
+  source: openapi/publiq-uitdatabank-entry-openapi.yml
+  flows: []
+  description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**.
+    See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
+- name: USER_ACCESS_TOKEN
+  source: openapi/publiq-uitdatabank-search-openapi.yml
+  flows: []
+  description: A user access token, obtained by redirecting the end user to publiq's authorization server to login using the **Authorization Code OAuth Flow**. See the [authentication docs about user access
+    tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+- name: CLIENT_ACCESS_TOKEN
+  source: openapi/publiq-uitdatabank-search-openapi.yml
+  flows: []
+  description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**.
+    See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
+- name: USER_ACCESS_TOKEN
+  source: openapi/publiq-uitpas-openapi.yml
+  flows: []
+  description: A user access token, obtained by redirecting the end user to publiq's authorization server to login using the **Authorization Code OAuth Flow**. See the [authentication docs about user access
+    tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
+- name: CLIENT_ACCESS_TOKEN
+  source: openapi/publiq-uitpas-openapi.yml
+  flows: []
+  description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**.
+    See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+scopes:
+- scope: https://api.publiq.be/auth/uitpas
+  sources:
+  - openapi/publiq-uitpas-openapi.yml
+  description: UiTPAS API audience/scope declared in the UiTPAS OpenAPI.
+- scope: openid
+  description: OpenID Connect scope for user login (documented on the user access token page).
+  sources:
+  - https://docs.publiq.be/docs/authentication/methods/user-access-token
+- scope: email
+  description: Requests the user email claim (documented value of the scope parameter).
+  sources:
+  - https://docs.publiq.be/docs/authentication/methods/user-access-token
+- scope: offline_access
+  description: Requests a refresh token so the user access token can be renewed (documented value of the scope parameter).
+  sources:
+  - https://docs.publiq.be/docs/authentication/methods/user-access-token
+derived_from: openapi/publiq-museumpassmusees-partner-openapi.yml, openapi/publiq-uitdatabank-entry-openapi.yml, openapi/publiq-uitdatabank-search-openapi.yml, openapi/publiq-uitpas-openapi.yml
+source: https://github.com/cultuurnet/apidocs/blob/main/projects/authentication/docs/user-access-token.md
+docs: https://docs.publiq.be/docs/authentication/methods/user-access-token
+note: 'Docs: scope is "A space-delimited string with one or more of the following values: openid, email, offline_access". API permissions (e.g. TICKETSALES_REGISTER, REWARDS_REDEEM, CHECKINS_WRITE on UiTPAS)
+  are organizer permissions checked via GET /permissions, not OAuth scopes.'

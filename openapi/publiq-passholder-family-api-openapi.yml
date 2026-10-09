@@ -1,0 +1,1092 @@
+openapi: 3.2.0
+info:
+  title: Publiq Passholder Family API
+  version: '4.0'
+  contact:
+    name: publiq helpdesk
+    email: technical-support@publiq.be
+    url: https://docs.publiq.be
+  x-refined-note:
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Passholder Family across 2 of this provider''s published API definitions: uitpas-uitpas.json, publiq-uitpas-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api-test.uitpas.be
+  description: Testing
+- url: https://api.uitpas.be
+  description: Production
+tags:
+- name: Passholder Family
+paths:
+  /passholders/{passholderId}/family-members:
+    parameters:
+    - schema:
+        type: string
+      name: passholderId
+      in: path
+      required: true
+      description: Passholder ID of the main family member
+    get:
+      summary: Retrieve family members of the current passholder
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FamilyMember'
+              examples:
+                Multiple family members:
+                  value:
+                  - passholder:
+                      id: 1be0fb53-0695-405b-ac09-deafead650af
+                      name: Peeters
+                      firstName: Marc
+                      inszNumber: 00000009007
+                      dateOfBirth: '2000-01-01'
+                      postalCode: '9300'
+                      address:
+                        postalCode: '9300'
+                        city: Aalst
+                      creationDate: '2012-08-24T14:15:22+00:00'
+                      registrationOrganizer:
+                        id: '1234'
+                        name: Example UiTPAS Organizer
+                      points: 10
+                      uitidStatus: UNREGISTERED
+                      uitpasNumber: 0930012345615
+                      cardSystemMemberships:
+                      - cardSystem:
+                          id: 1
+                          name: UiTPAS Dender
+                          branding:
+                            logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+                            primaryColor: rgba(0,0,0,1.0)
+                            secondaryColor: rgba(97,166,14,1.0)
+                          links:
+                            website: https://www.uitpas.be
+                          cities:
+                          - postalCode: '9300'
+                            name: Aalst
+                          - postalCode: '9400'
+                            name: Ninove
+                          permanent: true
+                        uitpasNumber: 0930012345615
+                        currentCard:
+                          uitpasNumber: 0930012345615
+                          status: ACTIVE
+                        status: ACTIVE
+                        socialTariff:
+                          status: ACTIVE
+                          endDate: '2022-08-24T14:15:22+00:00'
+                          inGracePeriod: false
+                          expired: false
+                    creationDate: '2019-08-24T14:15:22+00:00'
+                    icon: https://www.uitpas.be/_nuxt/img/icon1.png
+                    mainFamilyMember: true
+                  - uitpasNumber: 0900000067513
+                    creationDate: '2023-08-24T14:15:22+00:00'
+                    passholder:
+                      id: 2be0fb53-0695-405b-ac09-deafead650af
+                      name: Peeters
+                      firstName: Clara
+                      inszNumber: 00000009008
+                      dateOfBirth: '2000-01-01'
+                      postalCode: '9300'
+                      address:
+                        postalCode: '9300'
+                        city: Aalst
+                      creationDate: '2012-08-24T14:15:22+00:00'
+                      registrationOrganizer:
+                        id: '1234'
+                        name: Example UiTPAS Organizer
+                      points: 5
+                      uitidStatus: UNREGISTERED
+                      uitpasNumber: 0900000067513
+                      cardSystemMemberships:
+                      - cardSystem:
+                          id: 1
+                          name: UiTPAS Dender
+                          branding:
+                            logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+                            primaryColor: rgba(0,0,0,1.0)
+                            secondaryColor: rgba(97,166,14,1.0)
+                          links:
+                            website: https://www.uitpas.be
+                          cities:
+                          - postalCode: '9300'
+                            name: Aalst
+                          - postalCode: '9400'
+                            name: Ninove
+                          permanent: true
+                        uitpasNumber: 0900000067513
+                        currentCard:
+                          uitpasNumber: 0900000067513
+                          status: ACTIVE
+                        status: ACTIVE
+                        socialTariff:
+                          status: ACTIVE
+                          endDate: '2022-08-24T14:15:22+00:00'
+                          inGracePeriod: false
+                          expired: false
+                    icon: https://www.uitpas.be/_nuxt/img/icon2.png
+                    mainFamilyMember: false
+                  - uitpasNumber: 0900000036112
+                    creationDate: '2023-08-24T14:18:22+00:00'
+                    passholder:
+                      id: 3be0fb53-0695-405b-ac09-deafead650af
+                      name: Peeters
+                      firstName: Loius
+                      inszNumber: 00000009009
+                      dateOfBirth: '2000-01-01'
+                      postalCode: '9300'
+                      address:
+                        postalCode: '9300'
+                        city: Aalst
+                      creationDate: '2012-08-24T14:15:22+00:00'
+                      registrationOrganizer:
+                        id: '1234'
+                        name: Example UiTPAS Organizer
+                      points: 1
+                      uitidStatus: UNREGISTERED
+                      uitpasNumber: 0900000036112
+                      cardSystemMemberships:
+                      - cardSystem:
+                          id: 1
+                          name: UiTPAS Dender
+                          branding:
+                            logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+                            primaryColor: rgba(0,0,0,1.0)
+                            secondaryColor: rgba(97,166,14,1.0)
+                          links:
+                            website: https://www.uitpas.be
+                          cities:
+                          - postalCode: '9300'
+                            name: Aalst
+                          - postalCode: '9400'
+                            name: Ninove
+                          permanent: true
+                        uitpasNumber: 0900000036112
+                        currentCard:
+                          uitpasNumber: 0900000036112
+                          status: ACTIVE
+                        status: ACTIVE
+                        socialTariff:
+                          status: ACTIVE
+                          endDate: '2022-08-24T14:15:22+00:00'
+                          inGracePeriod: false
+                          expired: false
+                    firstName: Louis
+                    name: Peeters
+                    points: 2
+                    icon: https://www.uitpas.be/_nuxt/img/icon3.png
+                    mainFamilyMember: false
+                No other family members:
+                  value:
+                  - passholder:
+                      id: 1be0fb53-0695-405b-ac09-deafead650af
+                      name: Peeters
+                      firstName: Marc
+                      inszNumber: 00000009007
+                      dateOfBirth: '2000-01-01'
+                      postalCode: '9300'
+                      address:
+                        postalCode: '9300'
+                        city: Aalst
+                      creationDate: '2012-08-24T14:15:22+00:00'
+                      registrationOrganizer:
+                        id: '1234'
+                        name: Example UiTPAS Organizer
+                      points: 10
+                      uitidStatus: UNREGISTERED
+                      uitpasNumber: 0930012345615
+                      cardSystemMemberships:
+                      - cardSystem:
+                          id: 1
+                          name: UiTPAS Dender
+                          branding:
+                            logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+                            primaryColor: rgba(0,0,0,1.0)
+                            secondaryColor: rgba(97,166,14,1.0)
+                          links:
+                            website: https://www.uitpas.be
+                          cities:
+                          - postalCode: '9300'
+                            name: Aalst
+                          - postalCode: '9400'
+                            name: Ninove
+                          permanent: true
+                        uitpasNumber: 0930012345615
+                        currentCard:
+                          uitpasNumber: 0930012345615
+                          status: ACTIVE
+                        status: ACTIVE
+                        socialTariff:
+                          status: ACTIVE
+                          endDate: '2022-08-24T14:15:22+00:00'
+                          inGracePeriod: false
+                          expired: false
+                    creationDate: '2019-08-24T14:15:22+00:00'
+                    icon: https://www.uitpas.be/_nuxt/img/icon1.png
+                    mainFamilyMember: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: 'Not Found
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      operationId: get-passholders-passholderId-family-members
+      description: 'Retrieve family members of a given passholder.
+
+
+        The list of family members is specific to this passholder, the family relation is not mutual,
+
+        the total number of family members and the number of adults in a family is limited.
+
+
+        The passholder identified by `{passholderId}` is always part of this list and its boolean property `mainFamilyMember` will be `true`.
+
+
+        The caller of this method must have `PASSHOLDERS_FAMILY_MEMBERS` permission for the given passholder.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      parameters: []
+      tags:
+      - Passholder Family
+    post:
+      summary: Add family members to the current passholder's family
+      operationId: post-passholders-passholderId-family-members
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: 'Bad request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data
+
+            * https://api.publiq.be/probs/uitpas/passholder-not-found
+
+            * https://api.publiq.be/probs/uitpas/invalid-uitpas-number
+
+            * https://api.publiq.be/probs/uitpas/family-member-already-added
+
+            * https://api.publiq.be/probs/uitpas/too-many-family-members
+
+            * https://api.publiq.be/probs/uitpas/too-many-adults-in-family
+
+
+            The detail property might include more information for the client developer.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: 'Add another passholder as a family member of the given passholder.
+
+
+        Specify the `uitpasNumber` and optionally an `icon` for the new family member.
+
+
+        The caller of this method must have `PASSHOLDERS_FAMILY_MEMBERS` permission for the given passholder.
+
+
+        If a user access token of a passholder is used (e.g. in an end-user application), an extra `x-registration-header` header is required containing the registration token of the new family member. Use GET /passholders/me/uitid/registration-token to retrieve a registration token.
+
+
+        If an admin user token or client access token with the appropriate permissions is used, the `x-registration-token` header can be ommitted.'
+      requestBody:
+        description: New family member
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FamilyMember'
+            examples:
+              Example with icon:
+                value:
+                  uitpasNumber: '1000000520006'
+                  icon: https://www.uitpas.be/_nuxt/img/icon1.png
+              Example without icon:
+                value:
+                  uitpasNumber: '1000000520006'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      parameters:
+      - schema:
+          type: string
+        in: header
+        name: x-registration-token
+        description: the registration token of the passholder to add as family member. This header  is required when using an end-user token. It can be omitted when using an admin or client access token with the appropriate permissions.
+      tags:
+      - Passholder Family
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /passholders/{passholderId}/family-members/{familyMemberId}:
+    parameters:
+    - schema:
+        type: string
+      name: passholderId
+      in: path
+      required: true
+      description: Passholder ID of the main family member
+    - schema:
+        type: string
+      name: familyMemberId
+      in: path
+      required: true
+      description: Passholder ID of the family member to update or delete
+    put:
+      summary: Update a family member
+      operationId: put-passholders-passholderId-family-members-familyMemberId
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: 'Bad request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data
+
+
+            The detail property might include more information for the client developer.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: 'Update information of a family member of the given passholder.
+
+
+        The caller of this method must have `PASSHOLDERS_FAMILY_MEMBERS` permission for the given passholder'
+      parameters: []
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FamilyMember'
+            examples:
+              Example:
+                value:
+                  icon: https://www.uitpas.be/_nuxt/img/icon1.png
+        description: Updated information of the family member.
+      tags:
+      - Passholder Family
+    delete:
+      summary: Delete a family member
+      operationId: delete-passholders-passholderId-family-members-familyMemberId
+      responses:
+        '202':
+          description: Accepted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: 'Delete a family member of a given passholder.
+
+
+        The main family member is always a member of their family (boolean `mainFamilyMember` is `true`) and cannot be deleted.
+
+
+        The caller of this method must have `PASSHOLDERS_FAMILY_MEMBERS` permission for the *main family member* or for the *to be deleted family member*, except for custom token authentication.
+
+
+        > Custom tokens
+
+        >
+
+        > Next to regular client and user access tokens, this endpoint also supports ''custom tokens''. In this scenario, the custom token is sent out in an email to the passholder, who is added as a family member. This allows for the reversal of the add operation directly from that email, without further authentication. Unless your client is implementing this flow, you can ignore custom tokens.'
+      security:
+      - CLIENT_ACCESS_TOKEN: []
+      - USER_ACCESS_TOKEN: []
+      - CUSTOM_TOKEN: []
+      tags:
+      - Passholder Family
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /passholders/{passholderId}/families:
+    parameters:
+    - schema:
+        type: string
+      name: passholderId
+      in: path
+      required: true
+      description: Passholder ID
+    get:
+      summary: Retrieve families of the current passholder
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: List of families
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: The name of the main family member
+                      readOnly: true
+                    firstName:
+                      type: string
+                      description: The firstname of the main family member
+                      readOnly: true
+                    passholderId:
+                      type: string
+                      description: The passholder ID of the main family member
+                      readOnly: true
+                    email:
+                      type: string
+                      description: The email address of the main family member
+                      readOnly: true
+                    memberSince:
+                      type: string
+                      format: date-time
+                      description: The creationdate of the current passholder in this family
+                      readOnly: true
+                  required:
+                  - name
+                  - firstName
+                  - passholderId
+                  - memberSince
+              examples:
+                Example:
+                  value:
+                  - name: Peeters
+                    firstName: Marc
+                    passholderId: 55a96a3f-a570-4d4f-8580-fe00caeafcf0
+                    email: marc.peeters@uitpas.be
+                    memberSince: '2023-08-24T14:15:22+00:00'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      operationId: get-passholders-passholderId-families
+      description: 'Retrieve the other families to which the given passholder was added. This explicitly excludes the passholder''s own family.
+
+
+        The caller of this method must have `PASSHOLDERS_FAMILY_MEMBERS` permission for the given passholder.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      parameters: []
+      tags:
+      - Passholder Family
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+components:
+  responses:
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+  schemas:
+    Error:
+      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
+    CardSystemMembershipCard:
+      title: CardSystemMembershipCard
+      x-stoplight:
+        id: c61r94oays9ih
+      type: object
+      description: Representation of an UiTPAS card embedded in a CardSystemMembership.
+      properties:
+        uitpasNumber:
+          type: string
+          x-stoplight:
+            id: wt5795os9zlly
+          description: UiTPAS number of this card.
+        cardType:
+          type: string
+          x-stoplight:
+            id: 0wg00e7ok83tp
+          enum:
+          - NFC_CARD
+          - DIGITAL
+          description: Type of this card.
+        status:
+          type: string
+          x-stoplight:
+            id: ic0htdaaq5wmr
+          description: Status of this card.
+          enum:
+          - ACTIVE
+          - BLOCKED
+          - DELETED
+      required:
+      - uitpasNumber
+      - status
+    City:
+      title: City
+      type: object
+      x-tags:
+      - Models
+      example:
+        postalCode: '9300'
+        name: Aalst
+      properties:
+        postalCode:
+          type: string
+          description: Postalcode of the city
+        name:
+          type: string
+          description: Name of the city
+      required:
+      - postalCode
+      - name
+    Organizer:
+      title: Organizer
+      type: object
+      description: An organisation that partners with UiTPAS to provide discounts and/or rewards, and/or allows points to be collected at their events.
+      x-tags:
+      - Models
+      properties:
+        id:
+          type: string
+          description: Unique ID of an UiTPAS organizer. (Same as its ID in UiTdatabank)
+        name:
+          type: string
+          description: Human-readable name of an UiTPAS organizer.
+        cardSystems:
+          type: array
+          description: Card systems linked to this organizer
+          items:
+            $ref: '#/components/schemas/CardSystem'
+        linkedLocationId:
+          type: string
+          description: ID of the location linked to this organizer.
+          readOnly: true
+        address:
+          type: object
+          description: Address of this organizer. This property is alway available in responses.
+          required:
+          - city
+          properties:
+            street:
+              type: string
+              description: Street address of this organizer
+            postalCode:
+              type: string
+              description: Postal code of this organizer
+            city:
+              type: string
+              description: City of this organizer
+          readOnly: true
+      required:
+      - id
+    FamilyMember:
+      type: object
+      title: FamilyMember
+      x-tags:
+      - Models
+      description: The `FamilyMember` entity including basic information about the `Passholder` family member.
+      x-stoplight:
+        id: 2e1288b442b2a
+      properties:
+        uitpasNumber:
+          type: string
+          x-stoplight:
+            id: vffgzwi7q0jmc
+          description: UiTPAS number of the family member passholder. This field is always available in responses, mandatory in POST requests and ignored in PUT requests.
+        passholder:
+          x-stoplight:
+            id: hx6tv58az4pq2
+          allOf:
+          - $ref: '#/components/schemas/Passholder'
+          readOnly: true
+        creationDate:
+          type: string
+          format: date-time
+          description: Creationdate of the family member in its family. This field is always available in responses.
+          readOnly: true
+        icon:
+          type: string
+          description: Icon of the family member
+        mainFamilyMember:
+          type: boolean
+          description: Indicates whether this is the main family member (= the passholder that created this list of family members)
+          readOnly: true
+    Passholder:
+      title: Passholder
+      type: object
+      x-tags:
+      - Models
+      description: "Person who holds an UiTPAS, the end-user of an UiTPAS. \n\nA `Passholder` can be identified by its `id`. However, there are cases where the passholder identifies using one of its UiTPAS numbers. That number is CardSystem specific, so it can be found under `cardSystemMemberships`. Every passholder should have at least one cardsystem membership."
+      x-examples: {}
+      properties:
+        id:
+          type: string
+          description: This field is always available in responses and ignored in create and update operations.
+          readOnly: true
+        name:
+          type: string
+          description: Last name of the passholder.
+        firstName:
+          type: string
+          description: First name of the passholder.
+        inszNumber:
+          type: string
+          description: Unique national (Belgian) INSZ number of an individual passholder to look up.
+        uitpasNumber:
+          type: string
+          description: The UiTPAS number of this passholder. This field contains the UiTPAS number of the oldest, still active cardsystem membership, that has an active card. This field is always available in responses and ignored in create and update operations.
+        cardSystemMemberships:
+          type: array
+          description: This field is always available in responses and ignored in create and update operations.
+          items:
+            $ref: '#/components/schemas/CardSystemMembership'
+          readOnly: true
+        email:
+          type: string
+          description: Contact email address of the passholder. Not present for every passholder. Multiple passholders can have the same email address.
+        creationDate:
+          type: string
+          format: date-time
+          description: This field is always available in responses and ignored in create and update operations.
+          readOnly: true
+        dateOfBirth:
+          type: string
+          format: date
+          description: Date that the passholder was born.
+        gender:
+          type: string
+          enum:
+          - MALE
+          - FEMALE
+          - X
+          description: Gender of the passholder.
+        registrationOrganizer:
+          allOf:
+          - $ref: '#/components/schemas/Organizer'
+          writeOnly: true
+          description: Only used in passholder creation or update.
+        points:
+          type: integer
+          description: Amount of points the passholder has currently saved (and not used).This field is always available in responses and ignored in create and update operations.
+          readOnly: true
+        uitidStatus:
+          type: string
+          enum:
+          - REGISTERED
+          - UNREGISTERED
+          description: Whether or not the passholder has a an UiTiD registered. This field is always available in responses and ignored in create and update operations.
+          readOnly: true
+        address:
+          type: object
+          description: Address that the passholder lives at. Always present in responses. Passholders living outside of Belgium (usually near the border) will only have a `postalCode` and `city` in their address.
+          required:
+          - postalCode
+          - city
+          properties:
+            street:
+              type: string
+              description: Street name, number and optional box number of the address.
+            number:
+              type: string
+              description: House number. This field is deprecated and will be empty. The house number is part of the `street` property.
+              deprecated: true
+            box:
+              type: string
+              description: Postal box number. This field is deprecated and will be empty. The box number is part of the `street` property.
+              deprecated: true
+            postalCode:
+              type: string
+              description: Postal code of the municipality.
+            city:
+              type: string
+              description: Human-readable name of the municipality.
+            country:
+              type: string
+              description: ISO 3166-1 alpha-2 country code.
+        postalCode:
+          type: string
+          deprecated: true
+          description: Postal code of the municipality that the passholder lives in. Deprecated in favor of `address.postalCode`
+          readOnly: true
+        city:
+          type: string
+          deprecated: true
+          description: Name of the municipality that the passholder lives in. Deprecated in favor of `address.city`.
+          readOnly: true
+        phoneNumber:
+          type: string
+          description: Phone number that the passholder has registered, for example for SMS alerts.
+        optInPreferences:
+          type: object
+          description: Permissions that the passholder has given to be contacted.
+          properties:
+            serviceMails:
+              type: boolean
+              description: Important information about the functionality of UiTPAS.
+            milestoneMails:
+              type: boolean
+              description: Notification when you reach an important UiTPAS milestone, for example a specific amount of points or an exclusive reward becomes available to you.
+            infoMails:
+              type: boolean
+              description: Rewards, actions and events selected specifically for the passholder based on their UiTPAS history.
+            sms:
+              type: boolean
+              description: Free (sporadic) SMS messages with rewards, actions and events selected specifically for the passholder based on their UiTPAS history.
+            post:
+              type: boolean
+              description: Sporadic post mail with information about UiTPAS. Will be sent to the passholder's postal address.
+          required:
+          - serviceMails
+          - milestoneMails
+          - infoMails
+          - sms
+          - post
+        nationality:
+          type: string
+          description: Human-readable name of the passholder's nationality.
+        parentalConsent:
+          type: boolean
+          description: Only used in passholder creation and updates. Set to true for under-aged passholder that have parental consent.
+          writeOnly: true
+        legalTermsPaper:
+          type: boolean
+          description: Only used in passholder creation and updates. Set to true for passholders that received legal terms on paper.
+          writeOnly: true
+        legalTermsDigital:
+          type: boolean
+          description: Only used in passholder creation and updates. Set to true for passholders that received legal terms digitally.
+          writeOnly: true
+        registrationCardSystemId:
+          type: integer
+          description: Only used in passholder creation. Set to the id of the card system of which the passholder has to become a member.
+          writeOnly: true
+        registrationVoucher:
+          type: string
+          description: Only used in passholder creation when the ser has a price reduction voucher.
+          writeOnly: true
+        registrationCardType:
+          type: string
+          description: Only used and mandatory in passholder c
+          enum:
+          - DIGITAL
+          - NFC_CARD
+          writeOnly: true
+        registrationUitpasNumber:
+          type: string
+          description: Only used in passholder creation using a physical card.
+          writeOnly: true
+        registrationSocialTariffEndDate:
+          type: string
+          description: Only used in passholder creation using a `registrationUitpasNumber` with social tariff. Or when updating a passholder with social tariff. During registration, if no `registrationSocialTariffEndDate` is specified and `registrationUitpasNumber` has social tariff, a default date of April 30 of next year is used.
+          format: date
+          writeOnly: true
+        registrationPicture:
+          type: string
+          description: Base64 encoded string of the picture of this passholder. Only used in passholder creation.
+          format: byte
+          x-stoplight:
+            id: ikgxjklji2guj
+          writeOnly: true
+        registrationNote:
+          type: string
+          description: Only used in passholder creation. The admin-private note about this pas
+          x-stoplight:
+            id: 449kx338dtu1q
+          writeOnly: true
+      required:
+      - name
+      - firstName
+      - dateOfBirth
+      - registrationOrganizer
+      - address
+    CardSystem:
+      title: CardSystem
+      description: A region, usually one or multiple municipalities in Belgium, that uses UiTPAS and provides discounts and/or rewards. For example "Paspartoe" (Brussels), UiTPAS Leuven, UiTPAS Hasselt, UiTPAS Gent, and so on.
+      type: object
+      x-tags:
+      - Models
+      example:
+        id: 1
+        name: UiTPAS Dender
+        branding:
+          logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+          primaryColor: rgba(0,0,0,1.0)
+          secondaryColor: rgba(97,166,14,1.0)
+        links:
+          website: https://www.uitpas.be
+        cities:
+        - postalCode: '9300'
+          name: Aalst
+        - postalCode: '9400'
+          name: Ninove
+        permanent: true
+      properties:
+        id:
+          type: integer
+          description: ID of the card system
+        name:
+          type: string
+          description: Name of the card system. This field is always available in responses.
+        branding:
+          type: object
+          description: Branding information of the card system
+          properties:
+            logo:
+              type: string
+              description: URL to the logo of the card system
+            primaryColor:
+              type: string
+              description: Color code of the primary branding color.
+            secondaryColor:
+              type: string
+              description: Color code of the secondary branding color.
+        links:
+          type: object
+          description: Links of the card system
+          properties:
+            website:
+              type: string
+              description: URL of the website of the card system
+        cities:
+          type: array
+          description: List of cities that are part of this card system
+          items:
+            $ref: '#/components/schemas/City'
+        permanent:
+          type: boolean
+          description: Indicates whether this is a permanent card system
+        allowsCardlessRegistration:
+          type: boolean
+          description: Indicates if cardless registration is enabled
+        cardlessRegistrationType:
+          type: string
+          description: Indicates the types of online cardless registrations this cardsystem supports.
+          enum:
+          - ALL
+          - REGULAR
+          - SOCIALTARIFF
+          - NONE
+        socialTariffInfo:
+          type: string
+          description: Optional information about social tariff entitlement in this card system.
+      required:
+      - id
+    CardSystemMembership:
+      title: CardSystemMembership
+      description: Membership info of an individual passholder in a specific card system.
+      type: object
+      x-tags:
+      - Models
+      properties:
+        cardSystem:
+          $ref: '#/components/schemas/CardSystem'
+        uitpasNumber:
+          type: string
+          description: This is a convenience propery that contains the uitpasNumber of the `currentCard` if there is a current card and that card is `ACTIVE`.
+        currentCard:
+          $ref: '#/components/schemas/CardSystemMembershipCard'
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - BLOCKED
+          description: Whether the membership is active or blocked.
+          readOnly: true
+        socialTariff:
+          type: object
+          description: 'If the passholder has (or had) right to a social tariff, this object contains details like the  end date. Check the `status` of the `socialTariff`: the passholder is only currently entitled to a social tariff is `status` is `ACTIVE`. '
+          properties:
+            status:
+              type: string
+              enum:
+              - ACTIVE
+              - EXPIRED
+              - SUSPENDED
+              description: 'Status of the social tariff:
+
+                - `ACTIVE`: the passholder is entitled to social tariff
+
+                - `EXPIRED`: the passholder is NOT entitled to social tariff anymore
+
+                - `SUSPENDED`: the passholder is temporarily NOT entitled to social tariff. In this case a extra property `suspendedUntilDate` will also be available.'
+            endDate:
+              type: string
+              format: date-time
+              description: Exact moment the passholder's right to a social tariff expires.
+            inGracePeriod:
+              type: boolean
+              description: When the end date of the right to a social tariff has passed, the passholder may still be in a grace period that they can buy tickets at a social tariff until their right to a social tariff has been renewed.
+            suspendedUntilDate:
+              type: string
+              format: date-time
+              description: Date until this social tarif is suspended (only available when status is `SUSPENDED`)
+            expired:
+              type: boolean
+              description: If true, the passholder's right to a social tariff has completely expired (the end date has passed and the passholder is no longer in a grace period). **This property is deprecated.** Please use the `status` property instead.
+              deprecated: true
+          required:
+          - status
+          - endDate
+      required:
+      - cardSystem
+    Error_2:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+  securitySchemes:
+    USER_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A user access token, obtained by redirecting the end user to publiq's authorization server to login using the **Authorization Code OAuth Flow**. See the [authentication docs about user access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
+    CLIENT_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+    CLIENT_IDENTIFICATION:
+      name: x-client-id
+      type: apiKey
+      in: header
+    CUSTOM_TOKEN:
+      name: x-custom-token
+      type: apiKey
+      in: header
+x-refined-from:
+- uitpas-uitpas.json
+- publiq-uitpas-openapi.yml

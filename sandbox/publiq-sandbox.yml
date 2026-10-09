@@ -1,0 +1,76 @@
+generated: '2026-10-09'
+method: searched
+source:
+- https://docs.publiq.be/docs/authentication/environments
+- https://github.com/cultuurnet/apidocs/blob/main/projects/authentication/docs/environments.md
+- https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/test-dataset.md
+description: Separate test environment with its own client credentials. New integrations initially receive credentials that only work with the test environment; test tokens only work on test APIs. Test
+  data differs from production; new functionality may reach test before production.
+docs: https://docs.publiq.be/docs/authentication/environments
+environments:
+  authorization_server:
+    test: https://account-test.uitid.be
+    production: https://account.uitid.be
+  uitdatabank_entry:
+    test: https://io-test.uitdatabank.be
+    production: https://io.uitdatabank.be
+  uitdatabank_search:
+    test: https://search-test.uitdatabank.be
+    production: https://search.uitdatabank.be
+  uitpas:
+    test: https://api-test.uitpas.be
+key_modes: Client id and secret differ per environment; no key prefix convention documented.
+test_data:
+  docs: https://docs.publiq.be/docs/uitpas/test-dataset
+  organizers:
+  - name: '[TEST] UiTPAS Organisatie (Regio Gent + Paspartoe)'
+    id: 0ce87cbc-9299-4528-8d35-92225dc9489f
+  events:
+  - name: Permanente UiTPAS Test Festiviteit
+    id: 5a0967f9-cc06-4c3c-9206-30481a767434
+    details: Allows 100 ticket sales per passholder per week
+  - name: Test event met beperkte aankoop
+    id: d83b5b8a-108a-45d6-9ac9-8bdc44a0a24a
+    details: Allows only 1 ticket sale per week, to test refusals
+  - name: Test event with no permission
+    id: 373d6cee-b4ae-4637-9b7c-eeb79e45f044
+    details: Event by a different organizer - no ticketsale possible
+  passholders:
+  - uitpas_number: 0900000095902
+    card_status: active
+    comment: Use this pass for points rewards
+  - uitpas_number: 0900000067513
+    social_tariff: yes (Gent)
+    card_status: active
+  - uitpas_number: 0900000031618
+    social_tariff: yes (expired)
+    card_status: active
+  - uitpas_number: 0900000002312
+    card_status: blocked
+  - uitpas_number: 0900000074519
+    card_status: unregistered
+  - uitpas_number: 0900000020405
+    card_status: unregistered
+  group_passes:
+  - uitpas_number: 0900000045410
+    card_status: active
+  - uitpas_number: 0900000191800
+    card_status: active
+    comment: max. 50 ticketsales per day
+  rewards:
+  - name: Test Voordeel Regio Gent
+    id: '5687'
+    type: POINTS
+  - name: Test Welkomstvoordeel Regio Gent
+    id: '5688'
+    type: WELCOME
+  - name: Test Voordeel Regio Gent - 1/week
+    id: '5823'
+    type: POINTS
+  note: Subset copied verbatim from the published UiTPAS test dataset; see the page for the full table (chip numbers, INSZ numbers, family accounts).
+time_simulation: null
+trigger_tooling: null
+postman:
+- https://docs.publiq.be/docs/uitdatabank/entry-api/postman-collection
+- https://docs.publiq.be/docs/uitdatabank/search-api/postman-collection
+- https://docs.publiq.be/docs/museumpassmusees/postman

@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/publiq/main/json-schema/publiq-card-system-membership-schema.json",
+  "title": "CardSystemMembership",
+  "description": "Membership info of an individual passholder in a specific card system.",
+  "x-generated": "2026-10-09",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/publiq-uitpas-openapi.yml#/components/schemas/CardSystemMembership",
+  "type": "object",
+  "x-tags": [
+    "Models"
+  ],
+  "properties": {
+    "cardSystem": {
+      "$ref": "#/$defs/CardSystem"
+    },
+    "uitpasNumber": {
+      "type": "string",
+      "description": "This is a convenience propery that contains the uitpasNumber of the `currentCard` if there is a current card and that card is `ACTIVE`."
+    },
+    "currentCard": {
+      "$ref": "#/$defs/CardSystemMembershipCard"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "BLOCKED"
+      ],
+      "description": "Whether the membership is active or blocked.",
+      "readOnly": true
+    },
+    "socialTariff": {
+      "type": "object",
+      "description": "If the passholder has (or had) right to a social tariff, this object contains details like the  end date. Check the `status` of the `socialTariff`: the passholder is only currently entitled to a social tariff is `status` is `ACTIVE`. ",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "ACTIVE",
+            "EXPIRED",
+            "SUSPENDED"
+          ],
+          "description": "Status of the social tariff:\n- `ACTIVE`: the passholder is entitled to social tariff\n- `EXPIRED`: the passholder is NOT entitled to social tariff anymore\n- `SUSPENDED`: the passholder is temporarily NOT entitled to social tariff. In this case a extra property `suspendedUntilDate` will also be available."
+        },
+        "endDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Exact moment the passholder's right to a social tariff expires."
+        },
+        "inGracePeriod": {
+          "type": "boolean",
+          "description": "When the end date of the right to a social tariff has passed, the passholder may still be in a grace period that they can buy tickets at a social tariff until their right to a social tariff has been renewed."
+        },
+        "suspendedUntilDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date until this social tarif is suspended (only available when status is `SUSPENDED`)"
+        },
+        "expired": {
+          "type": "boolean",
+          "description": "If true, the passholder's right to a social tariff has completely expired (the end date has passed and the passholder is no longer in a grace period). **This property is deprecated.** Please use the `status` property instead.",
+          "deprecated": true
+        }
+      },
+      "required": [
+        "status",
+        "endDate"
+      ]
+    }
+  },
+  "required": [
+    "cardSystem"
+  ],
+  "$defs": {
+    "CardSystem": {
+      "title": "CardSystem",
+      "description": "A region, usually one or multiple municipalities in Belgium, that uses UiTPAS and provides discounts and/or rewards. For example \"Paspartoe\" (Brussels), UiTPAS Leuven, UiTPAS Hasselt, UiTPAS Gent, and so on.",
+      "type": "object",
+      "x-tags": [
+        "Models"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "ID of the card system"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the card system. This field is always available in responses."
+        },
+        "branding": {
+          "type": "object",
+          "description": "Branding information of the card system",
+          "properties": {
+            "logo": {
+              "type": "string",
+              "description": "URL to the logo of the card system"
+            },
+            "primaryColor": {
+              "type": "string",
+              "description": "Color code of the primary branding color."
+            },
+            "secondaryColor": {
+              "type": "string",
+              "description": "Color code of the secondary branding color."
+            }
+          }
+        },
+        "links": {
+          "type": "object",
+          "description": "Links of the card system",
+          "properties": {
+            "website": {
+              "type": "string",
+              "description": "URL of the website of the card system"
+            }
+          }
+        },
+        "cities": {
+          "type": "array",
+          "description": "List of cities that are part of this card system",
+          "items": {
+            "$ref": "#/$defs/City"
+          }
+        },
+        "permanent": {
+          "type": "boolean",
+          "description": "Indicates whether this is a permanent card system"
+        },
+        "allowsCardlessRegistration": {
+          "type": "boolean",
+          "description": "Indicates if cardless registration is enabled"
+        },
+        "cardlessRegistrationType": {
+          "type": "string",
+          "description": "Indicates the types of online cardless registrations this cardsystem supports.",
+          "enum": [
+            "ALL",
+            "REGULAR",
+            "SOCIALTARIFF",
+            "NONE"
+          ]
+        },
+        "socialTariffInfo": {
+          "type": "string",
+          "description": "Optional information about social tariff entitlement in this card system."
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "CardSystemMembershipCard": {
+      "title": "CardSystemMembershipCard",
+      "x-stoplight": {
+        "id": "c61r94oays9ih"
+      },
+      "type": "object",
+      "description": "Representation of an UiTPAS card embedded in a CardSystemMembership.",
+      "properties": {
+        "uitpasNumber": {
+          "type": "string",
+          "x-stoplight": {
+            "id": "wt5795os9zlly"
+          },
+          "description": "UiTPAS number of this card."
+        },
+        "cardType": {
+          "type": "string",
+          "x-stoplight": {
+            "id": "0wg00e7ok83tp"
+          },
+          "enum": [
+            "NFC_CARD",
+            "DIGITAL"
+          ],
+          "description": "Type of this card."
+        },
+        "status": {
+          "type": "string",
+          "x-stoplight": {
+            "id": "ic0htdaaq5wmr"
+          },
+          "description": "Status of this card.",
+          "enum": [
+            "ACTIVE",
+            "BLOCKED",
+            "DELETED"
+          ]
+        }
+      },
+      "required": [
+        "uitpasNumber",
+        "status"
+      ]
+    },
+    "City": {
+      "title": "City",
+      "type": "object",
+      "x-tags": [
+        "Models"
+      ],
+      "properties": {
+        "postalCode": {
+          "type": "string",
+          "description": "Postalcode of the city"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the city"
+        }
+      },
+      "required": [
+        "postalCode",
+        "name"
+      ]
+    }
+  }
+}

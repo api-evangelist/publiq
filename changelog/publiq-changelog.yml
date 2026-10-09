@@ -1,0 +1,74 @@
+generated: '2026-10-09'
+method: searched
+source:
+- https://docs.publiq.be/docs/release-notes
+- https://github.com/cultuurnet/apidocs/blob/main/projects/release-notes/docs/uitdatabank/2026.md
+- https://github.com/cultuurnet/apidocs/blob/main/projects/release-notes/docs/uitdatabank/2025.md
+scheme: monthly deployment notes per product, grouped by year (Features / Improvements / Bugfixes); APIs carry only a major version
+entries:
+- version: null
+  date: 2026-07
+  product: UiTdatabank Search API
+  breaking: true
+  highlights:
+  - Following an Elasticsearch upgrade, negative boosting in Search API advanced queries is no longer supported and has been removed from the documentation.
+- version: null
+  date: 2026-04
+  product: UiTdatabank Search API
+  breaking: false
+  highlights:
+  - Search API now accepts query bodies through POST in addition to GET parameters.
+  - Fixed id and location.id projections to consistently use the plural URL form.
+- version: null
+  date: 2026-03
+  product: UiTdatabank
+  breaking: false
+  highlights:
+  - ISO-8601 datetimes without an explicit timezone are now accepted and interpreted as Europe/Brussels.
+  - Improved duplicate place detection returns a suggested id for the canonical place.
+- version: null
+  date: 2026-02
+  product: UiTdatabank
+  breaking: false
+  highlights:
+  - API keys for legacy integrations matched to Keycloak client IDs, in preparation for the deprecation of API keys in favour of client credentials.
+- version: null
+  date: 2026-01
+  product: UiTdatabank Entry API
+  breaking: false
+  highlights:
+  - Image upload supports a JSON body with an online URL (POST /images) in addition to multipart/form-data.
+- version: null
+  date: 2025-11
+  product: UiTdatabank
+  breaking: false
+  highlights:
+  - Automatic UiTPAS labels on places and organizers.
+  - '"All ages" age ranges projected consistently as -.'
+- version: null
+  date: 2025-09
+  product: UiTdatabank
+  breaking: false
+  highlights:
+  - Creators of an organizer get implicit ownership of all events organized by that organizer.
+  - Duplicate place detection picks an UiTPAS location as canonical place.
+- version: null
+  date: 2025-07
+  product: UiTdatabank
+  breaking: false
+  highlights:
+  - Events created/updated with a duplicate place are linked to the canonical place.
+- version: null
+  date: 2025-05
+  product: UiTdatabank Entry API
+  breaking: false
+  highlights:
+  - New endpoints PUT /events/{eventId}/labels/, PUT /places/{placeId}/labels/, PUT /organizers/{organizerId}/labels/ to replace all manually-added labels.
+  - Cultuurkuur taxonomies refresh.
+note: 'breaking is our reading: the July 2026 removal of negative boosting removes previously supported query behaviour; the provider labels it an Improvement.'
+api_versions:
+  uitdatabank_entry: v3
+  uitdatabank_search: v3
+  uitpas: v4
+  museumpassmusees: v1
+current_version: null

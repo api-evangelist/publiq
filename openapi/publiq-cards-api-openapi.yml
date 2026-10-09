@@ -1,0 +1,467 @@
+openapi: 3.2.0
+info:
+  title: Publiq Cards API
+  version: '4.0'
+  contact:
+    name: publiq helpdesk
+    email: technical-support@publiq.be
+    url: https://docs.publiq.be
+  x-refined-note:
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Cards across 2 of this provider''s published API definitions: uitpas-uitpas.json, publiq-uitpas-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api-test.uitpas.be
+  description: Testing
+- url: https://api.uitpas.be
+  description: Production
+tags:
+- name: Cards
+paths:
+  /cards:
+    get:
+      summary: Retrieve card status
+      tags:
+      - Cards
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Card'
+              examples:
+                Active card:
+                  value:
+                    uitpasNumber: 0900000095902
+                    chipNumber: 042F51B2712380
+                    cardSystem:
+                      id: 1
+                      name: UiTPAS Dender
+                      branding:
+                        logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+                        primaryColor: rgba(0,0,0,1.0)
+                        secondaryColor: rgba(97,166,14,1.0)
+                      links:
+                        website: https://www.uitpas.be
+                      cities:
+                      - postalCode: '9300'
+                        name: Aalst
+                      - postalCode: '9400'
+                        name: Ninove
+                      permanent: true
+                    cardType: NFC_CARD
+                    status: ACTIVE
+                    socialTariff: false
+                Provisioned card:
+                  value:
+                    uitpasNumber: 0900000095902
+                    cardSystem:
+                      id: 1
+                      name: UiTPAS Dender
+                      branding:
+                        logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+                        primaryColor: rgba(0,0,0,1.0)
+                        secondaryColor: rgba(97,166,14,1.0)
+                      links:
+                        website: https://www.uitpas.be
+                      cities:
+                      - postalCode: '9300'
+                        name: Aalst
+                      - postalCode: '9400'
+                        name: Ninove
+                      permanent: true
+                    cardType: NFC_CARD
+                    status: PROVISIONED
+                    socialTariff: false
+        '400':
+          description: 'Bad Request. Error type:
+
+
+            https://api.publiq.be/probs/uitpas/invalid-uitpas-number'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      operationId: get-cards
+      description: 'Retrieve card status for a given `uitpasNumber` or `chipNumber`.
+
+
+        The caller of this request must have `CARDS_READ` permission.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      parameters:
+      - schema:
+          type: string
+        in: query
+        name: uitpasNumber
+        description: The UiTPAS number of the card to search
+      - schema:
+          type: string
+        in: query
+        name: chipNumber
+        description: The chip number of the card to search
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /cards/social-tariff/{cardSystemId}/active:
+    parameters:
+    - schema:
+        type: string
+      name: cardSystemId
+      in: path
+      required: true
+      description: ID of the card system
+    get:
+      summary: Retrieve all valid social tariff cards
+      tags:
+      - Cards
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: List of uitpas numbers
+                items:
+                  x-stoplight:
+                    id: btzarymlxotng
+                  type: object
+                  properties:
+                    uitpasNumber:
+                      type: string
+                      x-stoplight:
+                        id: d5mcgwl29vxgc
+                      description: uitpasNumber of the card
+                      readOnly: true
+                    cardType:
+                      type: string
+                      x-stoplight:
+                        id: nflq0bksci1ny
+                      enum:
+                      - REGULAR
+                      - GROUP
+                      description: Type of the card
+                      readOnly: true
+                    availableTickets:
+                      type: integer
+                      x-stoplight:
+                        id: rtlhxr5sy8tva
+                      description: Available tickets. Only present for cards of type `GROUP`.
+                  required:
+                  - uitpasNumber
+                  - cardType
+              examples:
+                Full example:
+                  value:
+                  - uitpasNumber: 0900000095902
+                    cardType: REGULAR
+                  - uitpasNumber: 0900000067513
+                    cardType: REGULAR
+                  - uitpasNumber: 0900000045410
+                    cardType: GROUP
+                    availableTickets: 10
+                Delta Example:
+                  value:
+                  - uitpasNumber: 0900000095902
+                    deltaOperation: ADD
+                    cardType: REGULAR
+                  - uitpasNumber: 0900000067513
+                    deltaOperation: DELETE
+                    cardType: REGULAR
+                  - uitpasNumber: 0900000045410
+                    cardType: GROUP
+                    deltaOperation: ADD
+                    availableTickets: 10
+        '400':
+          description: 'Bad Request. Error type:
+
+
+            https://api.publiq.be/probs/uitpas/invalid-uitpas-number'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      operationId: get-cards-social-tariff-cardSystemId-active
+      description: 'Retrieve all valid social tariff cards at this moment.
+
+
+        The response contains all current social tariff cards. Previously valid social tariff cards are omitted from the response. Please note that it is possible for a card to appear in this response, disappear some time later (e.g. temporarily blocked), and reappears again later (e.g. when unblocked).
+
+
+        The caller of this request must have `SOCIALTARIFF_EXPORT` permission.'
+      security:
+      - CLIENT_ACCESS_TOKEN: []
+      - USER_ACCESS_TOKEN: []
+      parameters: []
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+components:
+  responses:
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+  schemas:
+    Error:
+      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
+    Card:
+      title: Card
+      x-stoplight:
+        id: zqvfbrdvemv9g
+      type: object
+      description: Representation of an UiTPAS card.
+      properties:
+        uitpasNumber:
+          type: string
+          x-stoplight:
+            id: wt5795os9zlly
+          description: UiTPAS number of this card.
+        cardSystem:
+          $ref: '#/components/schemas/CardSystem'
+        cardType:
+          type: string
+          x-stoplight:
+            id: 0wg00e7ok83tp
+          enum:
+          - NFC_CARD
+          - DIGITAL
+          description: Type of this card.
+        status:
+          type: string
+          x-stoplight:
+            id: ic0htdaaq5wmr
+          description: Status of this card.
+          enum:
+          - PROVISIONED
+          - LOCAL_STOCK
+          - ACTIVE
+          - BLOCKED
+          - DELETED
+        socialTariff:
+          type: boolean
+          x-stoplight:
+            id: k6sdxxpe9zvpe
+          description: Indicated the social tariff status of this card.
+      required:
+      - uitpasNumber
+      - cardSystem
+      - status
+      - socialTariff
+    City:
+      title: City
+      type: object
+      x-tags:
+      - Models
+      example:
+        postalCode: '9300'
+        name: Aalst
+      properties:
+        postalCode:
+          type: string
+          description: Postalcode of the city
+        name:
+          type: string
+          description: Name of the city
+      required:
+      - postalCode
+      - name
+    CardSystem:
+      title: CardSystem
+      description: A region, usually one or multiple municipalities in Belgium, that uses UiTPAS and provides discounts and/or rewards. For example "Paspartoe" (Brussels), UiTPAS Leuven, UiTPAS Hasselt, UiTPAS Gent, and so on.
+      type: object
+      x-tags:
+      - Models
+      example:
+        id: 1
+        name: UiTPAS Dender
+        branding:
+          logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+          primaryColor: rgba(0,0,0,1.0)
+          secondaryColor: rgba(97,166,14,1.0)
+        links:
+          website: https://www.uitpas.be
+        cities:
+        - postalCode: '9300'
+          name: Aalst
+        - postalCode: '9400'
+          name: Ninove
+        permanent: true
+      properties:
+        id:
+          type: integer
+          description: ID of the card system
+        name:
+          type: string
+          description: Name of the card system. This field is always available in responses.
+        branding:
+          type: object
+          description: Branding information of the card system
+          properties:
+            logo:
+              type: string
+              description: URL to the logo of the card system
+            primaryColor:
+              type: string
+              description: Color code of the primary branding color.
+            secondaryColor:
+              type: string
+              description: Color code of the secondary branding color.
+        links:
+          type: object
+          description: Links of the card system
+          properties:
+            website:
+              type: string
+              description: URL of the website of the card system
+        cities:
+          type: array
+          description: List of cities that are part of this card system
+          items:
+            $ref: '#/components/schemas/City'
+        permanent:
+          type: boolean
+          description: Indicates whether this is a permanent card system
+        allowsCardlessRegistration:
+          type: boolean
+          description: Indicates if cardless registration is enabled
+        cardlessRegistrationType:
+          type: string
+          description: Indicates the types of online cardless registrations this cardsystem supports.
+          enum:
+          - ALL
+          - REGULAR
+          - SOCIALTARIFF
+          - NONE
+        socialTariffInfo:
+          type: string
+          description: Optional information about social tariff entitlement in this card system.
+      required:
+      - id
+    Error_2:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+  securitySchemes:
+    USER_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A user access token, obtained by redirecting the end user to publiq's authorization server to login using the **Authorization Code OAuth Flow**. See the [authentication docs about user access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
+    CLIENT_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+    CLIENT_IDENTIFICATION:
+      name: x-client-id
+      type: apiKey
+      in: header
+    CUSTOM_TOKEN:
+      name: x-custom-token
+      type: apiKey
+      in: header
+x-refined-from:
+- uitpas-uitpas.json
+- publiq-uitpas-openapi.yml

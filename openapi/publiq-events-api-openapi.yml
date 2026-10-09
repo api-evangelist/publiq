@@ -1,0 +1,3829 @@
+openapi: 3.2.0
+info:
+  title: Publiq Events API
+  contact:
+    name: publiq helpdesk
+    email: technical-support@publiq.be
+    url: https://docs.publiq.be
+  x-refined-note:
+  - x-source differs across the merged source definitions and was not carried
+  version: '1.0'
+  description: 'Operations tagged Events across 4 of this provider''s published API definitions: uitdatabank-entry.json, uitpas-uitpas.json, publiq-uitdatabank-entry-openapi.yml, publiq-uitpas-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://io-test.uitdatabank.be
+  description: Testing
+- url: https://io.uitdatabank.be
+  description: Production
+- url: https://api-test.uitpas.be
+  description: Testing
+- url: https://api.uitpas.be
+  description: Production
+tags:
+- name: Events
+paths:
+  /events:
+    post:
+      summary: event - create
+      tags:
+      - Events
+      responses:
+        '201':
+          description: The event was successfully created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    description: UUID of the created event to use in subsequent requests or to store as a reference in your application.
+                  eventId:
+                    type: string
+                    format: uuid
+                    deprecated: true
+                    description: Deprecated, use `id` instead.
+                  url:
+                    type: string
+                    example: https://io-test.uitdatabank.be/places/c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    format: uri
+                    description: URL of the created event to use in subsequent requests or to store as a reference in your application.
+                  commandId:
+                    type: string
+                    example: 92973349-967e-44d7-83a2-e1972d9e1622
+                    format: uuid
+                    deprecated: true
+                    description: ID of the last internal command that was dispatched for this operation. Will be removed in the future.
+                required:
+                - id
+                - eventId
+                - url
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (name) are missing.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      operationId: event-post
+      description: 'Creates a new event with the required properties and any additional optional properties.
+
+
+        By default, the new event will be editable and removable by the user or client that the access token used to perform this request belongs to. If you use a user access token, the user for which the token was obtained will see the new event in their dashboard in UiTdatabank and will be able to edit or remove it. If you use a client access token, only API requests with a token for the same client will be able to edit or remove it.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        description: 'The complete details of the new event to create. The schema of the event is the same as the response of the [`GET /events/{eventId}`](./entry.json/paths/~1events~1{eventId}/get) operation.
+
+
+          This request also supports an older deprecated schema that was used to create an event with just its required fields. If you have an existing integration that still uses this schema, you can view it by switching from the `event` schema to `event.post (deprecated)` below.'
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-post.json
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    get:
+      summary: event - get
+      tags:
+      - Events
+      responses:
+        '200':
+          description: Event details.
+          content:
+            application/json:
+              schema:
+                $ref: ../models/event-with-read-example.json
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: event-get
+      description: Returns the details of the event for the given `eventId`.
+    put:
+      summary: event - update
+      operationId: event-put
+      responses:
+        '200':
+          description: The event was updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    format: uuid
+                    description: UUID of the updated event to use in subsequent requests or to store as a reference in your application.
+                  eventId:
+                    type: string
+                    format: uuid
+                    example: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    description: Deprecated, use `id` instead.
+                    deprecated: true
+                  url:
+                    type: string
+                    example: https://io-test.uitdatabank.be/events/c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    description: URL of the updated event to use in subsequent requests or to store as a reference in your application.
+                    format: uri
+                  commandId:
+                    type: string
+                    example: 92973349-967e-44d7-83a2-e1972d9e1622
+                    format: uuid
+                    deprecated: true
+                    description: ID of the last internal command that was dispatched for this operation. Will be removed in the future.
+                required:
+                - id
+                - eventId
+                - url
+              examples:
+                Example:
+                  value:
+                    id: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    eventId: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    url: https://io-test.uitdatabank.be/events/c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    commandId: 92973349-967e-44d7-83a2-e1972d9e1622
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (name) are missing.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: 'Updates the event with the given `eventId` by completely overwriting it with the properties in the given JSON.
+
+
+        > Any existing optional properties on the event that are not included in the update request will be removed from the event when updating the event via this operation.
+
+        >
+
+        > As an exception, some existing `labels` or `hiddenLabels` may be kept on the event even if they are not included in the update request. For example if they were added via the UiTdatabank UI, or if the client or user making the request does not have sufficient permission to remove some specific labels.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-with-write-example.json
+        description: The complete details of the event to update. The schema of the event is the same as the response of the [`GET /events/{eventId}`](./entry.json/paths/~1events~1{eventId}/get) operation.
+      tags:
+      - Events
+    delete:
+      summary: event - delete
+      operationId: event-delete
+      responses:
+        '204':
+          description: No Content. The event's `workflowStatus` was successfully updated to `DELETED`.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: Does a soft-delete of the event. The event will continue to exist but it's `workflowStatus` will be changed to `DELETED`. This will remove it from all publication channels.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      tags:
+      - Events
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /imports/events:
+    post:
+      summary: event - import (create)
+      tags:
+      - Events
+      responses:
+        '201':
+          description: The event was successfully created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    description: UUID of the created event to use in subsequent requests or to store as a reference in your application.
+                  eventId:
+                    type: string
+                    format: uuid
+                    deprecated: true
+                    description: Deprecated, use `id` instead.
+                  url:
+                    type: string
+                    example: https://io-test.uitdatabank.be/places/c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    format: uri
+                    description: URL of the created event to use in subsequent requests or to store as a reference in your application.
+                  commandId:
+                    type: string
+                    example: 92973349-967e-44d7-83a2-e1972d9e1622
+                    format: uuid
+                    deprecated: true
+                    description: ID of the last internal command that was dispatched for this operation. Will be removed in the future.
+                required:
+                - id
+                - eventId
+                - url
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (name) are missing.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      operationId: event-import-new
+      deprecated: true
+      description: 'Creates a new event via the historical `/imports/events` URL.
+
+
+        > This operation is deprecated and should not be used in new integrations. Use the `POST /events` operation instead to create new events.
+
+        >
+
+        > Both operations accept the same JSON bodies nowadays, and support creating events with only the required properties or with additional optional properties.
+
+        >
+
+        > The only difference is that the default `workflowStatus` for events created via `POST /events` is `DRAFT`, while new events created via this `POST /imports/events` operation will have the default workflowStatus `READY_FOR_VALIDATION` for backward compatibility with historical integrations.
+
+        >
+
+        > If you want your new events to also have the workflowStatus `READY_FOR_VALIDATION`, you can use the `POST /events` operation and explicitly set the `workflowStatus` property in your JSON body to `READY_FOR_VALIDATION`.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        description: The complete details of the new event to create. The schema of the event is the same as the response of the [`GET /events/{eventId}`](./entry.json/paths/~1events~1{eventId}/get) operation.
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-post.json
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /imports/events/{eventId}:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    put:
+      summary: event - import (update)
+      operationId: event-import-update
+      deprecated: true
+      responses:
+        '200':
+          description: The event was updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    format: uuid
+                    description: UUID of the updated event to use in subsequent requests or to store as a reference in your application.
+                  eventId:
+                    type: string
+                    format: uuid
+                    example: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    description: Deprecated, use `id` instead.
+                    deprecated: true
+                  url:
+                    type: string
+                    example: https://io-test.uitdatabank.be/events/c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    description: URL of the updated event to use in subsequent requests or to store as a reference in your application.
+                    format: uri
+                  commandId:
+                    type: string
+                    example: 92973349-967e-44d7-83a2-e1972d9e1622
+                    format: uuid
+                    deprecated: true
+                    description: ID of the last internal command that was dispatched for this operation. Will be removed in the future.
+                required:
+                - id
+                - eventId
+                - url
+              examples:
+                Example:
+                  value:
+                    id: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    eventId: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    url: https://io-test.uitdatabank.be/events/c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    commandId: 92973349-967e-44d7-83a2-e1972d9e1622
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (name) are missing.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: 'Updates the event via the historical `/imports/events/{eventId}` URL by completely overwriting it with the properties in the given JSON.
+
+
+        > This operation is deprecated and should not be used in new integrations. Use the `PUT /events/{eventId}` operation instead to update existing events, which accepts exactly the same JSON body.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-with-write-example.json
+        description: The complete details of the event to update. The schema of the event is the same as the response of the [`GET /events/{eventId}`](./entry.json/paths/~1events~1{eventId}/get) operation.
+      tags:
+      - Events
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/copies:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    post:
+      summary: event - copy
+      tags:
+      - Events
+      responses:
+        '201':
+          description: The event was copied successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eventId:
+                    type: string
+                    description: UUID of the new event to use in subsequent requests or to store as a reference in your application.
+                  url:
+                    type: string
+                    description: URL of the new event to use in subsequent requests or to store as a reference in your application.
+              examples:
+                Example:
+                  value:
+                    eventId: 83a12220-9459-4fc8-b1ed-71b3d1668e65
+                    url: https://io-test.uitdatabank.be/events/83a12220-9459-4fc8-b1ed-71b3d1668e65
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (subEvent) are missing
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: event-copies-post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              anyOf:
+              - $ref: ../models/event-calendar-put.json
+              - $ref: ../models/event-calendar-put-deprecated.json
+            examples:
+              single:
+                value:
+                  calendarType: single
+                  subEvent:
+                  - startDate: '2021-05-17T22:00:00+00:00'
+                    endDate: '2021-05-17T22:00:00+00:00'
+                    status:
+                      type: Available
+                    bookingAvailability:
+                      type: Available
+              multiple:
+                value:
+                  calendarType: multiple
+                  subEvent:
+                  - startDate: '2020-05-17T22:00:00+00:00'
+                    endDate: '2020-05-17T22:00:00+00:00'
+                    status:
+                      type: Unavailable
+                      reason:
+                        nl: Geannuleerd wegens COVID-19
+                        en: Cancelled due to COVID-19
+                    bookingAvailability:
+                      type: Unavailable
+                  - startDate: '2021-05-17T22:00:00+00:00'
+                    endDate: '2021-05-17T22:00:00+00:00'
+                    status:
+                      type: Available
+                    bookingAvailability:
+                      type: Available
+              periodic:
+                value:
+                  calendarType: periodic
+                  startDate: '2021-05-17T22:00:00+00:00'
+                  endDate: '2021-05-17T22:00:00+00:00'
+                  openingHours:
+                  - opens: '13:00'
+                    closes: '17:00'
+                    dayOfWeek:
+                    - monday
+                  - opens: 09:00
+                    closes: '17:00'
+                    dayOfWeek:
+                    - tuesday
+                    - wednesday
+                    - thursday
+                    - friday
+                    - saturday
+                    - sunday
+                  status:
+                    type: Available
+                  bookingAvailability:
+                    type: Available
+              permanent:
+                value:
+                  calendarType: permanent
+                  openingHours:
+                  - opens: '13:00'
+                    closes: '17:00'
+                    dayOfWeek:
+                    - monday
+                  - opens: 09:00
+                    closes: '17:00'
+                    dayOfWeek:
+                    - tuesday
+                    - wednesday
+                    - thursday
+                    - friday
+                    - saturday
+                    - sunday
+                  status:
+                    type: Available
+                  bookingAvailability:
+                    type: Available
+        description: New calendar information for the event copy.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      description: 'Creates a new event based on all the properties of an existing event with the given `eventId`. Only the calendar information will be completely replaced with a new one, which has to be included in the request body.
+
+
+        The schema of the request body is the same as the one for the `PUT /events/{eventId}/calendar` endpoint.'
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/attendance-mode:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    put:
+      summary: attendanceMode - update
+      tags:
+      - Events
+      responses:
+        '204':
+          description: No Content. The event's attendance mode was successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (attendanceMode) are missing.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: event-attendance-mode-put
+      description: 'Updates the attendance mode of an event. There are three different attendance modes:
+
+        - `offline`: the event takes places on a physical location
+
+        - `online`: the events takes places on an online location
+
+        - `mixed`: the event takes places both on a real location and a online location
+
+
+        When changing from attendance mode online to either offline or mixed it is required to include the location property with the URI or UUID of the (physical) location that the event is taking place at.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-attendanceMode-put.json
+            examples:
+              Online:
+                value:
+                  attendanceMode: online
+              Offline:
+                value:
+                  attendanceMode: offline
+                  location: https://io-test.uitdatabank.be/places/85b04295-479c-40f5-b3dd-469dfb4387b3
+        description: New attendanceMode to set on the event, and optionally a new location (when moving from attendanceMode `online` to `mixed` or `offline`).
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/audience:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    put:
+      summary: audience - update
+      operationId: event-audience-put
+      responses:
+        '204':
+          description: No Content. The event's audience was successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data
+
+            * https://api.publiq.be/probs/uitdatabank/incompatible-audience-type'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Example:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /audienceType
+                      error: 'The data (int) should match the type: string'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+      - Events
+      description: 'Updates the intended audience of the event, which currently only has one property `audienceType`.
+
+
+        By default the audienceType is set to `everyone`. If needed the audience can be updated to `members` to hide it on public channels, or `education` for CultuurKuur events for schools.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-audience.json
+            examples:
+              Everyone (default):
+                value:
+                  audienceType: everyone
+              Members:
+                value:
+                  audienceType: members
+              Education (CultuurKuur):
+                value:
+                  audienceType: education
+        description: New audienceType to set on the event.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/available-from:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    put:
+      summary: availableFrom - update
+      operationId: event-availableFrom-put
+      responses:
+        '204':
+          description: No Content. The event's availableFrom was successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Example:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /availableFrom
+                      error: 'The data (int) should match the type: date-time'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+      - Events
+      description: Updates the availableFrom of the event. This is the first date & time that the event is allowed to be visible on publication channels.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-availableFrom-put.json
+            examples:
+              Example:
+                value:
+                  availableFrom: '2021-05-17T22:00:00+00:00'
+        description: New availableFrom to set on the event.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/booking-availability:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    put:
+      summary: bookingAvailability - update
+      operationId: event-bookingAvailability-put
+      responses:
+        '204':
+          description: No Content. The bookingAvailability has been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data
+
+            * https://api.publiq.be/probs/uitdatabank/calendar-type-not-supported'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Example:
+                  value:
+                    type: https://api.publiq.be/probs/uitdatabank/calendar-type-not-supported
+                    title: Calendar type not supported
+                    status: 400
+                    detail: 'Not allowed to update booking availability on calendar type: "permanent". Only single and multiple calendar types can be updated.'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: 'Updates the general bookingAvailability info on the top level of the event with the given `eventId`.
+
+
+        The type of any subEvents that the event has will also be updated to match the general type in bookingAvailability.
+
+
+        > Note that you cannot update the bookingAvailability of an event with calendar type `periodic` or `permanent`. For now, they can only have "Available" as bookingAvailability.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-bookingAvailability.json
+            examples:
+              Tickets/places available:
+                value:
+                  type: Available
+              No more tickets/places available:
+                value:
+                  type: Unavailable
+        description: New bookingAvailability to set on the event.
+      tags:
+      - Events
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/booking-info:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    put:
+      summary: bookingInfo - update
+      description: 'Updates the bookingInfo for an event.
+
+
+        > There is no DELETE endpoint. To remove (specific) bookingInfo perform a PUT request with empty properties.'
+      operationId: event-bookingInfo-put
+      tags:
+      - Events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-bookingInfo.json
+            examples:
+              Example:
+                value:
+                  phone: +32/01234567890
+                  email: info@example.com
+                  url: https://www.example.com
+                  urlLabel:
+                    nl: Nederlandse tekst
+                    fr: Texte français
+                    de: Deutscher Text
+                    en: English text
+                  availabilityStarts: '2021-05-17T22:00:00+00:00'
+                  availabilityEnds: '2021-05-17T22:00:00+00:00'
+        description: New bookingInfo to set on the event.
+      responses:
+        '204':
+          description: 'No Content. The bookingInfo has been updated successfully. '
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: '''urlLabel'' property is required by ''url'' property'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/calendar:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    put:
+      summary: calendar - put
+      tags:
+      - Events
+      responses:
+        '204':
+          description: No Content. The calendar information has been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (subEvent) are missing
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: event-calendar-put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              anyOf:
+              - $ref: ../models/event-calendar-put.json
+              - $ref: ../models/event-calendar-put-deprecated.json
+            examples:
+              single:
+                value:
+                  calendarType: single
+                  subEvent:
+                  - startDate: '2021-05-17T22:00:00+00:00'
+                    endDate: '2021-05-17T22:00:00+00:00'
+                    status:
+                      type: Available
+                    bookingAvailability:
+                      type: Available
+              multiple:
+                value:
+                  calendarType: multiple
+                  subEvent:
+                  - startDate: '2020-05-17T22:00:00+00:00'
+                    endDate: '2020-05-17T22:00:00+00:00'
+                    status:
+                      type: Unavailable
+                      reason:
+                        nl: Geannuleerd wegens COVID-19
+                        en: Cancelled due to COVID-19
+                    bookingAvailability:
+                      type: Unavailable
+                  - startDate: '2021-05-17T22:00:00+00:00'
+                    endDate: '2021-05-17T22:00:00+00:00'
+                    status:
+                      type: Available
+                    bookingAvailability:
+                      type: Available
+              periodic:
+                value:
+                  calendarType: periodic
+                  startDate: '2021-05-17T22:00:00+00:00'
+                  endDate: '2021-05-17T22:00:00+00:00'
+                  openingHours:
+                  - opens: '13:00'
+                    closes: '17:00'
+                    dayOfWeek:
+                    - monday
+                  - opens: 09:00
+                    closes: '17:00'
+                    dayOfWeek:
+                    - tuesday
+                    - wednesday
+                    - thursday
+                    - friday
+                    - saturday
+                    - sunday
+                  status:
+                    type: Available
+                  bookingAvailability:
+                    type: Available
+              permanent:
+                value:
+                  calendarType: permanent
+                  openingHours:
+                  - opens: '13:00'
+                    closes: '17:00'
+                    dayOfWeek:
+                    - monday
+                  - opens: 09:00
+                    closes: '17:00'
+                    dayOfWeek:
+                    - tuesday
+                    - wednesday
+                    - thursday
+                    - friday
+                    - saturday
+                    - sunday
+                  status:
+                    type: Available
+                  bookingAvailability:
+                    type: Available
+        description: New calendar information.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      description: 'Updates the calendar information of the given `eventId`. The calendar information will be completely replaced with the new one.
+
+
+        The required properties depend on the `calendarType` property.
+
+
+        | calendarType | required | optional |
+
+        |---|---|---|
+
+        | single | subEvent\[0\].startDate, subEvent\[0\].endDate | subEvent\[0\].status, subEvent\[0\].bookingAvailability |
+
+        | multiple | subEvent\[\*\].startDate, subEvent[\*\].endDate | subEvent\[\*\].status, subEvent\[\*\].bookingAvailability |
+
+        | periodic | startDate, endDate | openingHours, status, bookingAvailability |
+
+        | permanent | | openingHours, status, bookingAvailability |
+
+
+        > If `status` or `bookingAvailability` is missing on the event or a subEvent, it will default to `Available`.
+
+        >
+
+        > Although the status and bookingAvailability are optional they have a default value of `Available`. When the status and bookingAvailability is not provided an already set value will be overwritten to `Available`!
+
+
+        > You can use `single` and `multiple` interchangeably as long as you also include `subEvent` as well. The API will use the correct type based on the number of subEvents inside `subEvent`.
+
+
+        > This endpoint also supports a deprecated schema that uses `timeSpans` instead of `subEvent`. The `timeSpans` also have a slightly different structure than `subEvent`. For new integrations, it is recommended to use the schema with the `subEvent` property.
+
+        >
+
+        > For existing integrations the `timeSpans` property will be supported indefinitely for backward compatibility.'
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/calendar-summary:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    get:
+      summary: calendar summary - get
+      tags:
+      - Events
+      responses:
+        '200':
+          description: 'The calendar summary in either plain text or HTML.
+
+
+            For example:
+
+            ```
+
+            Van 6 januari 2021 tot 23 juni 2021 (geannuleerd)
+
+            ```
+
+
+            Or:
+
+            ```
+
+            <span class=\"cf-from cf-meta\">Van</span> <span class=\"cf-date\">6 januari 2021</span> <span class=\"cf-to cf-meta\">tot</span> <span class=\"cf-date\">23 juni 2021</span> <span title=\"Deze activiteit is waarschijnlijk geannuleerd omwille van preventieve coronamaatregelen.\" class=\"cf-status\">(geannuleerd)</span>
+
+            ```'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: event-calendar-summary-get
+      description: 'Returns a human-readable summary of the calendar information of the event. Can be configured to return either plain text or HTML, and to switch between five different formats depending on the amount of space you have to display it.
+
+
+        > For backward compatibility this endpoint is also accessible at the old abbreviated `/events/{eventId}/calsum` path.'
+      parameters:
+      - schema:
+          type: string
+          enum:
+          - text
+          - html
+          default: text
+        in: query
+        name: style
+        description: Deprecated alternative to the `accept` header. Supported for backward compatibility.
+        deprecated: true
+      - schema:
+          type: string
+          enum:
+          - xs
+          - sm
+          - md
+          - lg
+          default: lg
+        in: query
+        name: size
+        description: Defines the size of the summary. Larger summaries contain more detail for events with multiple dates/hours but will also take up more space when shown in a UI. We recommend to use the format `md` for the search results (and `lg` for events with calendarType single), and to always use `lg` for the detailpage. In some cases (e.g. mobile apps) calendar summary `xs` can be useful.
+      - schema:
+          type: string
+          enum:
+          - nl
+          - fr
+          - en
+          - de
+          default: nl
+        in: query
+        name: language
+        description: Defines the language that the summary will be written in. Also influences the date/time format used.
+      - schema:
+          type: boolean
+          default: false
+        in: query
+        name: hidePast
+        description: Will hide past dates in summaries of events with multiple dates. By default, past dates are not excluded from the calendar summary.
+      - schema:
+          type: string
+          default: Europe/Brussels
+        in: query
+        name: timezone
+        description: The timezone to format date/times in.
+      - schema:
+          type: string
+          enum:
+          - text/plain
+          - text/html
+        in: header
+        name: accept
+        description: Indicates the expected content-type. Defaults to `text/plain` but can be set to `text/html` for a HTML response.
+      - schema:
+          type: string
+          enum:
+          - nl_BE
+          - fr_BE
+          - en_BE
+          - de_BE
+        in: query
+        name: langCode
+        description: Deprecated alternative to the `language` query parameter. Supported for backward compatibility.
+        deprecated: true
+      - schema:
+          type: string
+          enum:
+          - xs
+          - sm
+          - md
+          - lg
+        in: query
+        name: format
+        description: Deprecated alternative to the `size` query parameter. Supported for backward compatibility.
+        deprecated: true
+      x-internal: false
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/contact-point:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    put:
+      summary: contactPoint - update
+      operationId: event-contactPoint-put
+      tags:
+      - Events
+      description: 'Updates the contact point information of the event with the given `eventId`.
+
+
+        > There is no DELETE endpoint. To remove contact information perform a PUT request with empty properties.
+
+
+        > Unlike `PUT /organizers/{organizerId}/contact-point`, all properties are required. There is also no partial updating.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-contactPoint-put.json
+        description: The contact point properties to set on the event.
+      responses:
+        '204':
+          description: The contactPoint has been successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/contributors:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    get:
+      summary: contributors - get
+      operationId: event-contributors-get
+      responses:
+        '200':
+          description: An array of contributors.
+          content:
+            application/json:
+              schema:
+                $ref: ../models/common-contributors.json
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+      - Events
+      description: Returns a JSON array of contributors, meaning users that have edit rights on the event.
+      x-internal: true
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    put:
+      summary: contributors - update
+      operationId: event-contributors-put
+      responses:
+        '204':
+          description: No Content. The contributors have been successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Example:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+      - Events
+      description: Updates the list of contributors on the event. These users will have edit rights on the event.
+      x-internal: true
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-contributors-put.json
+            examples:
+              Example:
+                value:
+                - info@publiq.be
+                - vragen@publiq.be
+        description: New list of contributors of the event. Previous contributors of the event that are not included in this list will be removed.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/description/{language}:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    - $ref: '#/components/parameters/language'
+    put:
+      summary: description - update
+      tags:
+      - Events
+      responses:
+        '204':
+          description: No Content. The description was successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: event-description-put
+      description: 'Updates the localized description of an event based on the given `eventId` and `language` inside the URL. The description is not limited in size, but it is recommended to use the first 200 characters of the description for promotional copy as these characters are visible in the list-view of results.
+
+
+        > Keep in mind:
+
+        > - The description should be UTF-8 encoded
+
+        > - Linebreaks are encoded as `\n`'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-description-put.json
+            examples: {}
+        description: The new description of the event.
+    delete:
+      summary: description - delete
+      tags:
+      - Events
+      operationId: event-description-delete
+      responses:
+        '204':
+          description: No Content. The description was successfully deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: Deletes the localized description of an event based on the given `eventId` and `language` inside the URL.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/facilities:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    put:
+      summary: facilities - update
+      operationId: event-facilities-put
+      responses:
+        '204':
+          description: No Content. The facilities have been successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Example:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+      - Events
+      description: 'Updates the list of available (accessibility) facilities on the event. These will show up in the event''s `terms`.
+
+
+        A list of possible facilities can be found using our guide about taxonomy terms.
+
+
+        **Note**: A special permission is required to update an event''s facilities in UiTdatabank, even if you are the event owner. Contact an administrator for further information.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-facilities-put.json
+            examples:
+              Example:
+                value:
+                - 3.13.2.0.0
+                - 3.23.2.0.0
+        description: New list of facilities to set on the event. Facilities previously set on the event but not included in this list will be removed from the event. Other terms will be preserved.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/history:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    get:
+      summary: history - get
+      operationId: event-history-get
+      tags:
+      - Events
+      responses:
+        '200':
+          description: Event history.
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                items:
+                  type: object
+                  properties:
+                    description:
+                      type: string
+                      description: A human-readable description of the update to the event. (Always in Dutch.)
+                    date:
+                      type: string
+                      format: date-time
+                      example: '2021-08-26T16:54:38+00:00'
+                      description: The date and time that the update happened in an ISO-8601 format with a timezone offset. For example `2021-08-26T16:54:38+00:00`.
+                    author:
+                      type: string
+                      description: Identifier of the user who made the change. Should not be treated as a semantic user id though, because it can be an email, v1 user id, or v2 user id. Should only be displayed and used by admins that look at the history log to look up the user in the correct system.
+                    api:
+                      type: string
+                      description: Human-readable name of the API that was used to make the change. Not always present in older history logs.
+                    auth0ClientId:
+                      type: string
+                      description: The id of the Auth0 client that made the change. (If it was an Auth0 API client.)
+                    auth0ClientName:
+                      type: string
+                      description: Name of the client in Auth0 that made the change. (If it was an Auth0 API client.)
+                    apiKey:
+                      type: string
+                      description: API key of the UiTiD v1 consumer that made the change (if it was an UiTiD v1 consumer).
+                    consumerName:
+                      type: string
+                      description: Name of the UiTiD v1 consumer that made the change (if it was an UiTiD v1 consumer).
+                  required:
+                  - description
+                  - date
+              examples:
+                Auth0 client:
+                  value:
+                  - date: '2021-09-30T14:57:17+00:00'
+                    description: Kalender-info aangepast
+                    author: google-oauth2|108326107941342286958
+                    auth0ClientId: JGJ3rAJLurRM9DHDE072zVhF3azl57mo
+                    auth0ClientName: UiTdatabase JWT Provider
+                    api: JSON-LD API
+                UiTiD v1 consumer:
+                  value:
+                  - date: '2021-10-04T09:40:59+00:00'
+                    description: Reservatie-info aangepast
+                    author: google-oauth2|108326107941342286958
+                    apiKey: deb306a6-6f46-4c98-89ce-b03ec4fd11e2
+                    api: JSON-LD API
+                    consumerName: UiTdatabank Acceptatie
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: 'Returns the history log of the event for the given `eventId`.
+
+
+        The history log is an array of objects that contain info about each individual update to the event, who did the update, using what API, etc.
+
+
+        Because this history log can contain API keys which are secret (deprecated but still usable for backward compatibility), it can only be accessed by users that are a "god user".
+
+
+        Because of this limitation, the endpoint is also documented as internal and not visible in the public docs.'
+      x-internal: true
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/images:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    post:
+      summary: images - add
+      operationId: event-images-post
+      responses:
+        '204':
+          description: The image was added to the event.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-image-post.json
+            examples:
+              Example:
+                value:
+                  mediaObjectId: 546a90cd-a238-417b-aa98-1b6c50c1345c
+        description: The image to add to an event.
+      description: Adds an image to an event. To upload an image, use the `POST /images` endpoint.
+      tags:
+      - Events
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/images/{imageId}:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    - $ref: '#/components/parameters/imageId'
+    delete:
+      summary: images - delete
+      operationId: event-image-delete
+      tags:
+      - Events
+      responses:
+        '204':
+          description: The image has been successfully removed from the event.
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: Removes the image with the given `imageId` from the event's `mediaObject` property.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    put:
+      summary: images - update
+      operationId: event-image-put
+      description: Updates the metadata of an image on an event.
+      tags:
+      - Events
+      responses:
+        '204':
+          description: The image metadata was updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-image-put.json
+            examples:
+              Example:
+                value:
+                  description: Picture of the last publiq event
+                  copyrightHolder: publiq
+        description: The metadata to update on the image.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/images/main:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    put:
+      summary: images main - update
+      operationId: event-main-image-put
+      tags:
+      - Events
+      description: Updates the main image of an event. The main image is the only image shown in search-result listviews and the image more prominently displayed on event-details, when the event has multiple images.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-main-image-put.json
+        description: The id of the image to set as main image on the event.
+      responses:
+        '204':
+          description: The main image was updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/labels/{labelName}:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    - $ref: '#/components/parameters/labelName'
+    put:
+      summary: labels - add
+      description: 'Adds the given label to the event with the given `eventId`.
+
+
+        If the specified label does not exist yet in UiTdatabank a new label will be created with default visibility and public permissions (usable by anyone), and linked to the event.
+
+
+        The label must be longer than 1 character and shorter than 255 characters. The label can also not contain the semicolon character. It should match the regex `^(?=.{2,255}$)(?=.*\S.*\S.*)[^;]*$`'
+      operationId: event-labels-add
+      tags:
+      - Events
+      responses:
+        '204':
+          description: No Content. The label has been added successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    delete:
+      summary: labels - delete
+      operationId: event-labels-delete
+      responses:
+        '204':
+          description: No Content. The label was deleted from the event.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: Deletes a label from the `labels` or `hiddenLabels` property on an event based on the event id, the label name, and the label's visibility.
+      tags:
+      - Events
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/labels:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    put:
+      summary: labels - update
+      description: 'Updates the given labels on the event with the given `eventId`.
+
+
+        If one of the specified labels does not exist yet in UiTdatabank a new label will be created with default visibility and public permissions (usable by anyone), and linked to the event.
+
+
+        The label must be longer than 1 character and shorter than 255 characters. The label can also not contain the semicolon character. It should match the regex `^(?=.{2,255}$)(?=.*\S.*\S.*)[^;]*$`'
+      operationId: event-labels-update
+      x-internal: true
+      tags:
+      - Events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-labels-put.json
+        description: The labels to add to the event.
+      responses:
+        '204':
+          description: No Content. The labels have been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Example:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/location/{placeId}:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    - $ref: '#/components/parameters/placeId'
+    put:
+      summary: location - update
+      operationId: event-location-put
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/uitdatabank/attendance-mode-not-supported'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Attendance mode not supported:
+                  value:
+                    type: https://api.publiq.be/probs/uitdatabank/attendance-mode-not-supported
+                    title: Attendance mode not supported
+                    status: 400
+                    detail: Cannot update the location of an online event to a real location. Set the attendanceMode to mixed or offline first.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: 'Updates the event''s location to a new place based on the given `eventId` and `placeId` in the URL.
+
+
+        If the `eventId` does not exist a `404 Not Found` response will be returned. If the `placeId` does not exist a `400 Bad Request` response will be returned. Otherwise a `204 No Content` will be returned if successful. (See response examples below.)'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      tags:
+      - Events
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/major-info:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    put:
+      summary: major-info - update
+      operationId: event-major-info-put
+      description: '> The major-info endpoint is deprecated and should not be used in new integrations!
+
+
+        Updates the "major info" of the event with the given `eventId`.
+
+
+        The major info contains:
+
+
+        * `name`: The name of the event in the event''s `mainLanguage`, as a string
+
+        * `type`: Id of the event''s `eventtype` taxonomy `term`, as a string
+
+        * `theme` (optional): Id of the event''s `theme` taxonomy `term`, as a string
+
+        * `location`: Object with the id of the event''s location, as a place''s uuid (string)
+
+        * `calendar`: Object with the event''s calendar information (see schema below)
+
+
+        All properties are required (except for `theme`) and will overwrite existing values of these properties on the event. If the event has a `theme` `term` before this update, but there is no `theme` in this major-info update, the `theme` will be removed.
+
+
+        > For backward-compatibility with older integrations, this operation can also be requested via `POST /event/{eventId}/major-info`.'
+      deprecated: true
+      tags:
+      - Events
+      responses:
+        '204':
+          description: No Content. The major-info has been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: A human-readable name in the main language of the event.
+                type:
+                  type: string
+                  description: The `eventtype` term used to categorize the event. Terms are pre-defined and can be browsed in our [guide about taxonomy terms](../docs/taxonomy-api/terms.md).
+                theme:
+                  type: string
+                  description: The `theme` term used to categorize the event. Terms are pre-defined and can be browsed in our [guide about taxonomy terms](../docs/taxonomy-api/terms.md).
+                location:
+                  type: object
+                  description: Reference to the location that the event is taking place at.
+                  required:
+                  - id
+                  properties:
+                    id:
+                      type: string
+                      description: UUID of the location that the event is taking place at.
+                calendar:
+                  $ref: ../models/event-calendar-put-deprecated.json
+              required:
+              - name
+              - type
+              - location
+              - calendar
+            examples:
+              Single day:
+                value:
+                  name: Single day example
+                  type: 0.50.4.0.0
+                  theme: 1.8.3.3.0
+                  location:
+                    id: DA5499B2-9C79-48D3-A02D-8F471308100D
+                  calendar:
+                    calendarType: single
+                    timeSpans:
+                    - start: '2021-05-17T22:00:00+00:00'
+                      end: '2021-05-17T22:00:00+00:00'
+                      status:
+                        type: Available
+                      bookingAvailability:
+                        type: Available
+              Multiple days:
+                value:
+                  name: Multiple days example
+                  type: 0.50.4.0.0
+                  theme: 1.8.3.3.0
+                  location:
+                    id: DA5499B2-9C79-48D3-A02D-8F471308100D
+                  calendar:
+                    calendarType: multiple
+                    timeSpans:
+                    - start: '2021-05-17T22:00:00+00:00'
+                      end: '2021-05-17T22:00:00+00:00'
+                      status:
+                        type: Available
+                      bookingAvailability:
+                        type: Available
+                    - start: '2021-05-18T22:00:00+00:00'
+                      end: '2021-05-18T22:00:00+00:00'
+                      status:
+                        type: Available
+                      bookingAvailability:
+                        type: Available
+              Periodic with opening hours:
+                value:
+                  name: Periodic with opening hours
+                  type: 0.50.4.0.0
+                  theme: 1.8.3.3.0
+                  location:
+                    id: DA5499B2-9C79-48D3-A02D-8F471308100D
+                  calendar:
+                    calendarType: periodic
+                    startDate: '2021-05-17T22:00:00+00:00'
+                    endDate: '2021-05-17T22:00:00+00:00'
+                    openingHours:
+                    - opens: '13:00'
+                      closes: '17:00'
+                      dayOfWeek:
+                      - monday
+                    - opens: 09:00
+                      closes: '17:00'
+                      dayOfWeek:
+                      - tuesday
+                      - wednesday
+                      - thursday
+                      - friday
+                      - saturday
+                      - sunday
+              Permanent with opening hours:
+                value:
+                  name: Periodic with opening hours
+                  type: 0.50.4.0.0
+                  theme: 1.8.3.3.0
+                  location:
+                    id: DA5499B2-9C79-48D3-A02D-8F471308100D
+                  calendar:
+                    calendarType: permanent
+                    openingHours:
+                    - opens: '13:00'
+                      closes: '17:00'
+                      dayOfWeek:
+                      - monday
+                    - opens: 09:00
+                      closes: '17:00'
+                      dayOfWeek:
+                      - tuesday
+                      - wednesday
+                      - thursday
+                      - friday
+                      - saturday
+                      - sunday
+        description: All required fields for an event (whether they have been updated or not).
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/name/{language}:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    - $ref: '#/components/parameters/language'
+    put:
+      summary: name - update
+      tags:
+      - Events
+      responses:
+        '204':
+          description: No Content. The name was successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: event-name-put
+      description: Updates the localized name of an event based on the given `eventId` and `language` inside the URL.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-name-put.json
+            examples: {}
+        description: The new name of the event.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/online-url:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    put:
+      summary: onlineUrl - update
+      tags:
+      - Events
+      responses:
+        '204':
+          description: No Content. The onlineUrl was successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (onlineUrl) are missing.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: event-online-url-put
+      description: Updates the online url of an event. Only events with attendance mode `online` or `mixed` can have an online url.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-onlineUrl-put.json
+            examples:
+              Example:
+                value:
+                  onlineUrl: https://www.publiq.be/livestream
+        description: New onlineUrl to set on the event.
+    delete:
+      summary: onlineUrl - delete
+      operationId: event-online-url-delete
+      responses:
+        '204':
+          description: No Content. The onlineUrl was successfully deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: Delete the onlineUrl of an event.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      tags:
+      - Events
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/organizer/{organizerId}:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    - $ref: '#/components/parameters/organizerId'
+    delete:
+      summary: organizer - delete
+      description: Deletes the organizer of the event with the given `eventId`.
+      operationId: event-organizer-delete
+      tags:
+      - Events
+      responses:
+        '204':
+          description: No Content. The organizer has been deleted successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    put:
+      summary: organizer - update
+      description: 'Updates the organizer of the event with the given `eventId`. A list of organizers can be found using our guide about finding existing organizers.
+
+
+        > An organizer is not required on an event, and it can only have one.'
+      operationId: event-organizer-update
+      tags:
+      - Events
+      responses:
+        '204':
+          description: No Content. The organizer has been updated successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/permissions:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    get:
+      summary: permissions - get
+      tags:
+      - Events
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  permissions:
+                    type: array
+                    description: The permissions granted to the user for the event.
+                    items:
+                      $ref: ../models/permission.json
+                required:
+                - permissions
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: get-events-eventId-permissions
+      x-internal: true
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      description: Get user permissions relating to an event.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/price-info:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    put:
+      summary: priceInfo - update
+      tags:
+      - Events
+      responses:
+        '204':
+          description: No Content. The priceInfo was successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - error: Tariff name "Kinderen" must be unique.
+                      jsonPointer: /priceInfo/1/name/nl
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: event-price-info-put
+      description: Updates the price info of an event.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-priceInfo.json
+            examples:
+              Example 1:
+                value:
+                - category: base
+                  price: 10.5
+                  priceCurrency: EUR
+                  name:
+                    nl: Basistarief
+                    fr: Tarif de base
+                    en: Base tariff
+                    de: Basisrate
+              Example 2:
+                value:
+                - category: base
+                  name:
+                    nl: Basistarief
+                    fr: Tarif de base
+                    en: Base tariff
+                    de: Basisrate
+                  price: 10
+                  priceCurrency: EUR
+                - category: tariff
+                  name:
+                    nl: Jongeren
+                    en: Youth
+                  price: 0
+                  priceCurrency: EUR
+                - category: tariff
+                  name:
+                    nl: Senioren
+                    en: Elderly
+                  price: 6
+                  priceCurrency: EUR
+        description: New priceInfo to set on the event.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/status:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    put:
+      summary: status - update
+      operationId: event-status-put
+      responses:
+        '204':
+          description: No Content. The status has been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data
+
+            * https://api.publiq.be/probs/uitdatabank/calendar-type-not-supported'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Example:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-syntax
+                    title: Invalid body syntax
+                    status: 400
+                    detail: The given request body could not be parsed as JSON.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: 'Updates the general status on the top level of the event with the given `eventId`.
+
+
+        The status of any subEvents that the event has will also be updated to match the general status.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-status.json
+            examples:
+              Event takes place as planned:
+                value:
+                  type: Available
+              Event postponed to a later date yet to be determined:
+                value:
+                  type: TemporarilyUnavailable
+              Event cancelled:
+                value:
+                  type: Unavailable
+                  reason:
+                    nl: Geannuleerd wegens ziekte van de lesgever
+        description: New status to set on the event.
+      tags:
+      - Events
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/sub-events:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    patch:
+      summary: subEvent - patch
+      operationId: event-subEvent-patch
+      description: 'Updates the given subEvents on the event with the given `eventId`.
+
+
+        Allows partial updates, omitted properties will be ignored and remain unchanged. Omitted subEvents will also remain unchanged.
+
+
+        Every subEvent to update requires an `id` property that is an integer that corresponds to their index in the list of subEvents on the parent event. For example `0` for the first subEvent, `1` for the second subEvent, and so on.
+
+
+        > Note! If you change the `startDate` of a subEvent, the subEvents will be re-ordered on the parent event afterwards because subEvents are always sorted chronologically.
+
+
+        Only events with calendar type `single` and `multiple` have subEvents, so only events with those calendar types support this endpoint.'
+      tags:
+      - Events
+      responses:
+        '204':
+          description: No Content. The subEvents have been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data
+
+            * https://api.publiq.be/probs/uitdatabank/calendar-type-not-supported'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Example:
+                  value:
+                    type: https://api.publiq.be/probs/uitdatabank/calendar-type-not-supported
+                    title: Calendar type not supported
+                    status: 400
+                    detail: 'Not allowed to update subEvents on calendar type: "permanent". Only subEvents on single and multiple calendar types can be updated.'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-subEvent-patch.json
+            examples:
+              Updating the dates of the first subEvent:
+                value:
+                - id: 0
+                  startDate: '2021-05-17T22:00:00+00:00'
+                  endDate: '2021-05-17T22:00:00+00:00'
+              Updating the status of the second subEvent:
+                value:
+                - id: 1
+                  status:
+                    type: Unavailable
+                    reason:
+                      nl: Afgelast wegens corona
+              Updating the booking availability of the third subEvent:
+                value:
+                - id: 2
+                  bookingAvailability:
+                    type: Unavailable
+              Updating multiple:
+                value:
+                - id: 0
+                  startDate: '2021-05-17T22:00:00+00:00'
+                  endDate: '2021-05-17T22:00:00+00:00'
+                - id: 1
+                  status:
+                    type: Unavailable
+                    reason:
+                      nl: Afgelast wegens corona
+                - id: 2
+                  bookingAvailability:
+                    type: Unavailable
+        description: "The subEvents to update, with the properties to update. \n\nEach subEvent must have an `id` property to indicate which subEvent should be updated. This `id` is the position of the subEvent in the list of subEvents on the parent event. For example `0` for the first subEvent, `1` for the second subEvent, and so on.\n\nAll other properties are optional, and only properties that are included will be updated. No subEvents or properties will be removed."
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/type/{termId}:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    - $ref: '#/components/parameters/termId'
+    put:
+      summary: terms > eventtype - update
+      operationId: event-terms-eventtype-put
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+      - Events
+      description: 'Updates the event''s type (examples of types are `Concert`, `Opendeurdag`, `Lessenreeks`, and so on) based on the given `eventId` and `termId`.
+
+
+        Terms are pre-defined and can be found using our guide about taxonomy terms. Only terms from the `eventtype` domain can be used as event types.
+
+
+        If the `eventId` does not exist a `404 Not Found` will be returned. If the `termId` does not exist or is not a term in the `eventtype` domain, a `400 Bad Request` will be returned. If the request is successful a `204 No Content` will be returned.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/theme:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    delete:
+      summary: terms > theme - delete
+      operationId: event-terms-theme-delete
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+      - Events
+      description: 'Deletes the event''s current theme based on the given `eventId`.
+
+
+        If the `eventId` does not exist a `404 Not Found` will be returned. If the request is successful a `204 No Content` will be returned.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/theme/{termId}:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    - $ref: '#/components/parameters/termId'
+    put:
+      summary: terms > theme - update
+      operationId: event-terms-theme-put
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+      - Events
+      description: 'Updates the event''s theme (examples of themes are `Audiovisuele kunst`, `Moderne dans`, `Actie en avontuur`, and so on) based on the given `eventId` and `termId`.
+
+
+        Terms are pre-defined and can be found using our guide about taxonomy terms. Only terms from the `theme` domain can be used as theme.
+
+
+        If the `eventId` does not exist a `404 Not Found` will be returned. If the `termId` does not exist or is not a term in the `theme` domain, a `400 Bad Request` will be returned. If the request is successful a `204 No Content` will be returned.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/typical-age-range:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    delete:
+      summary: typicalAgeRange - delete
+      operationId: event-typical-age-range-delete
+      tags:
+      - Events
+      description: Deletes the age range from an event.
+      responses:
+        '204':
+          description: The age range was successfully deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    put:
+      summary: typicalAgeRange - update
+      operationId: event-typical-age-range-put
+      tags:
+      - Events
+      description: Updates the age range of the event with the given `eventId`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-typicalAgeRange-put.json
+            examples:
+              All ages:
+                value:
+                  typicalAgeRange: '-'
+              Minimum age:
+                value:
+                  typicalAgeRange: 6-
+              Maximum age:
+                value:
+                  typicalAgeRange: '-12'
+        description: The age range to set on the event.
+      responses:
+        '204':
+          description: The age range was successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/videos:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    post:
+      summary: videos - add
+      operationId: event-videos-post
+      responses:
+        '200':
+          description: The video was added to the event.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  videoId:
+                    type: string
+                    format: uuid
+                    example: b504cf44-9ab8-4641-9934-38d1cc67242c
+                    description: UUID used to identify the video on the event.
+              examples:
+                The new videoId:
+                  value:
+                    videoId: b504cf44-9ab8-4641-9934-38d1cc67242c
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /url
+                      error: The required properties url is missing.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-videos-post.json
+            examples:
+              Video from Youtube and with Copyright:
+                value:
+                  url: https://www.youtube.com/watch?v=cEItmb_a20D
+                  language: nl
+                  copyrightHolder: publiq
+              Video from Vimeo:
+                value:
+                  url: https://www.vimeo.com/4dwe2
+                  language: nl
+              Video from Youtube with Url Shortener:
+                value:
+                  url: https://youtu.be/bsaAOun-dec
+                  language: nl
+                  copyrightHolder: publiq
+        description: The new video to add to an event.
+      description: 'Add a video as a URL reference to an event
+
+
+        The video objects contains:
+
+
+        * `url`: The full URL of the video. Currently only *Vimeo* and *Youtube* are supported as video source locations.
+
+        * `copyrightHolder`: The copyright holder of the video material. Although this field is optional it is strongly recommended to add a reference to the entity owning the rights on the video material.'
+      tags:
+      - Events
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    patch:
+      summary: videos - patch
+      operationId: event-videos-patch
+      responses:
+        '204':
+          description: No Content. The videos are updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /url
+                      error: The required properties url is missing.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: 'Update one or more videos of an event.
+
+
+        The video object(s) must contain
+
+
+        * `id`: The id of the video object to be changed.
+
+
+        The video object(s) can contain:
+
+
+        * `url`: The full URL of the video. Currently only *Vimeo* and *Youtube* are supported as video source locations.
+
+        * `language`: The updated language of a video
+
+        * `copyrightHolder`: The copyright holder of the video material. Although this field is optional it is strongly recommended to add a reference to the entity owning the rights on the video material.'
+      tags:
+      - Events
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-videos-patch.json
+            examples:
+              Videos to be updated.:
+                value:
+                - id: 46e9ea9f-fc42-4759-a81b-4308467b7c35
+                  url: https://www.youtube.com/watch?v=cEItmb_a20D
+                  copyrightHolder: publiq
+                - id: b504cf44-9ab8-4641-9934-38d1cc67242c
+                  language: fr
+        description: An array of videos to be changed.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/videos/{videoId}:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    - $ref: '#/components/parameters/videoId'
+    delete:
+      summary: videos - delete
+      operationId: event-videos-delete
+      responses:
+        '204':
+          description: No Content. The video was deleted from the event.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: Delete an embedded video from an event based on the event id and the video id.
+      tags:
+      - Events
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/workflow-status:
+    parameters:
+    - $ref: '#/components/parameters/eventId'
+    put:
+      summary: workflowStatus - update
+      tags:
+      - Events
+      responses:
+        '204':
+          description: No Content. The workflowStatus was successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - error: Missing required properties (workflowStatus)
+                      jsonPointer: /
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: event-workflow-status-put
+      description: 'Updates the workflow status of an event. Possible statuses are:
+
+
+        - `DRAFT`: The default status of new events. Events with this status do not appear in online calendars like or the search on
+
+        - `READY_FOR_VALIDATION`: This status means the event has been published, but not approved yet. Most online calendars will already show it, and it will appear in the search on
+
+        - `APPROVED`: The event has been approved by a moderator. It will appear on all online calendars. You cannot set this status unless you have moderation permissions.
+
+        - `REJECTED`: The event has been rejected by a moderator. It will not appear on any online calendars. You cannot set this status unless you have moderation permissions.
+
+        - `DELETED`: The event has been deleted. It will not appear on any online calendars.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/event-workflowStatus-put.json
+            examples: {}
+        description: New workflowStatus to set on the event. Depending on the new workflowStatus, other properties may/must be set as well.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /organizers/{organizerId}/labels:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    put:
+      summary: labels - update
+      description: 'Updates the given labels on the organizer with the given `organizerID`.
+
+
+        If one of the specified labels does not exist yet in UiTdatabank a new label will be created with default visibility and public permissions (usable by anyone), and linked to the event.
+
+
+        The label must be longer than 1 character and shorter than 255 characters. The label can also not contain the semicolon character. It should match the regex `^(?=.{2,255}$)(?=.*\S.*\S.*)[^;]*$`'
+      operationId: organizer-labels-update
+      x-internal: true
+      tags:
+      - Events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/organizer-labels-put.json
+        description: The labels to add to the organizer.
+      responses:
+        '204':
+          description: No Content. The labels have been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Example:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /events/{eventId}/card-systems:
+    parameters:
+    - schema:
+        type: string
+      name: eventId
+      in: path
+      required: true
+      description: The id of the event
+    put:
+      summary: Update event card systems
+      operationId: put-events-card-systems
+      responses:
+        '204':
+          description: EventCardSytems updated. No content.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data
+
+            * https://api.publiq.be/probs/uitpas/invalid-card-system
+
+            * https://api.publiq.be/probs/uitpas/cardsystem-not-found
+
+            * https://api.publiq.be/probs/uitpas/distributionkey-not-found
+
+            * https://api.publiq.be/probs/uitpas/invalid-distributionkey
+
+            * https://api.publiq.be/probs/uitpas/event-already-has-ticketsales
+
+
+            The detail property might include more information for the client developer.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized_2'
+        '403':
+          $ref: '#/components/responses/Forbidden_2'
+        '404':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/uitpas/event-not-found
+
+
+            The detail property might include more information for the client developer.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: List of all possible (enabled and disabled) EventCardSystem objects
+              type: array
+              items:
+                $ref: '#/components/schemas/EventCardSystem'
+            examples:
+              Example:
+                value:
+                - id: 1
+                  enabled: true
+                  manualDistributionKeys:
+                  - id: 123
+                    enabled: true
+                - id: 8
+                  enabled: false
+        description: New list of card systems that an event is related to. Will overwrite the old list.
+      description: 'Update the `EventCardSystem` objects of the given event.
+
+
+        The `EventCardSystem` object specifies that the event is available in
+
+        this specific card system and optionally what manual distribution keys are enabled.
+
+
+        This update is used to toggle the `enabled` state for specific card systems or distribution keys.
+
+
+        To update the `enabled` state for card systems or distribution keys, you typically retrieve the possible `EventCardSystem` objects first using `GET /events/{eventId}/card-systems`. You can then reuse the response from the `GET` request,
+
+        altering the `enabled` state. Note that you can also omit the name properties.
+
+        Only the required fields are used in this update request.
+
+
+        However, in case you know the card system(s) and distribution key(s) in advance, you might also make this `PUT` request without prior `GET` e.g. in case you need to disable all card systems for an event, you can simply put an empty array `[]` to indicate that (missing card systems in the array will be treated the same way as card systems with `enabled: "false"`).
+
+        Also note the implementation of this `PUT` endpoint is robust enough to allow updating card systems before the event is known in UiTPAS. (so even before the `GET` returns a valid HTTP 200 response).
+
+
+        > **This endpoint is only needed for exceptional cases.** In most cases card systems and distribution keys are set automatically on events, so you don''t need to retrieve or change them.
+
+
+        The caller of this request must have `EVENTS_UPDATE` permission for the organizer of this event or `EVENTS_UPDATE_ALL` permission for any organizer or the caller of this request must have "Aanbod bewerken" permission in the UiTdatabank for the given event.'
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      tags:
+      - Events
+    get:
+      summary: Get event card systems
+      operationId: get-events-card-systems
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventCardSystem'
+              examples:
+                Example:
+                  value:
+                  - id: 1
+                    name: UiTPAS Dender
+                    enabled: true
+                    manualDistributionKeys:
+                    - id: 123
+                      name: 3 euro per dag
+                      enabled: true
+                  - id: 8
+                    name: UiTPAS Gent
+                    enabled: true
+        '401':
+          $ref: '#/components/responses/Unauthorized_2'
+        '403':
+          $ref: '#/components/responses/Forbidden_2'
+        '404':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/uitpas/event-not-found
+
+
+            The detail property might include more information for the client developer.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: 'Retrieve social tariff settings specific for this card system and the given postal code.
+
+
+        This caller of this method, identified by client identification, client access token or user access token, does not require any permissions.'
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      tags:
+      - Events
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /events/{eventId}/settings:
+    parameters:
+    - schema:
+        type: string
+      name: eventId
+      in: path
+      required: true
+      description: The id of the event
+    put:
+      summary: Update event settings
+      operationId: put-events-settings
+      responses:
+        '204':
+          description: EventCardSytems updated. No content.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data
+
+
+            The detail property might include more information for the client developer.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized_2'
+        '403':
+          $ref: '#/components/responses/Forbidden_2'
+        '404':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/uitpas/event-not-found
+
+
+            The detail property might include more information for the client developer.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventSettings'
+            examples:
+              Example:
+                value:
+                  checkinPoints: 1
+                  id: 188dbbde-5ab1-497a-9083-8e56b5a33a1b
+                  passholderTicketLimit:
+                    volume: 1
+                    periodType: ABSOLUTE
+                  checkinLimit:
+                    volume: 1
+                    periodType: WEEK
+        description: 'Complete settings object of the given event. '
+      description: 'Update the event settings of the given event.
+
+
+        Make sure to perform a `GET events/{eventId}/settings` first, apply your changes and PUT the complete object using this request.
+
+
+        The caller of this request must have `EVENT_SETTINGS_UPDATE` permission for the organizer of this event or `EVENT_SETTINGS_UPDATE_ALL` permission for any organizer.'
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      tags:
+      - Events
+    get:
+      summary: Get event settings
+      operationId: get-events-settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventSettings'
+              examples:
+                Example with both limits:
+                  value:
+                    id: 188dbbde-5ab1-497a-9083-8e56b5a33a1b
+                    checkinPoints: 1
+                    passholderTicketLimit:
+                      volume: 1
+                      periodType: ABSOLUTE
+                    checkinLimit:
+                      volume: 1
+                      periodType: WEEK
+                Example without limits:
+                  value:
+                    id: 188dbbde-5ab1-497a-9083-8e56b5a33a1b
+                    checkinPoints: 1
+                Example with checkin limits:
+                  value:
+                    id: 188dbbde-5ab1-497a-9083-8e56b5a33a1b
+                    checkinPoints: 1
+                    checkinLimit:
+                      volume: 1
+                      periodType: MONTH
+        '401':
+          $ref: '#/components/responses/Unauthorized_2'
+        '403':
+          $ref: '#/components/responses/Forbidden_2'
+        '404':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/uitpas/event-not-found
+
+
+            The detail property might include more information for the client developer.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: 'Get event settings of the given event.
+
+
+        The caller of this request must have `EVENT_SETTINGS_READ` permission for the organizer of this event or `EVENT_SETTINGS_READ_ALL` permission for any organizer.'
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      tags:
+      - Events
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /events/{eventId}/qr-checkincodes/download-link:
+    parameters:
+    - schema:
+        type: string
+      name: eventId
+      in: path
+      required: true
+      description: The id of the event
+    get:
+      summary: Get event QR checkin code as download link
+      operationId: get-events-qr-checkincodes-downloadlink
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadLinkResponse'
+              examples:
+                Example:
+                  value:
+                    downloadLink: https://api-test.uitpas.be/some/path/to/qr.zip?ts=202310231357&hash=1b5413636b41e9f774d416358060e613398b3ab017da13f3815c771a988b2d84
+        '401':
+          $ref: '#/components/responses/Unauthorized_2'
+        '403':
+          $ref: '#/components/responses/Forbidden_2'
+        '404':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/uitpas/event-not-found
+
+
+            The detail property might include more information for the client developer.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: 'Get a temporary download link to the QR checkin code of the given event.
+
+
+        This endpoint allows you to obtain a short-lived, hassle-free download link for your QR checkin code. After generation, this link remains active for a limited time, enabling direct QR downloads without the need for additional authentication. This is in particular convenient for applications that need to offer this link to users to start the download.
+
+
+        The caller of this request must have `EVENTS_QR_CHECKINCODE` permission for the organizer of this event.'
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      tags:
+      - Events
+      parameters:
+      - schema:
+          type: string
+          enum:
+          - pdf
+          - zip
+          default: pdf
+        in: query
+        name: format
+        description: format of the result file.
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+components:
+  parameters:
+    eventId:
+      name: eventId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: F2D5D20C-CC98-4979-9CD2-453ABAD979B5
+      description: Unique id of an event, in the format of a UUID
+    imageId:
+      name: imageId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 365f99a4-5490-4313-8ee9-adebea2dceb0
+      description: The unique uuid of an already uploaded image.
+    labelName:
+      name: labelName
+      in: path
+      required: true
+      schema:
+        type: string
+        example: MyLabel
+        pattern: ^(?=.{2,255}$)(?=.*\S.*\S.*)[^;]*$
+      description: The label to add to an event, place or organizer. The label name should be longer than 1 character but shorter than 255 characters. The label name should not contain semicolons.
+    videoId:
+      name: videoId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: F2D5D20C-CC98-4979-9CD2-453ABAD979B5
+      description: Unique id of a video embedded in a place or event, in the format of a UUID
+    termId:
+      name: termId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique id of a taxonomy term. Taxonomy terms are pre-defined and can be found using our [guide about taxonomy terms](../docs/taxonomy-api/terms.md).
+    language:
+      name: language
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+        - nl
+        - fr
+        - en
+        - de
+      description: The language of the request body properties
+    organizerId:
+      name: organizerId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: F2D5D20C-CC98-4979-9CD2-453ABAD979B5
+      description: Unique id of an organizer, in the format of a UUID
+    placeId:
+      name: placeId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: F2D5D20C-CC98-4979-9CD2-453ABAD979B5
+      description: Unique id of an place, in the format of a UUID
+  responses:
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organizer abcd1234
+    NotFound:
+      description: 'The requested resource (URL) could not be found.
+
+        This can be due to one of multiple reasons:
+
+
+        * The endpoint has a typo and/or does not exist on the API
+
+        * One of the path parameters contains a value that is invalid or does not exist
+
+        * One of the required query parameters is missing
+
+        * One of the query parameters has an invalid value
+
+
+        The `detail` property of the response should contain more specific information.
+
+
+        The `type` will always be `https://api.publiq.be/probs/url/not-found`.'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/url/not-found
+                title: URL not found
+                status: 404
+                detail: The resource with id "76C6AC08-763C-492E-A68C-CBC43A857229" was not found.
+    Unauthorized_2:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    Forbidden_2:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+    Unauthorized_3:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error_3'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    Forbidden_3:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error_3'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+  schemas:
+    Error:
+      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
+    EventSettings:
+      title: EventSettings
+      x-stoplight:
+        id: vn36pgcxzw6l7
+      type: object
+      description: Event setting within UiTPAS
+      properties:
+        id:
+          type: string
+          description: ID of the event
+        passholderTicketLimit:
+          $ref: '#/components/schemas/PeriodLimit'
+        checkinLimit:
+          $ref: '#/components/schemas/PeriodLimit'
+        checkinPoints:
+          type: integer
+          x-stoplight:
+            id: 2w5lssksar2hk
+          description: Points earned after a checkin for this event
+      required:
+      - id
+      - checkinPoints
+    DownloadLinkResponse:
+      title: DownloadLinkResponse
+      x-stoplight:
+        id: a922luo99cksx
+      type: object
+      properties:
+        downloadLink:
+          type: string
+          x-stoplight:
+            id: 3opxrhpcw3s6u
+          description: Download link for the requested file
+      required:
+      - downloadLink
+    EventCardSystem:
+      title: EventCardSystem
+      type: object
+      example:
+        id: 1
+        name: UiTPAS Dender
+        enabled: true
+        manualDistributionKeys:
+        - id: 123
+          name: €1,5 halve dag
+          enabled: true
+      x-tags:
+      - Models
+      description: 'CardSystem in an event context, optionally including manual distributionKeys.
+
+
+        This model is only used in the GET and PUT `/events/{eventId}/card-systems` to configure the card systems and distribution keys for an event.
+
+
+        <!-- theme: warning -->
+
+
+        > **This model and corresponding endpoints are only needed for exceptional cases.** In most cases card systems and distribution keys are set automatically on events, so you don''t need to retrieve or change them.
+
+        '
+      properties:
+        id:
+          type: integer
+          description: ID of the card system
+        name:
+          type: string
+          description: Name of the card system
+        enabled:
+          type: boolean
+          description: State of this card system for the event.
+        manualDistributionKeys:
+          type: array
+          description: List of distribution keys, used to determine the price of discounted UiTPAS tariffs, which can be enabled or disabled manually for the event.
+          items:
+            type: object
+            description: Distribution key that can be enabled or disabled manually for the related event.
+            properties:
+              id:
+                type: integer
+                description: Unique ID of the manual distribution key.
+              name:
+                type: string
+                description: Human-readable name of the distribution key.
+              enabled:
+                type: boolean
+                description: Whether the distribution key is enabled or not for this specific event.
+            required:
+            - id
+            - enabled
+      required:
+      - id
+      - enabled
+    PeriodLimit:
+      title: PeriodLimit
+      type: object
+      description: Period limit settings
+      properties:
+        volume:
+          type: integer
+          description: Volume of this limit
+        periodType:
+          type: string
+          enum:
+          - ABSOLUTE
+          - DAY
+          - WEEK
+          - MONTH
+          - QUARTER
+          - YEAR
+          description: Period type of the limit
+      required:
+      - volume
+      - periodType
+    Error_2:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+    Error_3:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+  securitySchemes:
+    USER_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A user access token, obtained by redirecting the end user to publiq's authorization server to login using the **Authorization Code OAuth Flow**. See the [authentication docs about user access tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+    CLIENT_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
+    CLIENT_IDENTIFICATION:
+      name: x-client-id
+      type: apiKey
+      in: header
+    CUSTOM_TOKEN:
+      name: x-custom-token
+      type: apiKey
+      in: header
+x-refined-from:
+- uitdatabank-entry.json
+- uitpas-uitpas.json
+- publiq-uitdatabank-entry-openapi.yml
+- publiq-uitpas-openapi.yml

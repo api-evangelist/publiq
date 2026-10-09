@@ -1,0 +1,644 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist overlay for publiq UiTPAS API
+  version: 1.0.0
+extends: ../openapi/_original/publiq-uitpas-openapi.yml
+x-generated: '2026-10-09'
+x-method: generated
+x-source: openapi/publiq-uitpas-openapi.yml
+x-rationale: Adds documentation links and agent-facing hints (read-only/destructive flags per operation, derived from the
+  HTTP method) without mutating the original contract.
+actions:
+- target: $
+  description: Link the provider documentation for this API.
+  update:
+    externalDocs:
+      description: UiTPAS API documentation (docs.publiq.be)
+      url: https://docs.publiq.be/docs/uitpas/introduction
+- target: $.info
+  description: 'Point to cross-cutting publiq docs: authentication, errors, release notes.'
+  update:
+    x-apievangelist:
+      provider: publiq
+      authentication_docs: https://docs.publiq.be/docs/authentication
+      errors_docs: https://docs.publiq.be/docs/errors
+      release_notes: https://docs.publiq.be/docs/release-notes
+      support: https://platform.publiq.be/nl/ondersteuning
+- target: $.paths['/tariffs'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/tariffs/static'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/ticket-sales'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/ticket-sales'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/checkins'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/checkins'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/checkins/{checkinId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/checkin-status'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/ticket-sales/{ticketSaleId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/permissions'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/card-systems'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/card-systems'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/permissions/{clientId}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/permissions/{clientId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/settings'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/settings'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/qr-checkincodes/download-link'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{id}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/admins'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/admins'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/admins/{adminUserId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/associations'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/grouppasses'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/grouppasses/{passholderId}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/grouppasses/{passholderId}/coupons'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/private'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/private'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/picture'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/picture'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/picture'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/memberships/{cardSystemId}'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/memberships/{cardSystemId}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/association-memberships'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/association-memberships'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/association-memberships/{associationId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/coupons'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/me/uitid/registration-token'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: false
+- target: $.paths['/passholders/me/uitid/status'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: false
+- target: $.paths['/uitid/emails/{email}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/membership-prices/{cardSystemId}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/membership-prices/{cardSystemId}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/me/uitid'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/me'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/me'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/checkins'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/transactions'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/family-members'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/family-members'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/family-members/{familyMemberId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/family-members/{familyMemberId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/families'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/school'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/school'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/{passholderId}/school'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/financial-reports/periods'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/financial-reports'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/financial-reports'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/financial-reports/{reportId}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/financial-reports/{reportId}/download-link'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/financial-reports/{reportId}.zip'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passes'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passes/{uitpasNumber}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/insz-numbers/{inszNumber}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/chip-numbers/{chipNumber}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/rewards'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/rewards'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/rewards/{rewardId}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/rewards/{rewardId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/rewards/{rewardId}/redeem-status'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/rewards/redeemed'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/rewards/redeemed'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/rewards/redeemed/{redeemedRewardId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/card-systems'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/card-systems/{cardSystemId}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/card-systems/{cardSystemId}/social-tariff-settings'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/card-systems/{cardSystemId}/city-settings'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/card-systems/{cardSystemId}/membership-prices'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/orders'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/orders/{orderId}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/passholders/status/insz-numbers/{inszNumber}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/cards'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/cards/social-tariff/{cardSystemId}/active'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/kiosks'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/kiosks/{kioskId}/fixed-event'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/kiosks/{kioskId}/fixed-event'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/kiosks/{kioskId}/fixed-event'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/kiosk-devices/setup'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/kiosk-devices'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/kiosk-devices/events'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/kiosk-devices/events'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/kiosk-devices/events'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/kiosk-devices/checkins'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/kiosk-devices/checkins'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/kiosk-devices/chip-numbers/{chipNumber}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/social-tariff-validation/start'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: false
+- target: $.paths['/social-tariff-validation/token'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: false
+- target: $.paths['/social-tariff-validation'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true

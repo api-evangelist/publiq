@@ -1,0 +1,421 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/publiq/main/json-schema/publiq-order-schema.json",
+  "title": "Order",
+  "description": "Order object",
+  "x-generated": "2026-10-09",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/publiq-uitpas-openapi.yml#/components/schemas/Order",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "x-stoplight": {
+        "id": "n9hihx4x3wa17"
+      },
+      "description": "ID of the order. This property is always present in responses.",
+      "readOnly": true
+    },
+    "status": {
+      "type": "string",
+      "x-stoplight": {
+        "id": "6t5j0p21gcxwj"
+      },
+      "enum": [
+        "PENDING_PAYMENT",
+        "PENDING_UITID_CONNECT",
+        "COMPLETED",
+        "CANCELLED"
+      ],
+      "description": "Status of the order. This property is always present in responses.",
+      "readOnly": true
+    },
+    "paymentUrl": {
+      "type": "string",
+      "x-stoplight": {
+        "id": "bmo5ep7z3wbn2"
+      },
+      "description": "Payment URL (only when status is `PENDING_PAYMENT`)",
+      "readOnly": true
+    },
+    "email": {
+      "type": "string",
+      "x-stoplight": {
+        "id": "9heoomg0mq75m"
+      },
+      "description": "Email of the orderer. This property is always present in responses.",
+      "readOnly": true
+    },
+    "totalPrice": {
+      "type": "number",
+      "x-stoplight": {
+        "id": "f198xd50mpxmg"
+      },
+      "description": "Total price of the order. This property is always present in responses.",
+      "readOnly": true
+    },
+    "registrationToken": {
+      "type": "string",
+      "x-stoplight": {
+        "id": "q1oexa53dyky7"
+      },
+      "description": "Optional registration token. If this order is `PENDING_UITID_CONNECT` this field is present to allow for easy UiTiD account linking.",
+      "readOnly": true
+    },
+    "customToken": {
+      "type": "string",
+      "description": "Custom token that can be used for a limited number of time to request this order using `GET /orders/id` without any further authentication.",
+      "readOnly": true
+    },
+    "mainPassholderRegistration": {
+      "$ref": "#/$defs/PassholderRegistration"
+    },
+    "extraPassholderRegistrations": {
+      "type": "array",
+      "description": "Optional list of extra passholders in the order",
+      "items": {
+        "$ref": "#/$defs/PassholderRegistration"
+      }
+    },
+    "redirectUrlAfterPayment": {
+      "type": "string",
+      "description": "Where to redirect after payment. Extra query params `orderId` and `customToken` are added to this URL when used to redirect the user, so the receiving client can `GET` the latest status of the order.",
+      "writeOnly": true
+    },
+    "redirectUrlAfterCancelPayment": {
+      "type": "string",
+      "description": "Where to redirect after payment is cancelled. Extra query params `orderId` and `customToken` are added to this URL when used to redirect the user, so the receiving client can `GET` the latest status of the order.",
+      "writeOnly": true
+    }
+  },
+  "required": [
+    "mainPassholderRegistration"
+  ],
+  "$defs": {
+    "CardSystem": {
+      "title": "CardSystem",
+      "description": "A region, usually one or multiple municipalities in Belgium, that uses UiTPAS and provides discounts and/or rewards. For example \"Paspartoe\" (Brussels), UiTPAS Leuven, UiTPAS Hasselt, UiTPAS Gent, and so on.",
+      "type": "object",
+      "x-tags": [
+        "Models"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "ID of the card system"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the card system. This field is always available in responses."
+        },
+        "branding": {
+          "type": "object",
+          "description": "Branding information of the card system",
+          "properties": {
+            "logo": {
+              "type": "string",
+              "description": "URL to the logo of the card system"
+            },
+            "primaryColor": {
+              "type": "string",
+              "description": "Color code of the primary branding color."
+            },
+            "secondaryColor": {
+              "type": "string",
+              "description": "Color code of the secondary branding color."
+            }
+          }
+        },
+        "links": {
+          "type": "object",
+          "description": "Links of the card system",
+          "properties": {
+            "website": {
+              "type": "string",
+              "description": "URL of the website of the card system"
+            }
+          }
+        },
+        "cities": {
+          "type": "array",
+          "description": "List of cities that are part of this card system",
+          "items": {
+            "$ref": "#/$defs/City"
+          }
+        },
+        "permanent": {
+          "type": "boolean",
+          "description": "Indicates whether this is a permanent card system"
+        },
+        "allowsCardlessRegistration": {
+          "type": "boolean",
+          "description": "Indicates if cardless registration is enabled"
+        },
+        "cardlessRegistrationType": {
+          "type": "string",
+          "description": "Indicates the types of online cardless registrations this cardsystem supports.",
+          "enum": [
+            "ALL",
+            "REGULAR",
+            "SOCIALTARIFF",
+            "NONE"
+          ]
+        },
+        "socialTariffInfo": {
+          "type": "string",
+          "description": "Optional information about social tariff entitlement in this card system."
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "City": {
+      "title": "City",
+      "type": "object",
+      "x-tags": [
+        "Models"
+      ],
+      "properties": {
+        "postalCode": {
+          "type": "string",
+          "description": "Postalcode of the city"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the city"
+        }
+      },
+      "required": [
+        "postalCode",
+        "name"
+      ]
+    },
+    "Organizer": {
+      "title": "Organizer",
+      "type": "object",
+      "description": "An organisation that partners with UiTPAS to provide discounts and/or rewards, and/or allows points to be collected at their events.",
+      "x-tags": [
+        "Models"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique ID of an UiTPAS organizer. (Same as its ID in UiTdatabank)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable name of an UiTPAS organizer."
+        },
+        "cardSystems": {
+          "type": "array",
+          "description": "Card systems linked to this organizer",
+          "items": {
+            "$ref": "#/$defs/CardSystem"
+          }
+        },
+        "linkedLocationId": {
+          "type": "string",
+          "description": "ID of the location linked to this organizer.",
+          "readOnly": true
+        },
+        "address": {
+          "type": "object",
+          "description": "Address of this organizer. This property is alway available in responses.",
+          "required": [
+            "city"
+          ],
+          "properties": {
+            "street": {
+              "type": "string",
+              "description": "Street address of this organizer"
+            },
+            "postalCode": {
+              "type": "string",
+              "description": "Postal code of this organizer"
+            },
+            "city": {
+              "type": "string",
+              "description": "City of this organizer"
+            }
+          },
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "PassholderRegistration": {
+      "title": "PassholderRegistration",
+      "type": "object",
+      "x-tags": [
+        "Models"
+      ],
+      "description": "Registration request of a passholder, mainly used in the online order flow.\n\nA `PassholderRegistration` is not yet `Passholder` but one can be created (e.g. when the order is paid) using the information from the `PassholderRegistration`.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID of the PassholderRegistation. **Note:** This is not same as the later `Passholder` id. This field is always available in responses.",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "description": "Last name of the passholder to register."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "First name of the passholder to register."
+        },
+        "inszNumber": {
+          "type": "string",
+          "description": "Unique national (Belgian) INSZ number of an individual passholder."
+        },
+        "email": {
+          "type": "string",
+          "description": "Contact email address of the passholder to register"
+        },
+        "creationDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "This field is always available in responses.",
+          "readOnly": true
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "format": "date",
+          "description": "Date that the passholder to register was born."
+        },
+        "gender": {
+          "type": "string",
+          "enum": [
+            "MALE",
+            "FEMALE",
+            "X"
+          ],
+          "description": "Gender of the passholder to register."
+        },
+        "registrationOrganizer": {
+          "$ref": "#/$defs/Organizer"
+        },
+        "address": {
+          "type": "object",
+          "description": "Address that the passholder to register lives at. Always present in responses. Passholders living outside of Belgium (usually near the border) will only have a `postalCode` and `city` in their address.",
+          "required": [
+            "postalCode",
+            "city"
+          ],
+          "properties": {
+            "street": {
+              "type": "string",
+              "description": "Street name, number and optional box number of the address."
+            },
+            "number": {
+              "type": "string",
+              "description": "House number. This field is deprecated and will be empty. The house number is part of the `street` property.",
+              "deprecated": true
+            },
+            "box": {
+              "type": "string",
+              "description": "Postal box number. This field is deprecated and will be empty. The box number is part of the `street` property.",
+              "deprecated": true
+            },
+            "postalCode": {
+              "type": "string",
+              "description": "Postal code of the municipality."
+            },
+            "city": {
+              "type": "string",
+              "description": "Human-readable name of the municipality."
+            },
+            "country": {
+              "type": "string",
+              "description": "ISO 3166-1 alpha-2 country code."
+            }
+          }
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Phone number of the passholder to register, for example for SMS alerts."
+        },
+        "optInPreferences": {
+          "type": "object",
+          "description": "Permissions that the passholder has given to be contacted.",
+          "properties": {
+            "serviceMails": {
+              "type": "boolean",
+              "description": "Important information about the functionality of UiTPAS."
+            },
+            "milestoneMails": {
+              "type": "boolean",
+              "description": "Notification when you reach an important UiTPAS milestone, for example a specific amount of points or an exclusive reward becomes available to you."
+            },
+            "infoMails": {
+              "type": "boolean",
+              "description": "Rewards, actions and events selected specifically for the passholder based on their UiTPAS history."
+            },
+            "sms": {
+              "type": "boolean",
+              "description": "Free (sporadic) SMS messages with rewards, actions and events selected specifically for the passholder based on their UiTPAS history."
+            },
+            "post": {
+              "type": "boolean",
+              "description": "Sporadic post mail with information about UiTPAS. Will be sent to the passholder's postal address."
+            }
+          },
+          "required": [
+            "serviceMails",
+            "milestoneMails",
+            "infoMails",
+            "sms",
+            "post"
+          ]
+        },
+        "parentalConsent": {
+          "type": "boolean",
+          "description": "Set to true for under-aged passholder that have parental consent."
+        },
+        "legalTermsPaper": {
+          "type": "boolean",
+          "description": "Set to true for passholders that received legal terms on paper."
+        },
+        "legalTermsDigital": {
+          "type": "boolean",
+          "description": "Set to true for passholders that received legal terms digitally."
+        },
+        "registrationCardSystemId": {
+          "type": "integer",
+          "description": "Set to the id of the card system of which the passholder has to become a member."
+        },
+        "registrationVoucher": {
+          "type": "string",
+          "description": "Price reduction voucher."
+        },
+        "registrationSocialTariff": {
+          "type": "object",
+          "description": "Optional request for social tariff",
+          "properties": {
+            "requested": {
+              "type": "boolean",
+              "description": "`true` if social tariff is requested for this registration. Always available in responses if `registrationSocialTariff` exists.",
+              "readOnly": true
+            },
+            "idToken": {
+              "type": "string",
+              "description": "The Social Tariff Validation ID token of the user. Use the [social tariff validation flow](/reference/uitpas.json/paths/~1social-tariff-validation~1start/get) to obtain such ID tokens. If specified, this token must be valid, contain `hasSocialTariff:true` and the identity fields must match the fields in this registration. In all other cases an error is returned.",
+              "writeOnly": true
+            }
+          }
+        }
+      },
+      "required": [
+        "name",
+        "firstName",
+        "dateOfBirth",
+        "registrationOrganizer",
+        "address"
+      ]
+    }
+  }
+}

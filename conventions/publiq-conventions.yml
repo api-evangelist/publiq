@@ -1,0 +1,63 @@
+generated: '2026-10-09'
+method: searched
+source:
+- https://docs.publiq.be/docs/authentication/methods/overview
+- https://docs.publiq.be/docs/errors
+- https://docs.publiq.be/docs/uitdatabank/search-api/pagination
+- https://docs.publiq.be/#versioning-strategy
+auth:
+  style: OAuth2 bearer tokens (client credentials or authorization code via UiTiD/Keycloak) or x-client-id header / clientId query param for public endpoints
+  see: authentication/publiq-authentication.yml
+idempotency:
+  coverage: none
+  header: null
+  note: No Idempotency-Key header or replay-protection mechanism documented or declared in the OpenAPI files. Entry API PUT endpoints are full replacements (e.g. PUT /events/{eventId}/labels/).
+pagination:
+  style: offset
+  params:
+    start: number of results to skip (int, defaults to 0, max 10000)
+    limit: results per page (int, defaults to 30, max 2000)
+  response_fields:
+  - '@context'
+  - '@type: PagedCollection'
+  - itemsPerPage
+  - totalItems
+  - member
+  format: JSON-LD Hydra PagedCollection
+  source: https://docs.publiq.be/docs/uitdatabank/search-api/pagination
+  note: Exceeding start/limit maxima returns 404 https://api.publiq.be/probs/url/not-found.
+versioning:
+  style: major version only, evolution over versioning
+  see: lifecycle/publiq-lifecycle.yml
+errors:
+  envelope: RFC 7807 application/problem+json with type/title/status, optional detail and endUserMessage extension
+  see: errors/publiq-problem-types.yml
+rate_limit_signaling:
+  status: 429
+  problem_type: https://api.publiq.be/probs/uitpas/rate-limited
+  retry_after: 'museumPASSmusées OpenAPI: 503 responses may carry a Retry-After hint'
+  see: rate-limits/publiq-rate-limits.yml
+datetimes: ISO-8601; since March 2026 datetimes without timezone are interpreted as Europe/Brussels (release notes).
+request_id: null
+reversibility:
+  grade: documented
+  window_stated: false
+  note: Reversal operations exist but no docs page states a time window for them; no window is asserted.
+  surfaces:
+  - surface: UiTPAS ticket sales
+    reversal: Cancel a ticket sale registration
+    operationId: delete-ticket-sales
+    window: null
+  - surface: UiTPAS reward redemption
+    reversal: Cancel a redeemed reward
+    operationId: delete-rewards-redeemed-redeemedRewardId
+    window: null
+  - surface: UiTPAS check-ins
+    reversal: Delete a check-in
+    operationId: delete-checkins-checkinId
+    window: null
+  - surface: UiTdatabank events
+    reversal: 'Soft delete: "Does a soft-delete of the event. The event will continue to exist but it''s workflowStatus will be changed to DELETED."'
+    operationId: event-delete
+    window: null
+    note: Delete itself is soft; no documented restore operation found.

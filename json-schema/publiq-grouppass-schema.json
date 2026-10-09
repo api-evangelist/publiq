@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/publiq/main/json-schema/publiq-grouppass-schema.json",
+  "title": "Grouppass",
+  "description": "Grouppass is a special kind of UiTPAS concept: it has an `uitpasNumber` like regular passholders, but it can only participate in ticket sale flows (either social tariff or using coupons). \n\nThe social tariff for grouppasses is a little bit different from regular passholders, because a grouppass is entitled to buy a certain amount of `totalTicketsPerYear`, of which the remaining amount is indicated by `availableTickets`.\n\nA grouppass cannot check-in at events, or redeem rewards.\n\nA `Grouppass` can be identified by its `id`. However, there are cases where the grouppass is identified using its UiTPAS number. Every grouppass has one (and only one) uitpas number.",
+  "x-generated": "2026-10-09",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/publiq-uitpas-openapi.yml#/components/schemas/Grouppass",
+  "x-stoplight": {
+    "id": "upy28l7gpkmzw"
+  },
+  "type": "object",
+  "x-tags": [
+    "Models"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "This field is always available in responses.",
+      "readOnly": true
+    },
+    "uitpasNumber": {
+      "type": "string",
+      "description": "The UiTPAS number of this grouppass. This field is always available in responses."
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the grouppass. Not available when the caller is identified with client identification."
+    },
+    "cardStatus": {
+      "type": "string",
+      "x-stoplight": {
+        "id": "nnzfui82in9z5"
+      },
+      "description": "Status of the card linked to this grouppass.",
+      "enum": [
+        "PROVISIONED",
+        "LOCAL_STOCK",
+        "ACTIVE",
+        "BLOCKED",
+        "DELETED"
+      ]
+    },
+    "email": {
+      "type": "string",
+      "description": "Contact email address of the grouppass. Not available when the caller is identified with client identification."
+    },
+    "creationDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "This field is always available in responses.",
+      "readOnly": true
+    },
+    "socialTariff": {
+      "type": "object",
+      "x-stoplight": {
+        "id": "59mykno6i5b0b"
+      },
+      "description": "Social tariff of the grouppass (if applicable)",
+      "properties": {
+        "status": {
+          "type": "string",
+          "x-stoplight": {
+            "id": "f035pqngnrdtf"
+          },
+          "enum": [
+            "ACTIVE",
+            "EXPIRED"
+          ],
+          "description": "Status of the social tariff:\n- `ACTIVE`: the grouppass is entitled to social tariff\n- `EXPIRED`: the grouppass is NOT entitled to social tariff anymore\n"
+        },
+        "endDate": {
+          "type": "string",
+          "x-stoplight": {
+            "id": "mtikoui6mpcn5"
+          },
+          "description": "Exact moment the grouppass's right to a social tariff expires.",
+          "format": "date-time"
+        },
+        "totalTicketsPerYear": {
+          "type": "integer",
+          "x-stoplight": {
+            "id": "93mtfqrw53djc"
+          },
+          "description": "Total number of tickets this grouppass can buy per year."
+        },
+        "availableTickets": {
+          "type": "integer",
+          "x-stoplight": {
+            "id": "qytz7wdi7sqg4"
+          },
+          "description": "Number of available ticketsales"
+        }
+      },
+      "required": [
+        "status"
+      ]
+    },
+    "cardSystem": {
+      "$ref": "#/$defs/CardSystem"
+    },
+    "address": {
+      "type": "object",
+      "description": "Address of the grouppass. Not available when the caller is identified with client identification.",
+      "properties": {
+        "street": {
+          "type": "string",
+          "description": "Full street name, number and box of the grouppass"
+        },
+        "postalCode": {
+          "type": "string",
+          "description": "Postal code of the municipality."
+        },
+        "city": {
+          "type": "string",
+          "description": "Human-readable name of the municipality."
+        },
+        "country": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code."
+        }
+      },
+      "required": [
+        "postalCode",
+        "city"
+      ]
+    },
+    "telephone": {
+      "type": "string",
+      "x-stoplight": {
+        "id": "46g76ybvflcsd"
+      },
+      "description": "Telephone contact number of this grouppass. Not available when the caller is identified with client identification."
+    }
+  },
+  "required": [
+    "cardStatus",
+    "cardSystem"
+  ],
+  "$defs": {
+    "CardSystem": {
+      "title": "CardSystem",
+      "description": "A region, usually one or multiple municipalities in Belgium, that uses UiTPAS and provides discounts and/or rewards. For example \"Paspartoe\" (Brussels), UiTPAS Leuven, UiTPAS Hasselt, UiTPAS Gent, and so on.",
+      "type": "object",
+      "x-tags": [
+        "Models"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "ID of the card system"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the card system. This field is always available in responses."
+        },
+        "branding": {
+          "type": "object",
+          "description": "Branding information of the card system",
+          "properties": {
+            "logo": {
+              "type": "string",
+              "description": "URL to the logo of the card system"
+            },
+            "primaryColor": {
+              "type": "string",
+              "description": "Color code of the primary branding color."
+            },
+            "secondaryColor": {
+              "type": "string",
+              "description": "Color code of the secondary branding color."
+            }
+          }
+        },
+        "links": {
+          "type": "object",
+          "description": "Links of the card system",
+          "properties": {
+            "website": {
+              "type": "string",
+              "description": "URL of the website of the card system"
+            }
+          }
+        },
+        "cities": {
+          "type": "array",
+          "description": "List of cities that are part of this card system",
+          "items": {
+            "$ref": "#/$defs/City"
+          }
+        },
+        "permanent": {
+          "type": "boolean",
+          "description": "Indicates whether this is a permanent card system"
+        },
+        "allowsCardlessRegistration": {
+          "type": "boolean",
+          "description": "Indicates if cardless registration is enabled"
+        },
+        "cardlessRegistrationType": {
+          "type": "string",
+          "description": "Indicates the types of online cardless registrations this cardsystem supports.",
+          "enum": [
+            "ALL",
+            "REGULAR",
+            "SOCIALTARIFF",
+            "NONE"
+          ]
+        },
+        "socialTariffInfo": {
+          "type": "string",
+          "description": "Optional information about social tariff entitlement in this card system."
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "City": {
+      "title": "City",
+      "type": "object",
+      "x-tags": [
+        "Models"
+      ],
+      "properties": {
+        "postalCode": {
+          "type": "string",
+          "description": "Postalcode of the city"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the city"
+        }
+      },
+      "required": [
+        "postalCode",
+        "name"
+      ]
+    }
+  }
+}

@@ -1,0 +1,2618 @@
+openapi: 3.2.0
+info:
+  title: Publiq Places API
+  version: '3.0'
+  contact:
+    name: publiq helpdesk
+    email: technical-support@publiq.be
+    url: https://docs.publiq.be
+  x-refined-note:
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Places across 2 of this provider''s published API definitions: uitdatabank-entry.json, publiq-uitdatabank-entry-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://io-test.uitdatabank.be
+  description: Testing
+- url: https://io.uitdatabank.be
+  description: Production
+tags:
+- name: Places
+paths:
+  /places:
+    post:
+      summary: place - create
+      tags:
+      - Places
+      responses:
+        '201':
+          description: The place was created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The id of the created place.
+                    example: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    format: uuid
+                  placeId:
+                    type: string
+                    description: The id of the created place (deprecated and replaced with `id`).
+                    deprecated: true
+                    example: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    format: uuid
+                  url:
+                    type: string
+                    description: The url of the JSON-LD representation of the created place.
+                    example: https://io-test.uitdatabank.be/places/c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    format: uri
+                  commandId:
+                    type: string
+                    example: 92973349-967e-44d7-83a2-e1972d9e1622
+                    format: uuid
+                    deprecated: true
+                    description: ID of the last internal command that was dispatched for this operation. Will be removed in the future.
+                required:
+                - id
+                - placeId
+                - url
+              examples:
+                Example:
+                  value:
+                    id: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    placeId: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    url: https://io-test.uitdatabank.be/places/c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (name) are missing.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          description: 'Status conflict
+
+
+            To ensure data integrity and avoid duplication within the system, each place must have a unique combination of the main language title and address. You get this error when (multiple) matches already exist in the system.
+
+            You can use the attached query to get existing place(s).
+
+            Subsequently, appropriate actions, such as updates to an existing Place, can be done to maintain uniqueness and coherence in UDB.'
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    query: /place/581314d4-637e-407b-ba35-8b60847012d0
+                    type: https://api.publiq.be/probs/uitdatabank/duplicate-place
+                    title: Duplicate place
+                    status: 409
+                    detail: This place already exists. Use the attached query to get existing place(s) for the place you tried to create.
+                properties:
+                  query:
+                    type: string
+                    description: When multiple duplicated places are round, this provides a URI to existing places
+                  type:
+                    type: string
+                    description: https://api.publiq.be/probs/uitdatabank/duplicate-place
+                  title:
+                    type: string
+                    description: Duplicate place
+                  status:
+                    type: integer
+                    description: '409'
+                  detail:
+                    type: string
+                    description: Detailed description of the error
+                  duplicatePlaceUri:
+                    type: string
+                    description: When a single duplicated place is found, this is the URI of the original place
+                required:
+                - type
+                - title
+                - status
+                - detail
+              examples:
+                Multi duplicated places found:
+                  value:
+                    query: /place/581314d4-637e-407b-ba35-8b60847012d0
+                    type: https://api.publiq.be/probs/uitdatabank/duplicate-place
+                    title: Duplicate place
+                    status: 409
+                    detail: This place already exists. Use the attached query to get existing place(s) for the place you tried to create.
+                Single duplicated place found:
+                  value:
+                    duplicatePlaceUri: /place/581314d4-637e-407b-ba35-8b60847012d0
+                    type: https://api.publiq.be/probs/uitdatabank/duplicate-place
+                    title: Duplicate place
+                    status: 409
+                    detail: A place with this address / name combination already exists. Please use the existing place for your purposes.
+      operationId: place-post
+      description: 'Creates a new place with the required properties and any additional optional properties.
+
+
+        By default, the new place will be editable and removable by the user or client that the access token used to perform this request belongs to. If you use a user access token, the user for which the token was obtained will see the new place in their dashboard in UiTdatabank and will be able to edit or remove it. If you use a client access token, only API requests with a token for the same client will be able to edit or remove it.
+
+
+        To ensure data integrity and avoid duplication within the system, each place must have a unique combination of the main language title and address.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        description: 'The complete details of the new place to create. The schema of the place is the same as the response of the [`GET /places/{placeId}`](./entry.json/paths/~1places~1{placeId}/get) operation.
+
+
+          This request also supports an older deprecated schema that was used to create an place with just its required fields. If you have an existing integration that still uses this schema, you can view it by switching from the `place` schema to `place.post (deprecated)` below.'
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-post.json
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    get:
+      summary: place - get
+      tags:
+      - Places
+      responses:
+        '200':
+          description: Place details.
+          content:
+            application/json:
+              schema:
+                $ref: ../models/place-with-read-example.json
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: place-get
+      description: Returns the details of the place for the given `placeId`.
+    put:
+      summary: place - update
+      operationId: place-put
+      responses:
+        '200':
+          description: The place was updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    format: uuid
+                    description: The id of the updated place.
+                  placeId:
+                    type: string
+                    deprecated: true
+                    example: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    format: uuid
+                    description: The id of the updated place (deprecated and replaced with `id`).
+                  url:
+                    type: string
+                    example: https://io-test.uitdatabank.be/places/c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    format: uri
+                    description: The url of the JSON-LD representation of the updated place.
+                  commandId:
+                    type: string
+                    example: 92973349-967e-44d7-83a2-e1972d9e1622
+                    format: uuid
+                    deprecated: true
+                    description: ID of the last internal command that was dispatched for this operation. Will be removed in the future.
+                required:
+                - id
+                - placeId
+                - url
+              examples:
+                Example:
+                  value:
+                    id: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    placeId: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    url: https://io-test.uitdatabank.be/places/c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    commandId: 92973349-967e-44d7-83a2-e1972d9e1622
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (name) are missing.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: 'Updates the place with the given `placeId` by completely overwriting it with the properties in the given JSON.
+
+
+        > Any existing optional properties on the place that are not included in the update request will be removed from the place when updating the place via this operation.
+
+        >
+
+        > As an exception, some existing `labels` or `hiddenLabels` may be kept on the place even if they are not included in the update request. For example if they were added via the UiTdatabank UI, or if the client or user making the request does not have sufficient permission to remove some specific labels.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-with-write-example.json
+        description: The complete details of the place to update. The schema of the place is the same as the response of the [`GET /places/{placeId}`](./entry.json/paths/~1places~1{placeId}/get) operation.
+      tags:
+      - Places
+    delete:
+      summary: place - delete
+      operationId: place-delete
+      responses:
+        '204':
+          description: No Content. The place's `workflowStatus` was successfully updated to `DELETED`.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: Does a soft-delete of the place. The place will continue to exist but it's `workflowStatus` will be changed to `DELETED`. This will remove it from all publication channels.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      tags:
+      - Places
+      x-internal: false
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /imports/places:
+    post:
+      summary: place - import (create)
+      tags:
+      - Places
+      responses:
+        '201':
+          description: The place was created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The id of the created place.
+                    example: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    format: uuid
+                  placeId:
+                    type: string
+                    description: The id of the created place (deprecated and replaced with `id`).
+                    deprecated: true
+                    example: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    format: uuid
+                  url:
+                    type: string
+                    description: The url of the JSON-LD representation of the created place.
+                    example: https://io-test.uitdatabank.be/places/c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    format: uri
+                  commandId:
+                    type: string
+                    example: 92973349-967e-44d7-83a2-e1972d9e1622
+                    format: uuid
+                    deprecated: true
+                    description: ID of the last internal command that was dispatched for this operation. Will be removed in the future.
+                required:
+                - id
+                - placeId
+                - url
+              examples:
+                Example:
+                  value:
+                    id: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    placeId: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    url: https://io-test.uitdatabank.be/places/c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (name) are missing.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      operationId: place-import-create
+      deprecated: true
+      description: 'Creates a new place via the historical `/imports/places` URL.
+
+
+        > This operation is deprecated and should not be used in new integrations. Use the `POST /places` operation instead to create new places.
+
+        >
+
+        > Both operations accept the same JSON bodies nowadays, and support creating places with only the required properties or with additional optional properties.
+
+        >
+
+        > The only difference is that the default `workflowStatus` for places created via `POST /places` is `DRAFT`, while new places created via this `POST /imports/places` operation will have the default workflowStatus `READY_FOR_VALIDATION` for backward compatibility with historical integrations.
+
+        >
+
+        > If you want your new places to also have the workflowStatus `READY_FOR_VALIDATION`, you can use the `POST /places` operation and explicitly set the `workflowStatus` property in your JSON body to `READY_FOR_VALIDATION`.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        description: The complete details of the new place to create. The schema of the place is the same as the response of the [`GET /places/{placeId}`](./entry.json/paths/~1places~1{placeId}/get) operation.
+        content:
+          application/json:
+            schema:
+              anyOf:
+              - $ref: ../models/place.json
+              - $ref: ../models/place-post-deprecated.json
+            examples:
+              Example:
+                value:
+                  mainLanguage: nl
+                  name:
+                    nl: Nederlandse naam
+                    fr: Nom français
+                    de: Deutscher Name
+                    en: English name
+                  address:
+                    nl:
+                      addressCountry: BE
+                      addressLocality: Brussel
+                      postalCode: '1000'
+                      streetAddress: Wetstraat 1
+                    fr:
+                      addressCountry: BE
+                      addressLocality: Bruxelles
+                      postalCode: '1000'
+                      streetAddress: Rue de la Loi 1
+                    de:
+                      addressCountry: BE
+                      addressLocality: Brüssel
+                      postalCode: '1000'
+                      streetAddress: Wetstraat 1
+                    en:
+                      addressCountry: BE
+                      addressLocality: Brussels
+                      postalCode: '1000'
+                      streetAddress: Wetstraat 1
+                  calendarType: periodic
+                  startDate: '2021-05-17T22:00:00+00:00'
+                  endDate: '2021-05-17T22:00:00+00:00'
+                  openingHours:
+                  - opens: '17:00'
+                    closes: '17:00'
+                    dayOfWeek:
+                    - monday
+                  availableFrom: '2021-05-17T22:00:00+00:00'
+                  terms:
+                  - id: 0.14.0.0.0
+                    label: Monument
+                    domain: eventtype
+                  typicalAgeRange: 6-12
+                  description:
+                    nl: Nederlandse beschrijving
+                    fr: Description français
+                    de: Deutscher Beschreibung
+                    en: English description
+                  priceInfo:
+                  - category: base
+                    price: 10.5
+                    priceCurrency: EUR
+                    name:
+                      nl: Basistarief
+                      fr: Tarif de base
+                      de: Base tariff
+                      en: Basisrate
+                  contactPoint:
+                    phone:
+                    - 016/112233
+                    email:
+                    - info@example.com
+                    url:
+                    - https://www.example.com
+                  bookingInfo:
+                    phone: 016/112233
+                    email: info@example.com
+                    url: https://www.example.com
+                    urlLabel:
+                      nl: Nederlandse beschrijving
+                      fr: Description français
+                      de: Deutscher Beschreibung
+                      en: English description
+                    availabilityStarts: '2021-05-17T22:00:00+00:00'
+                    availabilityEnds: '2021-05-17T22:00:00+00:00'
+                  mediaObject:
+                  - '@id': https://io-test.uitdatabank.be/images/74969172-E2A6-4626-BA63-4B6919242A24
+                  - '@id': https://io-test.uitdatabank.be/images/85b04295-479c-40f5-b3dd-469dfb4387b3
+                    description: optional overwritten description
+                    copyrightHolder: optional overwritten copyright holder
+                    inLanguage: nl
+                  videos:
+                  - id: b504cf44-9ab8-4641-9934-38d1cc67242c
+                    url: https://www.youtube.com/watch?v=cEItmb_a20D
+                    embedUrl: https://www.youtube.com/embed/cEItmb_a20D
+                    language: nl
+                    copyrightHolder: publiq
+                  labels:
+                  - label1
+                  hiddenLabels:
+                  - label2
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /imports/places/{placeId}:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    put:
+      summary: place - import (update)
+      operationId: place-import-update
+      deprecated: true
+      responses:
+        '200':
+          description: The place was updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    format: uuid
+                    description: The id of the updated place.
+                  placeId:
+                    type: string
+                    deprecated: true
+                    example: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    format: uuid
+                    description: The id of the updated place (deprecated and replaced with `id`).
+                  url:
+                    type: string
+                    example: https://io-test.uitdatabank.be/places/c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    format: uri
+                    description: The url of the JSON-LD representation of the updated place.
+                  commandId:
+                    type: string
+                    example: 92973349-967e-44d7-83a2-e1972d9e1622
+                    format: uuid
+                    deprecated: true
+                    description: ID of the last internal command that was dispatched for this operation. Will be removed in the future.
+                required:
+                - id
+                - placeId
+                - url
+              examples:
+                Example:
+                  value:
+                    id: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    placeId: c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    url: https://io-test.uitdatabank.be/places/c8e6ff82-8b30-4295-b937-ab2f4f6ab4bf
+                    commandId: 92973349-967e-44d7-83a2-e1972d9e1622
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (name) are missing.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: 'Updates the place via the historical `/imports/places/{placeId}` URL by completely overwriting it with the properties in the given JSON.
+
+
+        > This operation is deprecated and should not be used in new integrations. Use the `PUT /places/{placeId}` operation instead to update existing places, which accepts exactly the same JSON body.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-with-write-example.json
+        description: The complete details of the place to update. The schema of the place is the same as the response of the [`GET /places/{placeId}`](./entry.json/paths/~1places~1{placeId}/get) operation.
+      tags:
+      - Places
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/address/{language}:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    - $ref: '#/components/parameters/language'
+    put:
+      summary: address - update
+      operationId: place-address-put
+      tags:
+      - Places
+      description: Updates the address of a place.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-address-put.json
+        description: New address of the place, localized in a single language.
+      responses:
+        '204':
+          description: The address was successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/available-from:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    put:
+      summary: availableFrom - update
+      operationId: place-availableFrom-put
+      responses:
+        '204':
+          description: No Content. The place availableFrom was successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Example:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /availableFrom
+                      error: 'The data (int) should match the type: date-time'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+      - Places
+      description: Updates the availableFrom of the place. This is the first date & time that the place is allowed to be visible on publication channels.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-availableFrom-put.json
+            examples:
+              Example:
+                value:
+                  availableFrom: '2021-05-17T22:00:00+00:00'
+        description: New availableFrom to set on the place.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/booking-info:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    put:
+      summary: bookingInfo - update
+      description: 'Updates the bookingInfo for a place.
+
+
+        > There is no DELETE endpoint. To remove (specific) bookingInfo perform a PUT request with empty properties.'
+      operationId: place-bookingInfo-put
+      tags:
+      - Places
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-bookingInfo.json
+            examples:
+              Example:
+                value:
+                  phone: +32/01234567890
+                  email: info@example.com
+                  url: https://www.example.com
+                  urlLabel:
+                    nl: Nederlandse tekst
+                    fr: Texte français
+                    de: Deutscher Text
+                    en: English text
+                  availabilityStarts: '2021-05-17T22:00:00+00:00'
+                  availabilityEnds: '2021-05-17T22:00:00+00:00'
+        description: New bookingInfo to set on the place.
+      responses:
+        '204':
+          description: 'No Content. The bookingInfo has been updated successfully. '
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: '''urlLabel'' property is required by ''url'' property'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/calendar:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    put:
+      summary: calendar - update
+      tags:
+      - Places
+      responses:
+        '204':
+          description: No Content. The calendar information has been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (calendarType) are missing
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: place-calendar-put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-calendar-put.json
+            examples:
+              periodic:
+                value:
+                  calendarType: periodic
+                  startDate: '2021-05-17T22:00:00+00:00'
+                  endDate: '2021-05-17T22:00:00+00:00'
+                  openingHours:
+                  - opens: '13:00'
+                    closes: '17:00'
+                    dayOfWeek:
+                    - monday
+                  - opens: 09:00
+                    closes: '17:00'
+                    dayOfWeek:
+                    - tuesday
+                    - wednesday
+                    - thursday
+                    - friday
+                    - saturday
+                    - sunday
+                  status:
+                    type: Available
+                  bookingAvailability:
+                    type: Available
+              permanent:
+                value:
+                  calendarType: permanent
+                  openingHours:
+                  - opens: '13:00'
+                    closes: '17:00'
+                    dayOfWeek:
+                    - monday
+                  - opens: 09:00
+                    closes: '17:00'
+                    dayOfWeek:
+                    - tuesday
+                    - wednesday
+                    - thursday
+                    - friday
+                    - saturday
+                    - sunday
+                  status:
+                    type: Available
+                  bookingAvailability:
+                    type: Available
+        description: New calendar information.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      description: 'Updates the calendar information of the given `placeId`. The calendar information will be completely replaced with the new one.
+
+
+        The required properties depend on the `calendarType` property.
+
+
+        | calendarType | required | optional |
+
+        |---|---|---|
+
+        | periodic | startDate, endDate | openingHours, status, bookingAvailability |
+
+        | permanent | | openingHours, status, bookingAvailability |
+
+
+        > If the event has a `status` or `bookingAvailability` that is not `Available`, and you do not include this `status` or `bookingAvailability` in the new calendar information, they will get reverted back to the default `Available`!
+
+
+        > Contrary to events, places cannot use calendarType `single` or `multiple`!'
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/calendar-summary:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    get:
+      summary: calendar summary - get
+      tags:
+      - Places
+      responses:
+        '200':
+          description: 'The calendar summary in either plain text or HTML.
+
+
+            For example:
+
+            ```
+
+            Van 6 januari 2021 tot 23 juni 2021 (geannuleerd)
+
+            ```
+
+
+            Or:
+
+            ```
+
+            <span class=\"cf-from cf-meta\">Van</span> <span class=\"cf-date\">6 januari 2021</span> <span class=\"cf-to cf-meta\">tot</span> <span class=\"cf-date\">23 juni 2021</span> <span title=\"Deze activiteit is waarschijnlijk geannuleerd omwille van prplaceieve coronamaatregelen.\" class=\"cf-status\">(geannuleerd)</span>
+
+            ```'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: place-calendar-summary-get
+      description: 'Returns a human-readable summary of the calendar information of the place. Can be configured to return either plain text or HTML, and to switch between five different formats depending on the amount of space you have to display it.
+
+
+        > For backward compatibility this endpoint is also accessible at the old abbreviated `/places/{placeId}/calsum` path.'
+      parameters:
+      - schema:
+          type: string
+          enum:
+          - text
+          - html
+          default: text
+        in: query
+        name: style
+        description: Deprecated alternative to the `accept` header. Supported for backward compatibility.
+        deprecated: true
+      - schema:
+          type: string
+          enum:
+          - xs
+          - sm
+          - md
+          - lg
+          default: lg
+        in: query
+        name: size
+        description: Defines the size of the summary. Larger summaries contain more detail for events with multiple dates/hours but will also take up more space when shown in a UI. We recommend to use the format `md` for the search results (and `lg` for events with calendarType single), and to always use `lg` for the detailpage. In some cases (e.g. mobile apps) calendar summary `xs` can be useful.
+      - schema:
+          type: string
+          enum:
+          - nl
+          - fr
+          - en
+          - de
+          default: nl
+        in: query
+        name: language
+        description: Defines the language that the summary will be written in. Also influences the date/time format used.
+      - schema:
+          type: boolean
+          default: false
+        in: query
+        name: hidePast
+        description: Will hide past dates in summaries of events with multiple dates. By default, past dates are not excluded from the calendar summary.
+      - schema:
+          type: string
+          default: Europe/Brussels
+        in: query
+        name: timezone
+        description: The timezone to format date/times in.
+      - schema:
+          type: string
+          enum:
+          - text/plain
+          - text/html
+        in: header
+        name: accept
+        description: Indicates the expected content-type. Defaults to `text/plain` but can be set to `text/html` for a HTML response.
+      - schema:
+          type: string
+          enum:
+          - nl_BE
+          - fr_BE
+          - en_BE
+          - de_BE
+        in: query
+        name: langCode
+        description: Deprecated alternative to the `language` query parameter. Supported for backward compatibility.
+        deprecated: true
+      - schema:
+          type: string
+          enum:
+          - xs
+          - sm
+          - md
+          - lg
+        in: query
+        name: format
+        deprecated: true
+        description: Deprecated alternative to the `size` query parameter. Supported for backward compatibility.
+      x-internal: false
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/contact-point:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    put:
+      summary: contactPoint - update
+      operationId: place-contactPoint-put
+      tags:
+      - Places
+      description: 'Updates the contact point information of the place with the given `placeId`.
+
+
+        > There is no DELETE endpoint. To remove contact information perform a PUT request with empty properties.
+
+
+        > Unlike `PUT /organizers/{organizerId}/contact-point`, all properties are required. There is also no partial updating.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-contactPoint-put.json
+        description: The contact point properties to set on the place.
+      responses:
+        '204':
+          description: The contactPoint has been successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/contributors:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    get:
+      summary: contributors - get
+      operationId: place-contributors-get
+      responses:
+        '200':
+          description: An array of contributors.
+          content:
+            application/json:
+              schema:
+                $ref: ../models/common-contributors.json
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+      - Places
+      description: Returns a JSON array of contributors, meaning users that have edit rights on the place.
+      x-internal: true
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    put:
+      summary: contributors - update
+      operationId: place-contributors-put
+      responses:
+        '204':
+          description: No Content. The contributors have been successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Example:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+      - Places
+      description: Updates the list of contributors on the place. These users will have edit rights on the place.
+      x-internal: true
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-contributors-put.json
+            examples:
+              Example:
+                value:
+                - info@publiq.be
+                - vragen@publiq.be
+        description: New list of contributors of the place. Previous contributors of the place that are not included in this list will be removed.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/description/{language}:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    - $ref: '#/components/parameters/language'
+    put:
+      summary: description - update
+      tags:
+      - Places
+      responses:
+        '204':
+          description: No Content. The description was successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: place-description-put
+      description: 'Updates the localized description of a place based on the given `placeId` and `language` inside the URL. The description is not limited in size, but it is recommended to use the first 200 characters of the description for promotional copy as these characters are visible in the list-view of results.
+
+
+        > Keep in mind:
+
+        > - The description should be UTF-8 encoded
+
+        > - Linebreaks are encoded as `\n`'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-description-put.json
+            examples: {}
+        description: The new description of the place.
+    delete:
+      summary: description - delete
+      tags:
+      - Places
+      operationId: place-description-delete
+      responses:
+        '204':
+          description: No Content. The description was successfully deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: Deletes the localized description of a place based on the given `placeId` and `language` inside the URL.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/facilities:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    put:
+      summary: facilities - update
+      operationId: place-facilities-put
+      responses:
+        '204':
+          description: No Content. The facilities have been successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Example:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+      - Places
+      description: 'Updates the list of available (accessibility) facilities on the place. These will show up in the place''s `terms`.
+
+
+        A list of possible facilities can be found using our guide about taxonomy terms.
+
+
+        **Note**: A special permission is required to update an place''s facilities in UiTdatabank, even if you are the place owner. Contact an administrator for further information.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-facilities-put.json
+            examples:
+              Example:
+                value:
+                - 3.13.2.0.0
+                - 3.23.2.0.0
+        description: New list of facilities to set on the event. Facilities previously set on the event but not included in this list will be removed from the event. Other terms will be preserved.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/history:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    get:
+      summary: history - get
+      tags:
+      - Places
+      responses:
+        '200':
+          description: Place history.
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                items:
+                  type: object
+                  properties:
+                    description:
+                      type: string
+                      description: A human-readable description of the update to the place. (Always in Dutch.)
+                    date:
+                      type: string
+                      format: date-time
+                      example: '2021-08-26T16:54:38+00:00'
+                      description: The date and time that the update happened in an ISO-8601 format with a timezone offset. For example `2021-08-26T16:54:38+00:00`.
+                    author:
+                      type: string
+                      description: Identifier of the user who made the change. Should not be treated as a semantic user id though, because it can be an email, v1 user id, or v2 user id. Should only be displayed and used by admins that look at the history log to look up the user in the correct system.
+                    api:
+                      type: string
+                      description: Human-readable name of the API that was used to make the change. Not always present in older history logs.
+                    auth0ClientId:
+                      type: string
+                      description: The id of the Auth0 client that made the change. (If it was an Auth0 API client.)
+                    auth0ClientName:
+                      type: string
+                      description: Name of the client in Auth0 that made the change. (If it was an Auth0 API client.)
+                    apiKey:
+                      type: string
+                      description: API key of the UiTiD v1 consumer that made the change (if it was an UiTiD v1 consumer).
+                    consumerName:
+                      type: string
+                      description: Name of the UiTiD v1 consumer that made the change (if it was an UiTiD v1 consumer).
+                  required:
+                  - description
+                  - date
+              examples:
+                Auth0 client:
+                  value:
+                  - date: '2021-09-30T14:57:17+00:00'
+                    description: Locatie aangemaakt in UiTdatabank
+                    author: google-oauth2|108326107941342286958
+                    auth0ClientId: JGJ3rAJLurRM9DHDE072zVhF3azl57mo
+                    auth0ClientName: UiTdatabase JWT Provider
+                    api: JSON-LD API
+                UiTiD v1 consumer:
+                  value:
+                  - date: '2021-10-04T09:40:59+00:00'
+                    description: Reservatie-info aangepast
+                    author: google-oauth2|108326107941342286958
+                    apiKey: deb306a6-6f46-4c98-89ce-b03ec4fd11e2
+                    api: JSON-LD API
+                    consumerName: UiTdatabank Acceptatie
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: place-history-get
+      description: 'Returns the history log of the place for the given `placeId`.
+
+
+        The history log is an array of objects that contain info about each individual update to the place, who did the update, using what API, etc.
+
+
+        Because this history log can contain API keys which are secret (deprecated but still usable for backward compatibility), it can only be accessed by users that are a "god user".
+
+
+        Because of this limitation, the endpoint is also documented as internal and not visible in the public docs.'
+      x-internal: true
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/images:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    post:
+      summary: images - add
+      operationId: place-images-post
+      responses:
+        '204':
+          description: The image was added to the place.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-image-post.json
+            examples:
+              Example:
+                value:
+                  mediaObjectId: 546a90cd-a238-417b-aa98-1b6c50c1345c
+        description: The image to add to a place.
+      description: Adds an image to a place. To upload an image, use the `POST /images` endpoint.
+      tags:
+      - Places
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/images/{imageId}:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    - $ref: '#/components/parameters/imageId'
+    delete:
+      summary: images - delete
+      operationId: place-image-delete
+      tags:
+      - Places
+      responses:
+        '204':
+          description: The image has been successfully removed from the place.
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: Removes the image with the given `imageId` from the place's `mediaObject` property.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    put:
+      summary: images - update
+      operationId: place-image-put
+      description: Updates the metadata of an image on a place.
+      tags:
+      - Places
+      responses:
+        '204':
+          description: The image metadata was updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-image-put.json
+            examples:
+              Example:
+                value:
+                  description: Picture of the publiq office
+                  copyrightHolder: publiq
+        description: The metadata to update on the image.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/images/main:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    put:
+      summary: images main - update
+      operationId: place-main-image-put
+      tags:
+      - Places
+      description: Updates the main image of a place. The main image is the only image shown in search-result listviews and the image more prominently displayed on place-details, when the place has multiple images.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-main-image-put.json
+        description: The id of the image to set as main image on the place.
+      responses:
+        '204':
+          description: The main image was updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/labels/{labelName}:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    - $ref: '#/components/parameters/labelName'
+    put:
+      summary: labels - add
+      description: 'Adds the given label to the place with the given `placeId`.
+
+
+        If the specified label does not exist yet in UiTdatabank a new label will be created with default visibility and public permissions (usable by anyone), and linked to the place.
+
+
+        The label must be longer than 1 character and shorter than 255 characters. The label can also not contain the semicolon character. It should match the regex `^(?=.{2,255}$)(?=.*\S.*\S.*)[^;]*$`'
+      operationId: places-labels-add
+      tags:
+      - Places
+      responses:
+        '204':
+          description: No Content. The label has been added successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    delete:
+      summary: labels - delete
+      operationId: place-labels-delete
+      responses:
+        '204':
+          description: No Content. The label was deleted from the place.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: Deletes a label from the `labels` or `hiddenLabels` property on an place based on the place id, the label name, and the label's visibility.
+      tags:
+      - Places
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/labels:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    put:
+      summary: labels - update
+      description: 'Updates the given labels on the place with the given `placeId`.
+
+
+        If one of the specified labels does not exist yet in UiTdatabank a new label will be created with default visibility and public permissions (usable by anyone), and linked to the place.
+
+
+        The label must be longer than 1 character and shorter than 255 characters. The label can also not contain the semicolon character. It should match the regex `^(?=.{2,255}$)(?=.*\S.*\S.*)[^;]*$`'
+      operationId: place-labels-update
+      x-internal: true
+      tags:
+      - Places
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-labels-put.json
+        description: The labels to add to the place.
+      responses:
+        '204':
+          description: No Content. The labels have been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Example:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/major-info:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    put:
+      operationId: place-major-info-put
+      description: '> The major-info endpoint is deprecated and should not be used in new integrations!
+
+
+        Updates the "major info" of the event with the given `placeId`.
+
+
+        The major info contains:
+
+
+        * `name`: The name of the place in the place''s `mainLanguage`, as a string
+
+        * `type`: Id of the place''s `eventtype` taxonomy `term`, as a string
+
+        * `theme` (optional): Id of the place''s `theme` taxonomy `term`, as a string
+
+        * `address`: Object with the address of the place (see schema below)
+
+        * `calendar`: Object with the place''s calendar information (see schema below)
+
+
+        All properties are required (except for `theme`) and will overwrite existing values of these properties on the place. If the place has a `theme` `term` before this update, but there is no `theme` in this major-info update, the `theme` will be removed.
+
+
+        > For backward-compatibility with older integrations, this operation can also be requested via `POST /place/{placeId}/major-info`'
+      summary: major-info - update
+      deprecated: true
+      responses:
+        '204':
+          description: No Content. The major-info has been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: A human-readable name in the main language of the place.
+                type:
+                  type: string
+                  description: The `eventtype` term used to categorize the place. Terms are pre-defined and can be found using our [guide about taxonomy terms](../docs/taxonomy-api/terms.md).
+                theme:
+                  type: string
+                  description: The `theme` term used to categorize the place. Terms are pre-defined and can be found using our [guide about taxonomy terms](../docs/taxonomy-api/terms.md).
+                address:
+                  $ref: ../models/common-address-localized.json
+                  description: The address the place is located at, in the main language of the place.
+                calendar:
+                  $ref: ../models/place-calendar-put.json
+              required:
+              - name
+              - type
+              - address
+              - calendar
+            examples:
+              Permanent with opening hours:
+                value:
+                  name: Sint-Pieterskerk
+                  type: 0.14.0.0.0
+                  theme: 1.44.0.0.0
+                  address:
+                    streetAddress: Grote Markt 1
+                    postalCode: '3000'
+                    addressLocality: Leuven
+                    addressCountry: BE
+                  calendar:
+                    calendarType: permanent
+                    openingHours:
+                    - opens: '10:00'
+                      closes: '16:30'
+                      dayOfWeek:
+                      - monday
+                      - tuesday
+                      - thursday
+                      - friday
+                      - saturday
+                    - opens: '11:00'
+                      closes: '16:30'
+                      dayOfWeek:
+                      - sunday
+              Periodic with opening hours:
+                value:
+                  name: Velodroom
+                  type: Yf4aZBfsUEu2NsQqsprngw
+                  address:
+                    streetAddress: Brusselsestraat
+                    postalCode: '3000'
+                    addressLocality: Leuven
+                    addressCountry: BE
+                  calendar:
+                    calendarType: periodic
+                    startDate: '2021-05-17T22:00:00+00:00'
+                    endDate: '2023-11-17T22:00:00+00:00'
+                    openingHours:
+                    - opens: '17:00'
+                      closes: '22:00'
+                      dayOfWeek:
+                      - thursday
+                      - friday
+                    - opens: '13:00'
+                      closes: '22:00'
+                      dayOfWeek:
+                      - saturday
+                      - sunday
+        description: All required fields for a place (whether they have been updated or not).
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      tags:
+      - Places
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/name/{language}:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    - $ref: '#/components/parameters/language'
+    put:
+      summary: name - update
+      tags:
+      - Places
+      responses:
+        '204':
+          description: No Content. The name was successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: place-name-put
+      description: Updates the localized name of a place based on the given `placeId` and `language` inside the URL.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-name-put.json
+            examples: {}
+        description: The new name of the place.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/organizer/{organizerId}:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    - $ref: '#/components/parameters/organizerId'
+    delete:
+      summary: organizer - delete
+      description: Deletes the organizer of the place with the given `placeId`.
+      operationId: place-organizer-delete
+      tags:
+      - Places
+      responses:
+        '204':
+          description: No Content. The organizer has been deleted successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    put:
+      summary: organizer - update
+      description: 'Updates the organizer of the place with the given `placeId`. A list of organizers can be found using our guide about finding existing organizers.
+
+
+        > An organizer is not required on a place, and it can only have one.'
+      operationId: place-organizer-update
+      tags:
+      - Places
+      responses:
+        '204':
+          description: No Content. The organizer has been updated successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/permissions:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    get:
+      summary: permissions - get
+      tags:
+      - Places
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  permissions:
+                    type: array
+                    description: The permissions granted to the user for the place.
+                    items:
+                      $ref: ../models/permission.json
+                required:
+                - permissions
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: get-places-placeId-permissions
+      x-internal: true
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      description: Get user permissions relating to a place.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/price-info:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    put:
+      summary: priceInfo - update
+      tags:
+      - Places
+      responses:
+        '204':
+          description: No Content. The priceInfo was successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - error: Tariff name "Kinderen" must be unique.
+                      jsonPointer: /priceInfo/1/name/nl
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: place-price-info-put
+      description: Updates the price info of a place.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-priceInfo.json
+            examples:
+              Example 1:
+                value:
+                - category: base
+                  price: 10.5
+                  priceCurrency: EUR
+                  name:
+                    nl: Basistarief
+                    fr: Tarif de base
+                    en: Base tariff
+                    de: Basisrate
+              Example 2:
+                value:
+                - category: base
+                  name:
+                    nl: Basistarief
+                    fr: Tarif de base
+                    en: Base tariff
+                    de: Basisrate
+                  price: 10
+                  priceCurrency: EUR
+                - category: tariff
+                  name:
+                    nl: Jongeren
+                    en: Youth
+                  price: 0
+                  priceCurrency: EUR
+                - category: tariff
+                  name:
+                    nl: Senioren
+                    en: Elderly
+                  price: 6
+                  priceCurrency: EUR
+        description: New priceInfo to set on the place.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/status:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    put:
+      summary: status - update
+      operationId: place-status-put
+      responses:
+        '204':
+          description: No Content. The status has been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data
+
+            * https://api.publiq.be/probs/uitdatabank/calendar-type-not-supported'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Example:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-syntax
+                    title: Invalid body syntax
+                    status: 400
+                    detail: The given request body could not be parsed as JSON.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: Updates the status on the top level of the place with the given `placeId`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-status.json
+            examples:
+              Place is open and can be visited during opening hours:
+                value:
+                  type: Available
+              Place is temporarily closed:
+                value:
+                  type: TemporarilyUnavailable
+              Place still exists (physically), but is permanently closed:
+                value:
+                  type: Unavailable
+        description: New status to set on the place.
+      tags:
+      - Places
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/type/{termId}:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    - $ref: '#/components/parameters/termId'
+    put:
+      summary: type - update
+      operationId: place-type-put
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+      - Places
+      description: 'Updates the place''s type (examples of types are `Bioscoop`, `Monument`, `Theater`, and so on) based on the given `placeId` and `termId`.
+
+
+        Terms are pre-defined and can be found using our guide about taxonomy terms. Only terms from the `eventtype` domain can be used as place types.
+
+
+        If the `placeId` does not exist a `404 Not Found` will be returned. If the `termId` does not exist or is not a term in the `eventtype` domain, a `400 Bad Request` will be returned. If the request is successful a `204 No Content` will be returned.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/typical-age-range:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    delete:
+      summary: typicalAgeRange - delete
+      operationId: place-typical-age-range-delete
+      tags:
+      - Places
+      description: Deletes the age range from a place.
+      responses:
+        '204':
+          description: The age range was successfully deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    put:
+      summary: typicalAgeRange - update
+      operationId: place-typical-age-range-put
+      tags:
+      - Places
+      description: Updates the age range of the place with the given `placeId`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-typicalAgeRange-put.json
+            examples:
+              All ages:
+                value:
+                  typicalAgeRange: '-'
+              Minimum age:
+                value:
+                  typicalAgeRange: 6-
+              Maximum age:
+                value:
+                  typicalAgeRange: '-12'
+        description: The age range to set on the place.
+      responses:
+        '204':
+          description: The age range was successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/videos:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    post:
+      summary: videos - add
+      operationId: place-videos-post
+      responses:
+        '200':
+          description: The video was added to the place.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  videoId:
+                    type: string
+                    format: uuid
+                    example: b504cf44-9ab8-4641-9934-38d1cc67242c
+                    description: UUID used to identify the video on the place.
+              examples:
+                The new videoId:
+                  value:
+                    videoId: b504cf44-9ab8-4641-9934-38d1cc67242c
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /url
+                      error: The required properties url is missing.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-videos-post.json
+            examples:
+              Video from Youtube and with Copyright:
+                value:
+                  url: https://www.youtube.com/watch?v=cEItmb_a20D
+                  language: nl
+                  copyrightHolder: publiq
+              Video from Vimeo:
+                value:
+                  url: https://www.vimeo.com/4dwe2
+                  language: nl
+              Video from Youtube with Url Shortener:
+                value:
+                  url: https://youtu.be/bsaAOun-dec
+                  language: nl
+                  copyrightHolder: publiq
+        description: The new video to add to a place.
+      description: 'Add a video as a URL reference to place
+
+
+        The video objects contains:
+
+
+        * `url`: The full URL of the video. Currently only *Vimeo* and *Youtube* are supported as video source locations.
+
+        * `copyrightHolder`: The copyright holder of the video material. Although this field is optional it is strongly recommended to add a reference to the entity owning the rights on the video material.'
+      tags:
+      - Places
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    patch:
+      summary: videos - patch
+      operationId: places-videos-patch
+      responses:
+        '204':
+          description: No Content. The videos are updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /url
+                      error: The required properties url is missing.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: 'Update one or more videos of a place.
+
+
+        The video object(s) must contain
+
+
+        * `id`: The id of the video object to be changed.
+
+
+        The video object(s) can contain:
+
+
+        * `url`: The full URL of the video. Currently only *Vimeo* and *Youtube* are supported as video source locations.
+
+        * `language`: The updated language of a video
+
+        * `copyrightHolder`: The copyright holder of the video material. Although this field is optional it is strongly recommended to add a reference to the entity owning the rights on the video material.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-videos-patch.json
+            examples:
+              Videos to be updated.:
+                value:
+                - id: 30a880ba-c406-4308-8031-eb39c334f8c2
+                  url: https://www.youtube.com/watch?v=cEItmb_a20D
+                  language: fr
+                  copyrightHolder: publiq
+                - id: 55f3859b-ad56-426e-acd8-435401372019
+                  copyrightHolder: Creative Commons
+        description: An array of videos to be changed.
+      tags:
+      - Places
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/videos/{videoId}:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    - $ref: '#/components/parameters/videoId'
+    delete:
+      summary: videos - delete
+      operationId: place-videos-delete
+      responses:
+        '204':
+          description: No Content. The video was deleted from the place.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: Delete an embedded video from an place based on the place id and the video id.
+      tags:
+      - Places
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /places/{placeId}/workflow-status:
+    parameters:
+    - $ref: '#/components/parameters/placeId'
+    put:
+      summary: workflowStatus - update
+      tags:
+      - Places
+      responses:
+        '204':
+          description: No Content. The workflowStatus was successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - error: Missing required properties (workflowStatus)
+                      jsonPointer: /
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: place-workflow-status-put
+      description: 'Updates the workflow status of an place. Possible statuses are:
+
+
+        - `DRAFT`: The default status of new places. Places with this status do not appear in online calendars like or the search on
+
+        - `READY_FOR_VALIDATION`: This status means the place has been published, but not approved yet. Most online calendars will already show it, and it will appear in the search on
+
+        - `APPROVED`: The place has been approved by a moderator. It will appear on all online calendars. You cannot set this status unless you have moderation permissions.
+
+        - `REJECTED`: The place has been rejected by a moderator. It will not appear on any online calendars. You cannot set this status unless you have moderation permissions.
+
+        - `DELETED`: The place has been deleted. It will not appear on any online calendars.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/place-workflowStatus-put.json
+            examples: {}
+        description: New workflowStatus to set on the place. Depending on the new workflowStatus, other properties may/must be set as well.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+components:
+  responses:
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organizer abcd1234
+    NotFound:
+      description: 'The requested resource (URL) could not be found.
+
+        This can be due to one of multiple reasons:
+
+
+        * The endpoint has a typo and/or does not exist on the API
+
+        * One of the path parameters contains a value that is invalid or does not exist
+
+        * One of the required query parameters is missing
+
+        * One of the query parameters has an invalid value
+
+
+        The `detail` property of the response should contain more specific information.
+
+
+        The `type` will always be `https://api.publiq.be/probs/url/not-found`.'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/url/not-found
+                title: URL not found
+                status: 404
+                detail: The resource with id "76C6AC08-763C-492E-A68C-CBC43A857229" was not found.
+  parameters:
+    imageId:
+      name: imageId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 365f99a4-5490-4313-8ee9-adebea2dceb0
+      description: The unique uuid of an already uploaded image.
+    labelName:
+      name: labelName
+      in: path
+      required: true
+      schema:
+        type: string
+        example: MyLabel
+        pattern: ^(?=.{2,255}$)(?=.*\S.*\S.*)[^;]*$
+      description: The label to add to an event, place or organizer. The label name should be longer than 1 character but shorter than 255 characters. The label name should not contain semicolons.
+    videoId:
+      name: videoId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: F2D5D20C-CC98-4979-9CD2-453ABAD979B5
+      description: Unique id of a video embedded in a place or event, in the format of a UUID
+    termId:
+      name: termId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique id of a taxonomy term. Taxonomy terms are pre-defined and can be found using our [guide about taxonomy terms](../docs/taxonomy-api/terms.md).
+    language:
+      name: language
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+        - nl
+        - fr
+        - en
+        - de
+      description: The language of the request body properties
+    organizerId:
+      name: organizerId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: F2D5D20C-CC98-4979-9CD2-453ABAD979B5
+      description: Unique id of an organizer, in the format of a UUID
+    placeId:
+      name: placeId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: F2D5D20C-CC98-4979-9CD2-453ABAD979B5
+      description: Unique id of an place, in the format of a UUID
+  schemas:
+    Error:
+      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
+    Error_2:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+  securitySchemes:
+    USER_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A user access token, obtained by redirecting the end user to publiq's authorization server to login using the **Authorization Code OAuth Flow**. See the [authentication docs about user access tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+    CLIENT_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
+x-refined-from:
+- uitdatabank-entry.json
+- publiq-uitdatabank-entry-openapi.yml

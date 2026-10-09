@@ -1,0 +1,702 @@
+{
+  "@context": {
+    "@vocab": "https://publiq.be/schema#",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "publiq": "https://publiq.be/schema#",
+    "Error": "publiq:Error",
+    "type": {
+      "@id": "publiq:type",
+      "@type": "xsd:string"
+    },
+    "title": {
+      "@id": "publiq:title",
+      "@type": "xsd:string"
+    },
+    "status": {
+      "@id": "publiq:status",
+      "@type": "xsd:integer"
+    },
+    "detail": {
+      "@id": "publiq:detail",
+      "@type": "xsd:string"
+    },
+    "endUserMessage": {
+      "@id": "publiq:endUserMessage"
+    },
+    "schemaErrors": {
+      "@id": "publiq:schemaErrors",
+      "@container": "@list"
+    },
+    "VoucherList": "publiq:VoucherList",
+    "id": {
+      "@id": "publiq:id",
+      "@type": "xsd:string"
+    },
+    "vouchers": {
+      "@id": "publiq:vouchers",
+      "@container": "@list"
+    },
+    "Pass": "publiq:Pass",
+    "passholderId": {
+      "@id": "publiq:passholderId",
+      "@type": "xsd:string"
+    },
+    "subscriptionEndDate": {
+      "@id": "publiq:subscriptionEndDate",
+      "@type": "xsd:date"
+    },
+    "visit": {
+      "@id": "publiq:visit"
+    },
+    "firstName": {
+      "@id": "publiq:firstName",
+      "@type": "xsd:string"
+    },
+    "lastName": {
+      "@id": "publiq:lastName",
+      "@type": "xsd:string"
+    },
+    "dateOfBirth": {
+      "@id": "publiq:dateOfBirth",
+      "@type": "xsd:date"
+    },
+    "picture": {
+      "@id": "publiq:picture"
+    },
+    "common-facet": "publiq:common-facet",
+    "name": {
+      "@id": "publiq:name"
+    },
+    "count": {
+      "@id": "publiq:count",
+      "@type": "xsd:integer"
+    },
+    "children": {
+      "@id": "publiq:children"
+    },
+    "Tariff": "publiq:Tariff",
+    "price": {
+      "@id": "publiq:price",
+      "@type": "xsd:decimal"
+    },
+    "MembershipPrice": "publiq:MembershipPrice",
+    "label": {
+      "@id": "publiq:label",
+      "@type": "xsd:string"
+    },
+    "description": {
+      "@id": "publiq:description",
+      "@type": "xsd:string"
+    },
+    "TicketSale": "publiq:TicketSale",
+    "creationDate": {
+      "@id": "publiq:creationDate",
+      "@type": "xsd:dateTime"
+    },
+    "regularPrice": {
+      "@id": "publiq:regularPrice",
+      "@type": "xsd:decimal"
+    },
+    "regularPriceLabel": {
+      "@id": "publiq:regularPriceLabel",
+      "@type": "xsd:string"
+    },
+    "tariffId": {
+      "@id": "publiq:tariffId",
+      "@type": "xsd:string"
+    },
+    "tariff": {
+      "@id": "publiq:tariff",
+      "@type": "@id"
+    },
+    "eventId": {
+      "@id": "publiq:eventId",
+      "@type": "xsd:string"
+    },
+    "eventTitle": {
+      "@id": "publiq:eventTitle",
+      "@type": "xsd:string"
+    },
+    "uitpasNumber": {
+      "@id": "publiq:uitpasNumber",
+      "@type": "xsd:string"
+    },
+    "passholder": {
+      "@id": "publiq:passholder",
+      "@type": "@id"
+    },
+    "Checkin": "publiq:Checkin",
+    "points": {
+      "@id": "publiq:points",
+      "@type": "xsd:integer"
+    },
+    "OrganizerPermissions": "publiq:OrganizerPermissions",
+    "organizer": {
+      "@id": "publiq:organizer",
+      "@type": "@id"
+    },
+    "permissions": {
+      "@id": "publiq:permissions",
+      "@container": "@list"
+    },
+    "permissionDetails": {
+      "@id": "publiq:permissionDetails",
+      "@container": "@list"
+    },
+    "linkedOrganizers": {
+      "@id": "publiq:linkedOrganizers",
+      "@container": "@list"
+    },
+    "LinkedOrganizerPermissions": "publiq:LinkedOrganizerPermissions",
+    "Permission": "publiq:Permission",
+    "PermissionDetail": "publiq:PermissionDetail",
+    "cardSystemIds": {
+      "@id": "publiq:cardSystemIds",
+      "@container": "@list"
+    },
+    "Organizer": "publiq:Organizer",
+    "cardSystems": {
+      "@id": "publiq:cardSystems",
+      "@container": "@list"
+    },
+    "linkedLocationId": {
+      "@id": "publiq:linkedLocationId",
+      "@type": "xsd:string"
+    },
+    "address": {
+      "@id": "publiq:address"
+    },
+    "OrganizerAdmin": "publiq:OrganizerAdmin",
+    "userId": {
+      "@id": "publiq:userId",
+      "@type": "xsd:string"
+    },
+    "email": {
+      "@id": "publiq:email",
+      "@type": "xsd:string"
+    },
+    "PassholdersPaginatedResponse": "publiq:PassholdersPaginatedResponse",
+    "totalItems": {
+      "@id": "publiq:totalItems",
+      "@type": "xsd:integer"
+    },
+    "member": {
+      "@id": "publiq:member",
+      "@container": "@list"
+    },
+    "GrouppassesPaginatedResponse": "publiq:GrouppassesPaginatedResponse",
+    "RewardsPaginatedResponse": "publiq:RewardsPaginatedResponse",
+    "facet": {
+      "@id": "publiq:facet"
+    },
+    "RedeemedRewardsPaginatedResponse": "publiq:RedeemedRewardsPaginatedResponse",
+    "OrganizersPaginatedResponse": "publiq:OrganizersPaginatedResponse",
+    "OrganizerAdminsPaginatedCollection": "publiq:OrganizerAdminsPaginatedCollection",
+    "KiosksPaginatedCollection": "publiq:KiosksPaginatedCollection",
+    "AssociationsPaginatedResponse": "publiq:AssociationsPaginatedResponse",
+    "CheckinsPaginatedCollection": "publiq:CheckinsPaginatedCollection",
+    "TicketSalesPaginatedResponse": "publiq:TicketSalesPaginatedResponse",
+    "Passholder": "publiq:Passholder",
+    "inszNumber": {
+      "@id": "publiq:inszNumber",
+      "@type": "xsd:string"
+    },
+    "cardSystemMemberships": {
+      "@id": "publiq:cardSystemMemberships",
+      "@container": "@list"
+    },
+    "gender": {
+      "@id": "publiq:gender",
+      "@type": "xsd:string"
+    },
+    "registrationOrganizer": {
+      "@id": "publiq:registrationOrganizer"
+    },
+    "uitidStatus": {
+      "@id": "publiq:uitidStatus",
+      "@type": "xsd:string"
+    },
+    "postalCode": {
+      "@id": "publiq:postalCode",
+      "@type": "xsd:string"
+    },
+    "city": {
+      "@id": "publiq:city",
+      "@type": "xsd:string"
+    },
+    "phoneNumber": {
+      "@id": "publiq:phoneNumber",
+      "@type": "xsd:string"
+    },
+    "optInPreferences": {
+      "@id": "publiq:optInPreferences"
+    },
+    "nationality": {
+      "@id": "publiq:nationality",
+      "@type": "xsd:string"
+    },
+    "parentalConsent": {
+      "@id": "publiq:parentalConsent",
+      "@type": "xsd:boolean"
+    },
+    "legalTermsPaper": {
+      "@id": "publiq:legalTermsPaper",
+      "@type": "xsd:boolean"
+    },
+    "legalTermsDigital": {
+      "@id": "publiq:legalTermsDigital",
+      "@type": "xsd:boolean"
+    },
+    "registrationCardSystemId": {
+      "@id": "publiq:registrationCardSystemId",
+      "@type": "xsd:integer"
+    },
+    "registrationVoucher": {
+      "@id": "publiq:registrationVoucher",
+      "@type": "xsd:string"
+    },
+    "registrationCardType": {
+      "@id": "publiq:registrationCardType",
+      "@type": "xsd:string"
+    },
+    "registrationUitpasNumber": {
+      "@id": "publiq:registrationUitpasNumber",
+      "@type": "xsd:string"
+    },
+    "registrationSocialTariffEndDate": {
+      "@id": "publiq:registrationSocialTariffEndDate",
+      "@type": "xsd:date"
+    },
+    "registrationPicture": {
+      "@id": "publiq:registrationPicture",
+      "@type": "xsd:string"
+    },
+    "registrationNote": {
+      "@id": "publiq:registrationNote",
+      "@type": "xsd:string"
+    },
+    "PassholderRegistration": "publiq:PassholderRegistration",
+    "registrationSocialTariff": {
+      "@id": "publiq:registrationSocialTariff"
+    },
+    "Grouppass": "publiq:Grouppass",
+    "cardStatus": {
+      "@id": "publiq:cardStatus",
+      "@type": "xsd:string"
+    },
+    "socialTariff": {
+      "@id": "publiq:socialTariff"
+    },
+    "cardSystem": {
+      "@id": "publiq:cardSystem",
+      "@type": "@id"
+    },
+    "telephone": {
+      "@id": "publiq:telephone",
+      "@type": "xsd:string"
+    },
+    "PassholderSelfRegistration": "publiq:PassholderSelfRegistration",
+    "FamilyMember": "publiq:FamilyMember",
+    "icon": {
+      "@id": "publiq:icon",
+      "@type": "xsd:string"
+    },
+    "mainFamilyMember": {
+      "@id": "publiq:mainFamilyMember",
+      "@type": "xsd:boolean"
+    },
+    "CardSystemMembership": "publiq:CardSystemMembership",
+    "currentCard": {
+      "@id": "publiq:currentCard",
+      "@type": "@id"
+    },
+    "CardSystemMembershipCard": "publiq:CardSystemMembershipCard",
+    "cardType": {
+      "@id": "publiq:cardType",
+      "@type": "xsd:string"
+    },
+    "CardSystem": "publiq:CardSystem",
+    "branding": {
+      "@id": "publiq:branding"
+    },
+    "links": {
+      "@id": "publiq:links"
+    },
+    "cities": {
+      "@id": "publiq:cities",
+      "@container": "@list"
+    },
+    "permanent": {
+      "@id": "publiq:permanent",
+      "@type": "xsd:boolean"
+    },
+    "allowsCardlessRegistration": {
+      "@id": "publiq:allowsCardlessRegistration",
+      "@type": "xsd:boolean"
+    },
+    "cardlessRegistrationType": {
+      "@id": "publiq:cardlessRegistrationType",
+      "@type": "xsd:string"
+    },
+    "socialTariffInfo": {
+      "@id": "publiq:socialTariffInfo",
+      "@type": "xsd:string"
+    },
+    "Report": "publiq:Report",
+    "message": {
+      "@id": "publiq:message",
+      "@type": "xsd:string"
+    },
+    "period": {
+      "@id": "publiq:period",
+      "@type": "@id"
+    },
+    "ReportPeriod": "publiq:ReportPeriod",
+    "startDate": {
+      "@id": "publiq:startDate",
+      "@type": "xsd:date"
+    },
+    "endDate": {
+      "@id": "publiq:endDate",
+      "@type": "xsd:date"
+    },
+    "EventCardSystem": "publiq:EventCardSystem",
+    "enabled": {
+      "@id": "publiq:enabled",
+      "@type": "xsd:boolean"
+    },
+    "manualDistributionKeys": {
+      "@id": "publiq:manualDistributionKeys",
+      "@container": "@list"
+    },
+    "TariffsResponse": "publiq:TariffsResponse",
+    "available": {
+      "@id": "publiq:available",
+      "@container": "@list"
+    },
+    "Period": "publiq:Period",
+    "begin": {
+      "@id": "publiq:begin",
+      "@type": "xsd:dateTime"
+    },
+    "end": {
+      "@id": "publiq:end",
+      "@type": "xsd:dateTime"
+    },
+    "Reward": "publiq:Reward",
+    "promotionalDescription": {
+      "@id": "publiq:promotionalDescription",
+      "@type": "xsd:string"
+    },
+    "publicationPeriod": {
+      "@id": "publiq:publicationPeriod",
+      "@type": "@id"
+    },
+    "categories": {
+      "@id": "publiq:categories",
+      "@container": "@list"
+    },
+    "moreInfoURL": {
+      "@id": "publiq:moreInfoURL",
+      "@type": "@id"
+    },
+    "grantingPeriod": {
+      "@id": "publiq:grantingPeriod",
+      "@type": "@id"
+    },
+    "owningCardSystem": {
+      "@id": "publiq:owningCardSystem",
+      "@type": "@id"
+    },
+    "applicableCardSystems": {
+      "@id": "publiq:applicableCardSystems",
+      "@container": "@list"
+    },
+    "allCardSystems": {
+      "@id": "publiq:allCardSystems",
+      "@type": "xsd:boolean"
+    },
+    "organizers": {
+      "@id": "publiq:organizers",
+      "@container": "@list"
+    },
+    "maxAvailableUnits": {
+      "@id": "publiq:maxAvailableUnits",
+      "@type": "xsd:integer"
+    },
+    "unitsTaken": {
+      "@id": "publiq:unitsTaken",
+      "@type": "xsd:integer"
+    },
+    "practicalInfo": {
+      "@id": "publiq:practicalInfo",
+      "@type": "xsd:string"
+    },
+    "pictures": {
+      "@id": "publiq:pictures",
+      "@container": "@list"
+    },
+    "redeemPeriod": {
+      "@id": "publiq:redeemPeriod",
+      "@type": "@id"
+    },
+    "forKids": {
+      "@id": "publiq:forKids",
+      "@type": "xsd:boolean"
+    },
+    "sport": {
+      "@id": "publiq:sport",
+      "@type": "xsd:boolean"
+    },
+    "featured": {
+      "@id": "publiq:featured",
+      "@type": "xsd:boolean"
+    },
+    "online": {
+      "@id": "publiq:online",
+      "@type": "xsd:boolean"
+    },
+    "lastChance": {
+      "@id": "publiq:lastChance",
+      "@type": "xsd:boolean"
+    },
+    "redeemConstraint": {
+      "@id": "publiq:redeemConstraint"
+    },
+    "RedeemedReward": "publiq:RedeemedReward",
+    "reward": {
+      "@id": "publiq:reward",
+      "@type": "@id"
+    },
+    "redeemDate": {
+      "@id": "publiq:redeemDate",
+      "@type": "xsd:dateTime"
+    },
+    "redeemInfo": {
+      "@id": "publiq:redeemInfo"
+    },
+    "redeemCode": {
+      "@id": "publiq:redeemCode",
+      "@type": "xsd:string"
+    },
+    "CardSystemsPaginatedCollection": "publiq:CardSystemsPaginatedCollection",
+    "TransactionsPaginatedCollection": "publiq:TransactionsPaginatedCollection",
+    "Transaction": "publiq:Transaction",
+    "location": {
+      "@id": "publiq:location",
+      "@type": "xsd:string"
+    },
+    "City": "publiq:City",
+    "Order": "publiq:Order",
+    "paymentUrl": {
+      "@id": "publiq:paymentUrl",
+      "@type": "xsd:string"
+    },
+    "totalPrice": {
+      "@id": "publiq:totalPrice",
+      "@type": "xsd:decimal"
+    },
+    "registrationToken": {
+      "@id": "publiq:registrationToken",
+      "@type": "xsd:string"
+    },
+    "customToken": {
+      "@id": "publiq:customToken",
+      "@type": "xsd:string"
+    },
+    "mainPassholderRegistration": {
+      "@id": "publiq:mainPassholderRegistration",
+      "@type": "@id"
+    },
+    "extraPassholderRegistrations": {
+      "@id": "publiq:extraPassholderRegistrations",
+      "@container": "@list"
+    },
+    "redirectUrlAfterPayment": {
+      "@id": "publiq:redirectUrlAfterPayment",
+      "@type": "xsd:string"
+    },
+    "redirectUrlAfterCancelPayment": {
+      "@id": "publiq:redirectUrlAfterCancelPayment",
+      "@type": "xsd:string"
+    },
+    "Card": "publiq:Card",
+    "CheckinStatus": "publiq:CheckinStatus",
+    "allowed": {
+      "@id": "publiq:allowed",
+      "@type": "xsd:boolean"
+    },
+    "PassholderPicture": "publiq:PassholderPicture",
+    "pictureUrl": {
+      "@id": "publiq:pictureUrl",
+      "@type": "xsd:string"
+    },
+    "DownloadLinkResponse": "publiq:DownloadLinkResponse",
+    "downloadLink": {
+      "@id": "publiq:downloadLink",
+      "@type": "xsd:string"
+    },
+    "KioskDeviceEvent": "publiq:KioskDeviceEvent",
+    "checkinPoints": {
+      "@id": "publiq:checkinPoints",
+      "@type": "xsd:integer"
+    },
+    "event": {
+      "@id": "publiq:event"
+    },
+    "checkinCode": {
+      "@id": "publiq:checkinCode",
+      "@type": "xsd:string"
+    },
+    "KioskDevice": "publiq:KioskDevice",
+    "locations": {
+      "@id": "publiq:locations",
+      "@container": "@list"
+    },
+    "deviceId": {
+      "@id": "publiq:deviceId",
+      "@type": "xsd:string"
+    },
+    "releaseTrack": {
+      "@id": "publiq:releaseTrack",
+      "@type": "xsd:string"
+    },
+    "KioskDeviceEventRequest": "publiq:KioskDeviceEventRequest",
+    "KioskDeviceCheckinRequest": "publiq:KioskDeviceCheckinRequest",
+    "chipNumber": {
+      "@id": "publiq:chipNumber",
+      "@type": "xsd:string"
+    },
+    "KioskDeviceCheckinResponse": "publiq:KioskDeviceCheckinResponse",
+    "newPoints": {
+      "@id": "publiq:newPoints",
+      "@type": "xsd:integer"
+    },
+    "totalPoints": {
+      "@id": "publiq:totalPoints",
+      "@type": "xsd:integer"
+    },
+    "KioskDeviceSetup": "publiq:KioskDeviceSetup",
+    "Location": "publiq:Location",
+    "EventSettings": "publiq:EventSettings",
+    "passholderTicketLimit": {
+      "@id": "publiq:passholderTicketLimit",
+      "@type": "@id"
+    },
+    "checkinLimit": {
+      "@id": "publiq:checkinLimit",
+      "@type": "@id"
+    },
+    "PeriodLimit": "publiq:PeriodLimit",
+    "volume": {
+      "@id": "publiq:volume",
+      "@type": "xsd:integer"
+    },
+    "periodType": {
+      "@id": "publiq:periodType",
+      "@type": "xsd:string"
+    },
+    "KioskPass": "publiq:KioskPass",
+    "CardSystemSocialTariffSettings": "publiq:CardSystemSocialTariffSettings",
+    "CardSystemCitySettings": "publiq:CardSystemCitySettings",
+    "contactEmail": {
+      "@id": "publiq:contactEmail",
+      "@type": "xsd:string"
+    },
+    "SocialTariffValidation": "publiq:SocialTariffValidation",
+    "user": {
+      "@id": "publiq:user",
+      "@type": "@id"
+    },
+    "SocialTariffValidationTokenRequest": "publiq:SocialTariffValidationTokenRequest",
+    "code": {
+      "@id": "publiq:code",
+      "@type": "xsd:string"
+    },
+    "codeVerifier": {
+      "@id": "publiq:codeVerifier",
+      "@type": "xsd:string"
+    },
+    "SocialTariffValidationTokenResponse": "publiq:SocialTariffValidationTokenResponse",
+    "token": {
+      "@id": "publiq:token",
+      "@type": "xsd:string"
+    },
+    "SocialTariffValidationPerson": "publiq:SocialTariffValidationPerson",
+    "familyName": {
+      "@id": "publiq:familyName",
+      "@type": "xsd:string"
+    },
+    "givenName": {
+      "@id": "publiq:givenName",
+      "@type": "xsd:string"
+    },
+    "hasSocialTariff": {
+      "@id": "publiq:hasSocialTariff",
+      "@type": "xsd:boolean"
+    },
+    "street": {
+      "@id": "publiq:street",
+      "@type": "xsd:string"
+    },
+    "idToken": {
+      "@id": "publiq:idToken",
+      "@type": "xsd:string"
+    },
+    "idTokenExpiresAt": {
+      "@id": "publiq:idTokenExpiresAt",
+      "@type": "xsd:dateTime"
+    },
+    "Association": "publiq:Association",
+    "endDateType": {
+      "@id": "publiq:endDateType",
+      "@type": "xsd:string"
+    },
+    "AssociationMembership": "publiq:AssociationMembership",
+    "association": {
+      "@id": "publiq:association",
+      "@type": "@id"
+    },
+    "renewable": {
+      "@id": "publiq:renewable",
+      "@type": "xsd:boolean"
+    },
+    "newEndDate": {
+      "@id": "publiq:newEndDate",
+      "@type": "xsd:date"
+    },
+    "MembershipRequest": "publiq:MembershipRequest",
+    "voucher": {
+      "@id": "publiq:voucher",
+      "@type": "xsd:string"
+    },
+    "GrantedCoupon": "publiq:GrantedCoupon",
+    "coupon": {
+      "@id": "publiq:coupon"
+    },
+    "validityPeriod": {
+      "@id": "publiq:validityPeriod"
+    },
+    "remaining": {
+      "@id": "publiq:remaining"
+    },
+    "PrivateProperties": "publiq:PrivateProperties",
+    "note": {
+      "@id": "publiq:note",
+      "@type": "xsd:string"
+    }
+  },
+  "@type": "schema:Dataset",
+  "schema:name": "publiq API JSON-LD context",
+  "schema:description": "A JSON-LD @context for the objects publiq's own API contract declares: one class per component schema, one property per declared field, typed from the contract. Derived by script (derive-json-ld.py, 2026-10-09) from openapi/publiq-museumpassmusees-partner-openapi.yml, openapi/publiq-uitdatabank-entry-openapi.yml, openapi/publiq-uitdatabank-search-openapi.yml.",
+  "dcterms:created": "2026-10-09",
+  "dcterms:source": [
+    "openapi/publiq-museumpassmusees-partner-openapi.yml",
+    "openapi/publiq-uitdatabank-entry-openapi.yml",
+    "openapi/publiq-uitdatabank-search-openapi.yml",
+    "openapi/publiq-uitdatabank-taxonomy-openapi.yml",
+    "openapi/publiq-uitpas-openapi.yml"
+  ]
+}

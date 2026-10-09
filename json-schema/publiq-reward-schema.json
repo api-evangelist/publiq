@@ -1,0 +1,353 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/publiq/main/json-schema/publiq-reward-schema.json",
+  "title": "Reward",
+  "description": "Reward model",
+  "x-generated": "2026-10-09",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/publiq-uitpas-openapi.yml#/components/schemas/Reward",
+  "type": "object",
+  "x-tags": [
+    "Models"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "ID of the reward",
+      "readOnly": true
+    },
+    "title": {
+      "type": "string",
+      "description": "Title of the reward"
+    },
+    "type": {
+      "type": "string",
+      "description": "Type of the reward",
+      "enum": [
+        "POINTS",
+        "WELCOME"
+      ]
+    },
+    "promotionalDescription": {
+      "type": "string",
+      "description": "Promotion description"
+    },
+    "publicationPeriod": {
+      "$ref": "#/$defs/Period"
+    },
+    "points": {
+      "type": "number",
+      "description": "Number of points needed to redeem the reward. Required for reward of type POINTS."
+    },
+    "categories": {
+      "type": "array",
+      "description": "List of categories of this reward. Required for reward of type POINTS.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Eten en drinken",
+          "Doen",
+          "Gadget of item",
+          "Goede doel"
+        ]
+      }
+    },
+    "moreInfoURL": {
+      "type": "string",
+      "description": "URL where a user can find more info about this reward. Required for reward of type POINTS.",
+      "format": "uri"
+    },
+    "grantingPeriod": {
+      "$ref": "#/$defs/Period"
+    },
+    "owningCardSystem": {
+      "$ref": "#/$defs/CardSystem"
+    },
+    "applicableCardSystems": {
+      "type": "array",
+      "description": "List of CardSystems whose members can redeem this reward. ",
+      "items": {
+        "$ref": "#/$defs/CardSystem"
+      }
+    },
+    "allCardSystems": {
+      "type": "boolean",
+      "description": "If set to true, `applicableCardSystems` will always contain all UiTPAS CardSystems.",
+      "default": true
+    },
+    "organizers": {
+      "type": "array",
+      "description": "List of Organizers where this reward can be redeemed.",
+      "items": {
+        "$ref": "#/$defs/Organizer"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "INACTIVE",
+        "DELETED"
+      ],
+      "description": "Status of this reward.",
+      "readOnly": true
+    },
+    "maxAvailableUnits": {
+      "type": "integer",
+      "description": "Maximum (total) available units of this reward."
+    },
+    "unitsTaken": {
+      "type": "integer",
+      "description": "Number of rewards already redeemed.",
+      "readOnly": true
+    },
+    "practicalInfo": {
+      "type": "string",
+      "description": "Practical info for passholders who want to redeem this reward."
+    },
+    "pictures": {
+      "type": "array",
+      "description": "List of URLs to zero or more images of this reward.",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      }
+    },
+    "redeemPeriod": {
+      "$ref": "#/$defs/Period"
+    },
+    "forKids": {
+      "type": "boolean",
+      "description": "true if this reward is specifically targetted to children."
+    },
+    "sport": {
+      "type": "boolean",
+      "description": "true if this is a sport reward"
+    },
+    "featured": {
+      "type": "boolean",
+      "description": "true if this reward is currently set as 'featured'"
+    },
+    "online": {
+      "type": "boolean",
+      "description": "true if this reward can be redeemed online"
+    },
+    "lastChance": {
+      "type": "boolean",
+      "description": "true if this rewards will not be redeemable anymore in the near future",
+      "readOnly": true
+    },
+    "redeemConstraint": {
+      "type": "object",
+      "description": "Defines how many times this reward can be redeemed by the same passholder in a specific period.",
+      "properties": {
+        "volume": {
+          "type": "integer",
+          "description": "The maximum number of times this reward can be redeemed by the same passholder."
+        },
+        "period": {
+          "type": "string",
+          "description": "The calendar period this volume constraint applies to:\n- `ABSOLUTE`: the constraint applies to any period.\n- `DAY`: the constraint applies from 00:00 to 23:59\n- `WEEK`: the constraint applies from Monday 00:00 to Sunday 23:59\n- `MONTH`: the constraint applies from the first of the month at 00:00 to the last day of the month 23:59\n- `QUARTER`: this constraint applies to the first day of the quarter to the last day: January-March, April-June, July-September, October-December.\n- `YEAR`: from the Jan 1st to Dec 31st",
+          "enum": [
+            "ABSOLUTE",
+            "DAY",
+            "WEEK",
+            "MONTH",
+            "QUARTER",
+            "YEAR"
+          ]
+        }
+      },
+      "required": [
+        "volume",
+        "period"
+      ]
+    }
+  },
+  "required": [
+    "title",
+    "type",
+    "promotionalDescription",
+    "publicationPeriod"
+  ],
+  "$defs": {
+    "CardSystem": {
+      "title": "CardSystem",
+      "description": "A region, usually one or multiple municipalities in Belgium, that uses UiTPAS and provides discounts and/or rewards. For example \"Paspartoe\" (Brussels), UiTPAS Leuven, UiTPAS Hasselt, UiTPAS Gent, and so on.",
+      "type": "object",
+      "x-tags": [
+        "Models"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "ID of the card system"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the card system. This field is always available in responses."
+        },
+        "branding": {
+          "type": "object",
+          "description": "Branding information of the card system",
+          "properties": {
+            "logo": {
+              "type": "string",
+              "description": "URL to the logo of the card system"
+            },
+            "primaryColor": {
+              "type": "string",
+              "description": "Color code of the primary branding color."
+            },
+            "secondaryColor": {
+              "type": "string",
+              "description": "Color code of the secondary branding color."
+            }
+          }
+        },
+        "links": {
+          "type": "object",
+          "description": "Links of the card system",
+          "properties": {
+            "website": {
+              "type": "string",
+              "description": "URL of the website of the card system"
+            }
+          }
+        },
+        "cities": {
+          "type": "array",
+          "description": "List of cities that are part of this card system",
+          "items": {
+            "$ref": "#/$defs/City"
+          }
+        },
+        "permanent": {
+          "type": "boolean",
+          "description": "Indicates whether this is a permanent card system"
+        },
+        "allowsCardlessRegistration": {
+          "type": "boolean",
+          "description": "Indicates if cardless registration is enabled"
+        },
+        "cardlessRegistrationType": {
+          "type": "string",
+          "description": "Indicates the types of online cardless registrations this cardsystem supports.",
+          "enum": [
+            "ALL",
+            "REGULAR",
+            "SOCIALTARIFF",
+            "NONE"
+          ]
+        },
+        "socialTariffInfo": {
+          "type": "string",
+          "description": "Optional information about social tariff entitlement in this card system."
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "City": {
+      "title": "City",
+      "type": "object",
+      "x-tags": [
+        "Models"
+      ],
+      "properties": {
+        "postalCode": {
+          "type": "string",
+          "description": "Postalcode of the city"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the city"
+        }
+      },
+      "required": [
+        "postalCode",
+        "name"
+      ]
+    },
+    "Organizer": {
+      "title": "Organizer",
+      "type": "object",
+      "description": "An organisation that partners with UiTPAS to provide discounts and/or rewards, and/or allows points to be collected at their events.",
+      "x-tags": [
+        "Models"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique ID of an UiTPAS organizer. (Same as its ID in UiTdatabank)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable name of an UiTPAS organizer."
+        },
+        "cardSystems": {
+          "type": "array",
+          "description": "Card systems linked to this organizer",
+          "items": {
+            "$ref": "#/$defs/CardSystem"
+          }
+        },
+        "linkedLocationId": {
+          "type": "string",
+          "description": "ID of the location linked to this organizer.",
+          "readOnly": true
+        },
+        "address": {
+          "type": "object",
+          "description": "Address of this organizer. This property is alway available in responses.",
+          "required": [
+            "city"
+          ],
+          "properties": {
+            "street": {
+              "type": "string",
+              "description": "Street address of this organizer"
+            },
+            "postalCode": {
+              "type": "string",
+              "description": "Postal code of this organizer"
+            },
+            "city": {
+              "type": "string",
+              "description": "City of this organizer"
+            }
+          },
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "Period": {
+      "title": "Period",
+      "type": "object",
+      "x-tags": [
+        "Models"
+      ],
+      "description": "Period entity with a begin and optional end date.",
+      "properties": {
+        "begin": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Start date of the period (inclusive)."
+        },
+        "end": {
+          "type": "string",
+          "format": "date-time",
+          "description": "End date of the period (inclusive)."
+        }
+      },
+      "required": [
+        "begin"
+      ]
+    }
+  }
+}

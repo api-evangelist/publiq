@@ -1,0 +1,848 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist overlay for publiq UiTdatabank Entry API
+  version: 1.0.0
+extends: ../openapi/_original/publiq-uitdatabank-entry-openapi.yml
+x-generated: '2026-10-09'
+x-method: generated
+x-source: openapi/publiq-uitdatabank-entry-openapi.yml
+x-rationale: Adds documentation links and agent-facing hints (read-only/destructive flags per operation, derived from the
+  HTTP method) without mutating the original contract.
+actions:
+- target: $
+  description: Link the provider documentation for this API.
+  update:
+    externalDocs:
+      description: UiTdatabank Entry API documentation (docs.publiq.be)
+      url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+- target: $.info
+  description: 'Point to cross-cutting publiq docs: authentication, errors, release notes.'
+  update:
+    x-apievangelist:
+      provider: publiq
+      authentication_docs: https://docs.publiq.be/docs/authentication
+      errors_docs: https://docs.publiq.be/docs/errors
+      release_notes: https://docs.publiq.be/docs/release-notes
+      support: https://platform.publiq.be/nl/ondersteuning
+- target: $.paths['/events'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: false
+- target: $.paths['/events/{eventId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/imports/events'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/imports/events/{eventId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/copies'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/attendance-mode'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/audience'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/available-from'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/booking-availability'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/booking-info'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/calendar'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/calendar-summary'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: false
+- target: $.paths['/events/{eventId}/contact-point'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/contributors'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/contributors'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/description/{language}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/description/{language}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/facilities'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/history'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/images'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/images/{imageId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/images/{imageId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/images/main'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/labels/{labelName}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/labels/{labelName}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/labels'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/location/{placeId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/major-info'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/name/{language}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/online-url'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/online-url'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/organizer/{organizerId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/organizer/{organizerId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/permissions'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/price-info'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/status'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/sub-events'].patch
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/type/{termId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/theme'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/theme/{termId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/typical-age-range'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/typical-age-range'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/videos'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/videos'].patch
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/videos/{videoId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/events/{eventId}/workflow-status'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/images'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/images/{imageId}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: false
+- target: $.paths['/places'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: false
+- target: $.paths['/places/{placeId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/imports/places'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/imports/places/{placeId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/address/{language}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/available-from'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/booking-info'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/calendar'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/calendar-summary'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: false
+- target: $.paths['/places/{placeId}/contact-point'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/contributors'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/contributors'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/description/{language}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/description/{language}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/facilities'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/history'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/images'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/images/{imageId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/images/{imageId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/images/main'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/labels/{labelName}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/labels/{labelName}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/labels'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/major-info'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/name/{language}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/organizer/{organizerId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/organizer/{organizerId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/permissions'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/price-info'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/status'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/type/{termId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/typical-age-range'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/typical-age-range'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/videos'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/videos'].patch
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/videos/{videoId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/places/{placeId}/workflow-status'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/address/{language}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/address'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/address'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/contact-point'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/contributors'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/contributors'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/description/{language}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/description/{language}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/educational-description/{language}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/educational-description/{language}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/images'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/images'].patch
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/images/{imageId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/labels/{labelName}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/labels/{labelName}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/labels'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/images/main'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/name/{language}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/name'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/permissions'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/url'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/verenigingsloket'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/organizers/{organizerId}/verenigingsloket'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: false
+- target: $.paths['/ownerships'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/ownerships'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: false
+- target: $.paths['/ownerships/{ownershipId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: true
+- target: $.paths['/ownerships/{ownershipId}/approve'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/ownerships/{ownershipId}/reject'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/news-articles'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: false
+- target: $.paths['/news-articles'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: false
+- target: $.paths['/news-articles/{articleId}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: false
+- target: $.paths['/news-articles/{articleId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: false
+- target: $.paths['/news-articles/{articleId}'].delete
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: true
+      requiresAuth: false
+- target: $.paths['/productions/{productionId1}/merge/{productionId2}'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/productions/{productionId}/events/{eventId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/productions/skip'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/productions'].post
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: false
+- target: $.paths['/productions'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: false
+- target: $.paths['/user'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/users/{userId}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/users/emails/{email}'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/mailing-list/{mailinglistId}'].put
+  update:
+    x-agent-hints:
+      readOnly: false
+      destructive: false
+      requiresAuth: true
+- target: $.paths['/cultuurkuur/regions'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: false
+- target: $.paths['/cultuurkuur/education-levels'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: false

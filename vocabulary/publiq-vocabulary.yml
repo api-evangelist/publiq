@@ -1,0 +1,383 @@
+generated: '2026-10-09'
+method: derived
+generator: derive-vocabulary.py
+source:
+- openapi/publiq-museumpassmusees-partner-openapi.yml
+- openapi/publiq-uitdatabank-entry-openapi.yml
+- openapi/publiq-uitdatabank-search-openapi.yml
+- openapi/publiq-uitdatabank-taxonomy-openapi.yml
+- openapi/publiq-uitpas-openapi.yml
+vocabulary:
+  name: publiq Domain Vocabulary
+  description: 'Terms declared by publiq''s own API contract: its resource groups, objects and enumerations, with the contract''s definitions.
+    Derived, not authored.'
+  version: '2026-10-09'
+  terms:
+  - term: Error
+    definition: RFC7807 error model for all publiq APIs.
+    tags:
+    - Object
+    source: openapi/publiq-museumpassmusees-partner-openapi.yml#/components/schemas/Error
+  - term: VoucherList
+    definition: 'Object declared by the contract with fields: id, vouchers.'
+    tags:
+    - Object
+    source: openapi/publiq-museumpassmusees-partner-openapi.yml#/components/schemas/VoucherList
+  - term: Pass
+    definition: 'Object declared by the contract with fields: passholderId, subscriptionEndDate, visit, firstName, lastName, dateOfBirth, picture.'
+    tags:
+    - Object
+    source: openapi/publiq-museumpassmusees-partner-openapi.yml#/components/schemas/Pass
+  - term: facet
+    definition: A single facet for a specific filter. Every facet has a human-readable name and total count to show to end-users to drill down
+      search results.
+    tags:
+    - Object
+    source: openapi/publiq-uitdatabank-search-openapi.yml#/components/schemas/common-facet
+  - term: Tariff
+    definition: The Tariff describes the discounted price a passholder has to pay for a given ticket.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/Tariff
+  - term: MembershipPrice
+    definition: The MembershipPrice describes the price an UiTPAS membership in a specific cardsystem for a new or existing passholder.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/MembershipPrice
+  - term: TicketSale
+    definition: Model used both for registering new ticket sales and when searching for past ticket sales. The `passholder` field is automatically
+      included in responses if you have PASSHOLDERS_SEARCH permission. It is not required for ticket sale registrations.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/TicketSale
+  - term: Checkin
+    definition: Model used both for registering and searching checkins. The `passholder` field is automatically included in responses if you have
+      PASSHOLDERS_SEARCH permission. It is not required for check-in creation.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/Checkin
+  - term: OrganizerPermissions
+    definition: Combination of organizer and its permissions
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/OrganizerPermissions
+  - term: LinkedOrganizerPermissions
+    definition: Combination of organizer and its permissions, specifically targetted to be used when linked to another organizer.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/LinkedOrganizerPermissions
+  - term: Permission
+    definition: ID of the permission
+    tags:
+    - Enumeration
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/Permission
+  - term: PermissionDetail
+    definition: Permission details
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/PermissionDetail
+  - term: Organizer
+    definition: An organisation that partners with UiTPAS to provide discounts and/or rewards, and/or allows points to be collected at their events.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/Organizer
+  - term: OrganizerAdmin
+    definition: An admin user for an organizer.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/OrganizerAdmin
+  - term: PassholdersPaginatedResponse
+    definition: Paginated response object for passholders
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/PassholdersPaginatedResponse
+  - term: GrouppassesPaginatedResponse
+    definition: Paginated response object for grouppasses
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/GrouppassesPaginatedResponse
+  - term: RewardsPaginatedResponse
+    definition: Paginated response object for rewards
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/RewardsPaginatedResponse
+  - term: RewardsPaginatedResponse
+    definition: Paginated response object for rewards
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/RedeemedRewardsPaginatedResponse
+  - term: OrganizersPaginatedResponse
+    definition: Paginated response object for organizers
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/OrganizersPaginatedResponse
+  - term: OrganizerAdminsPaginatedCollection
+    definition: Paginated response object for organizer admins.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/OrganizerAdminsPaginatedCollection
+  - term: KiosksPaginatedCollection
+    definition: Paginated response object for kiosks.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/KiosksPaginatedCollection
+  - term: AssociationsPaginatedResponse
+    definition: Paginated response object for associations
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/AssociationsPaginatedResponse
+  - term: CheckinsPaginatedCollection
+    definition: Paginated collection object for checkins
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/CheckinsPaginatedCollection
+  - term: TicketSalesPaginatedResponse
+    definition: Paginated response object for ticket sales
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/TicketSalesPaginatedResponse
+  - term: Passholder
+    definition: Person who holds an UiTPAS, the end-user of an UiTPAS. A `Passholder` can be identified by its `id`. However, there are cases
+      where the passholder identifies using one of its UiTPAS numbers. That number is CardSystem specific, so it can be found under `cardSystemMemberships`.
+      Every passholder should have at least one cardsystem membership.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/Passholder
+  - term: PassholderRegistration
+    definition: Registration request of a passholder, mainly used in the online order flow. A `PassholderRegistration` is not yet `Passholder`
+      but one can be created (e.g. when the order is paid) using the information from the `PassholderRegistration`.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/PassholderRegistration
+  - term: Grouppass
+    definition: 'Grouppass is a special kind of UiTPAS concept: it has an `uitpasNumber` like regular passholders, but it can only participate
+      in ticket sale flows (either social tariff or using coupons). The social tariff for grouppasses is a little bit different from regular passholders,
+      because a grouppass is entitled to buy a certain amount of `totalTicketsPerYear`, of which the remaining amount is indicated b'
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/Grouppass
+  - term: PassholderSelfRegistration
+    definition: 'Object declared by the contract with fields: name, firstName, dateOfBirth, email, postalCode, city, cardSystem, registrationOrganizer.'
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/PassholderSelfRegistration
+  - term: FamilyMember
+    definition: The `FamilyMember` entity including basic information about the `Passholder` family member.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/FamilyMember
+  - term: CardSystemMembership
+    definition: Membership info of an individual passholder in a specific card system.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/CardSystemMembership
+  - term: CardSystemMembershipCard
+    definition: Representation of an UiTPAS card embedded in a CardSystemMembership.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/CardSystemMembershipCard
+  - term: CardSystem
+    definition: A region, usually one or multiple municipalities in Belgium, that uses UiTPAS and provides discounts and/or rewards. For example
+      "Paspartoe" (Brussels), UiTPAS Leuven, UiTPAS Hasselt, UiTPAS Gent, and so on.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/CardSystem
+  - term: Report
+    definition: The status of a report export.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/Report
+  - term: ReportPeriod
+    definition: Date range for which to export a list of financial transactions.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/ReportPeriod
+  - term: EventCardSystem
+    definition: CardSystem in an event context, optionally including manual distributionKeys. This model is only used in the GET and PUT `/events/{eventId}/card-systems`
+      to configure the card systems and distribution keys for an event. > **This model and corresponding endpoints are only needed for exceptional
+      cases.** In most cases card systems and distribution keys are set automatically on events, so you don't n
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/EventCardSystem
+  - term: TariffsResponse
+    definition: Response object for tariffs
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/TariffsResponse
+  - term: TariffAvailibility
+    definition: The `TariffAvailibility` includes all information about the `Tariff`, which describes the discounted price a passholder has to
+      pay for a given ticket, and the `remaining` number of tickets this passholder can buy for this event at this Tariff.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/TariffAvailibility
+  - term: Period
+    definition: Period entity with a begin and optional end date.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/Period
+  - term: Reward
+    definition: Reward model
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/Reward
+  - term: RedeemedReward
+    definition: 'Object declared by the contract with fields: id, reward, redeemDate, redeemInfo, redeemCode.'
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/RedeemedReward
+  - term: Facet
+    definition: Each property is a possible filter value, mapping to an object with a human-readable name and amount of results if the filter
+      value is applied in combination with the other active filters.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/Facet
+  - term: CardSystemsPaginatedCollection
+    definition: Paginated response object for card systems
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/CardSystemsPaginatedCollection
+  - term: TransactionsPaginatedCollection
+    definition: Paginated response object for transactions
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/TransactionsPaginatedCollection
+  - term: Transaction
+    definition: Transaction
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/Transaction
+  - term: City
+    definition: 'Object declared by the contract with fields: postalCode, name.'
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/City
+  - term: Order
+    definition: Order object
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/Order
+  - term: Card
+    definition: Representation of an UiTPAS card.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/Card
+  - term: CheckinStatus
+    definition: The status of a potential checkin, including an `endUserMessage` when it's not allowed.
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/CheckinStatus
+  - term: PassholderPicture
+    definition: 'Object declared by the contract with fields: pictureUrl.'
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/PassholderPicture
+  - term: DownloadLinkResponse
+    definition: 'Object declared by the contract with fields: downloadLink.'
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/DownloadLinkResponse
+  - term: KioskDeviceEvent
+    definition: Event model used in Kiosk APIs
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/KioskDeviceEvent
+  - term: KioskDevice
+    definition: Representation of the kiosk entity
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/KioskDevice
+  - term: KioskDeviceEventRequest
+    definition: Model to configure the kiosk event
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/KioskDeviceEventRequest
+  - term: KioskDeviceCheckinRequest
+    definition: 'Object declared by the contract with fields: chipNumber.'
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/KioskDeviceCheckinRequest
+  - term: KioskDeviceCheckinResponse
+    definition: Checkin via kiosk response
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/KioskDeviceCheckinResponse
+  - term: KioskDeviceSetup
+    definition: 'Object declared by the contract with fields: name, deviceId.'
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/KioskDeviceSetup
+  - term: Location
+    definition: Location model
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/Location
+  - term: EventSettings
+    definition: Event setting within UiTPAS
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/EventSettings
+  - term: PeriodLimit
+    definition: Period limit settings
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/PeriodLimit
+  - term: KioskPass
+    definition: Pass information
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/KioskPass
+  - term: CardSystemSocialTariffSettings
+    definition: CardSystemSocialTariffSettings
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/CardSystemSocialTariffSettings
+  - term: CardSystemCitySettings
+    definition: CardSystemCitySettings
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/CardSystemCitySettings
+  - term: SocialTariffValidation
+    definition: SocialTariffValidation information
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/SocialTariffValidation
+  - term: SocialTariffValidationTokenRequest
+    definition: SocialTariffValidationTokenRequest
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/SocialTariffValidationTokenRequest
+  - term: SocialTariffValidationTokenResponse
+    definition: SocialTariffValidationTokenRequest
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/SocialTariffValidationTokenResponse
+  - term: SocialTariffValidationPerson
+    definition: SocialTariffValidationPerson
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/SocialTariffValidationPerson
+  - term: Association
+    definition: Association
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/Association
+  - term: AssociationMembership
+    definition: 'Object declared by the contract with fields: association, status, endDate, renewable, newEndDate.'
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/AssociationMembership
+  - term: MembershipRequest
+    definition: Membership request model
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/MembershipRequest
+  - term: GrantedCoupon
+    definition: 'Object declared by the contract with fields: id, coupon, validityPeriod, status, remaining.'
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/GrantedCoupon
+  - term: PrivateProperties
+    definition: Private properties of a passholder
+    tags:
+    - Object
+    source: openapi/publiq-uitpas-openapi.yml#/components/schemas/PrivateProperties

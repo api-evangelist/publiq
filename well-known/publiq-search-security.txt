@@ -1,0 +1,5 @@
+Contact: mailto:security@publiq.be
+Expires: 2027-10-06T11:19:00+02:00
+Acknowledgments: https://www.publiq.be/projecten/publiq-platform/hall-of-fame
+Policy: https://www.publiq.be/en/projects/publiq-platform/responsible-disclosure-policy
+Preferred-Languages: en, nl

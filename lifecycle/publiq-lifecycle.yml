@@ -1,0 +1,22 @@
+generated: '2026-10-09'
+method: searched
+source: https://docs.publiq.be/#versioning-strategy
+versioning:
+  scheme: major-version-only (e.g. Search API v3, UiTPAS API v4)
+  policy: At publiq, we aim for API evolution over versioning.
+  backward_compatibility: When we make changes to an existing version of an API, we make sure that the changes are backward compatible with existing integrations.
+  support_period: Our APIs only have a major version number (for example Search API v3, UiTPAS API v4, ...), which is always supported over the span of many years.
+  evidence: https://github.com/cultuurnet/apidocs/blob/main/landingpage.md
+deprecation:
+  policy: At some point a new major version of an API may be introduced. While this usually requires a rewrite of existing integrations, this is always communicated well beforehand to all known integrators
+    and we always keep supporting the old version for a long time
+  sunset_headers: not documented
+  deprecated_operations:
+    uitdatabank-entry: 34
+    uitdatabank-search: 1
+    uitpas: 19
+    note: 'count of "deprecated": true in the provider OpenAPI files (operations and parameters/properties)'
+  recent: 'Feb 2026 release note: legacy API keys matched to Keycloak client IDs "in preparation for the deprecation of API keys in favour of client credentials".'
+status_page: https://status.publiq.be/
+sla: null
+changelog: https://docs.publiq.be/docs/release-notes

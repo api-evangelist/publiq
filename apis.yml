@@ -1,23 +1,1349 @@
 aid: publiq
+
 name: publiq
-description: 'publiq is a company surfaced via the API Evangelist harvest backlog (source: spectral-ruleset-github)
-  and added to the network as a stub for full-pipeline profiling.'
+
+description: publiq vzw is a Belgian (Flemish) non-profit organisation that stimulates active participation in culture, sport and leisure by making
+  event and activity information accessible. It runs products such as UiTdatabank (the Flemish database of cultural and leisure events), UiTPAS
+  (a leisure discount and savings pass) and museumPASSmusées, and offers the publiq platform through which developers register integrations and
+  receive client credentials for its APIs, including the UiTdatabank Entry API and Search API, the UiTPAS API and the museumPASSmusées API, plus
+  plug-and-play widgets. Documentation, OpenAPI files and Postman collections are published on docs.publiq.be.
+
 url: https://raw.githubusercontent.com/api-evangelist/publiq/refs/heads/main/apis.yml
+
 x-type: company
+
 x-source: harvest:spectral-ruleset-github
-x-tier: stub
-x-tier-reason: harvest
+
+x-tier: profiled
+x-tier-reason: enrichment pass 2026-10-09 (modular-v1; was harvest)
+
 specificationVersion: '0.20'
+
 created: '2026-10-09'
+
 modified: '2026-10-09'
+
 tags:
 - Company
-apis: []
+- Culture
+- Events
+- Leisure
+- Belgium
+- Non-Profit
+- Open Data
+- Loyalty Programs
+
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+
+image: https://www.publiq.be/img/svg/logo-white.svg
+
 common:
+- type: AgenticAccess
+  url: agentic-access/publiq-agentic-access.yml
+- type: Plans
+  url: plans/publiq-plans-pricing.yml
+- type: Spectral
+  url: rules/publiq-rules.yml
+- type: Spectral
+  url: rules/publiq-apidocs-spectral-rules.yml
+- type: JSONLD
+  url: json-ld/publiq-context.jsonld
+- type: Vocabulary
+  url: vocabulary/publiq-vocabulary.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: DataModel
+  url: data-model/publiq-data-model.yml
+- type: Components
+  url: components/publiq-components.yml
+- type: ChangeLog
+  url: changelog/publiq-changelog.yml
+- type: Conventions
+  url: conventions/publiq-conventions.yml
+- type: Sandbox
+  url: sandbox/publiq-sandbox.yml
+- type: Deprecation
+  url: lifecycle/publiq-lifecycle.yml
+- type: Lifecycle
+  url: lifecycle/publiq-lifecycle.yml
+- type: ErrorCatalog
+  url: errors/publiq-problem-types.yml
+- type: Conformance
+  url: conformance/publiq-conformance.yml
+- type: Overlay
+  url: overlays/publiq-museumpassmusees-partner-overlay.yaml
+- type: SecurityTxt
+  url: well-known/publiq-search-security.txt
+- type: SecurityTxt
+  url: well-known/publiq-platform-security.txt
+- type: SecurityTxt
+  url: well-known/publiq-partner-api-security.txt
+- type: SecurityTxt
+  url: well-known/publiq-io-security.txt
+- type: SecurityTxt
+  url: well-known/publiq-api-security.txt
+- type: WellKnown
+  url: well-known/publiq-well-known.yml
+- type: Hosts
+  url: hosts/publiq-hosts.yml
+- type: Vendors
+  url: vendors/publiq-vendors.yml
+- type: GettingStarted
+  url: https://docs.publiq.be/#getting-started
+- type: OAuthScopes
+  url: scopes/publiq-scopes.yml
+- type: Authentication
+  url: authentication/publiq-authentication.yml
 - type: Website
+  url: https://www.publiq.be/
+- type: DeveloperPortal
+  url: https://platform.publiq.be/
+- type: Documentation
   url: https://docs.publiq.be/
+- type: Authentication
+  url: https://docs.publiq.be/docs/authentication/methods/overview
+- type: Support
+  url: https://helpdesk.publiq.be/hc/nl
+- type: StatusPage
+  url: https://status.publiq.be/
+- type: Blog
+  url: https://www.publiq.be/nl/nieuws
+- type: GitHubOrganization
+  url: https://github.com/cultuurnet
+- type: Pricing
+  url: https://www.publiq.be/nl/projecten/publiq-platform/prijzen
+- type: SignUp
+  url: https://platform.publiq.be/
+- type: Login
+  url: https://platform.publiq.be/login
+- type: TermsOfService
+  url: https://www.publiq.be/projecten/publiq-platform/gebruiksvoorwaarden
+- type: PrivacyPolicy
+  url: https://www.publiq.be/nl/privacy
+- type: Security
+  url: https://www.publiq.be/projecten/publiq-platform/responsible-disclosure-policy
+- type: Contact
+  url: https://www.publiq.be/nl/contact
+- type: LinkedIn
+  url: https://www.linkedin.com/company/publiq-vzw/
+- type: YouTube
+  url: https://www.youtube.com/channel/UCKeWkGEBy9Kc6pQ2GOfF_Ug
+- type: DomainSecurity
+  url: security/publiq-domain-security.yml
+- type: SpectralRules
+  url: https://github.com/cultuurnet/apidocs/blob/253bb51def286cc4c19066c0724525ab997aee60/.spectral.json
+
+apis:
+- aid: publiq:publiq-associations-api
+  name: publiq Associations API
+  description: The Associations API from publiq — 3 operation(s) for associations.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Associations
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-associations-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-card-systems-api
+  name: publiq Card Systems API
+  description: The Card Systems API from publiq — 5 operation(s) for card systems.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Card Systems
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-card-systems-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-cards-api
+  name: publiq Cards API
+  description: The Cards API from publiq — 2 operation(s) for cards.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Cards
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-cards-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-current-passholder-api
+  name: publiq Current Passholder API
+  description: The Current Passholder API from publiq — 4 operation(s) for current passholder.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Current Passholder
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-current-passholder-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-events-api
+  name: publiq Events API
+  description: The Events API from publiq — 42 operation(s) for events.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Events
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-events-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-events-places-api
+  name: publiq Events & places API
+  description: The Events & places API from publiq — 3 operation(s) for events & places.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Events & places
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-events-places-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-external-cards-api
+  name: publiq External cards API
+  description: The External cards API from publiq — 2 operation(s) for external cards.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - External cards
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-external-cards-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-financial-reports-api
+  name: publiq Financial reports API
+  description: The Financial reports API from publiq — 5 operation(s) for financial reports.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Financial reports
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-financial-reports-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-grouppasses-api
+  name: publiq Grouppasses API
+  description: The Grouppasses API from publiq — 3 operation(s) for grouppasses.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Grouppasses
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-grouppasses-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-images-api
+  name: publiq Images API
+  description: The Images API from publiq — 2 operation(s) for images.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Images
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-images-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-kiosk-devices-api
+  name: publiq Kiosk devices API
+  description: The Kiosk devices API from publiq — 5 operation(s) for kiosk devices.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Kiosk devices
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-kiosk-devices-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-kiosks-api
+  name: publiq Kiosks API
+  description: The Kiosks API from publiq — 2 operation(s) for kiosks.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Kiosks
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-kiosks-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-mailing-api
+  name: publiq Mailing API
+  description: The Mailing API from publiq — 1 operation(s) for mailing.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Mailing
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-mailing-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-news-articles-api
+  name: publiq News articles API
+  description: The News articles API from publiq — 2 operation(s) for news articles.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - News articles
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-news-articles-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-orders-api
+  name: publiq Orders API
+  description: The Orders API from publiq — 2 operation(s) for orders.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Orders
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-orders-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-organizers-api
+  name: publiq Organizers API
+  description: The Organizers API from publiq — 20 operation(s) for organizers.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Organizers
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-organizers-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-ownerships-api
+  name: publiq Ownerships API
+  description: The Ownerships API from publiq — 4 operation(s) for ownerships.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Ownerships
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-ownerships-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-passholder-family-api
+  name: publiq Passholder Family API
+  description: The Passholder Family API from publiq — 3 operation(s) for passholder family.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Passholder Family
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-passholder-family-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-passholders-api
+  name: publiq Passholders API
+  description: The Passholders API from publiq — 16 operation(s) for passholders.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Passholders
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-passholders-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-permissions-api
+  name: publiq Permissions API
+  description: The Permissions API from publiq — 2 operation(s) for permissions.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Permissions
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-permissions-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-places-api
+  name: publiq Places API
+  description: The Places API from publiq — 30 operation(s) for places.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Places
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-places-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-productions-api
+  name: publiq Productions API
+  description: The Productions API from publiq — 4 operation(s) for productions.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Productions
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-productions-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-rewards-api
+  name: publiq Rewards API
+  description: The Rewards API from publiq — 5 operation(s) for rewards.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Rewards
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-rewards-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-schools-api
+  name: publiq Schools API
+  description: The Schools API from publiq — 1 operation(s) for schools.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Schools
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-schools-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-socialtariffvalidation-api
+  name: publiq Social Tariff Validation API
+  description: The SocialTariffValidation API from publiq — 3 operation(s) for socialtariffvalidation.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - SocialTariffValidation
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-socialtariffvalidation-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-taxonomy-api
+  name: publiq Taxonomy API
+  description: The Taxonomy API from publiq — 2 operation(s) for taxonomy.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Taxonomy
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-taxonomy-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-terms-api
+  name: publiq Terms API
+  description: The Terms API from publiq — 1 operation(s) for terms.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Terms
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-terms-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-ticket-sales-api
+  name: publiq Ticket sales API
+  description: The Ticket sales API from publiq — 4 operation(s) for ticket sales.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Ticket sales
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-ticket-sales-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-uitid-api
+  name: publiq UI Ti D API
+  description: The UiTiD API from publiq — 1 operation(s) for uitid.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - UiTiD
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-uitid-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-users-api
+  name: publiq Users API
+  description: The Users API from publiq — 3 operation(s) for users.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Users
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-users-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-visits-api
+  name: publiq Visits API
+  description: The Visits API from publiq — 1 operation(s) for visits.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Visits
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-visits-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-vouchers-api
+  name: publiq Vouchers API
+  description: The Vouchers API from publiq — 1 operation(s) for vouchers.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Vouchers
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-vouchers-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+- aid: publiq:publiq-check-ins-api
+  name: publiq Check Ins API
+  description: The Check Ins API from publiq — 3 operation(s) for check ins.
+  humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  baseURL: https://io.uitdatabank.be
+  tags:
+  - Check Ins
+  properties:
+  - type: OpenAPI
+    url: openapi/publiq-check-ins-api-openapi.yml
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/search-api/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-common-facet-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+  - type: Documentation
+    url: https://docs.publiq.be/docs/uitpas/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-passholder-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-grouppass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-reward-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-pass-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-order-schema.json
+  - type: JSONSchema
+    url: json-schema/publiq-card-system-membership-schema.json
+  - type: Documentation
+    url: https://docs.publiq.be/docs/museumpassmusees/introduction
+  - type: JSONSchema
+    url: json-schema/publiq-voucher-list-schema.json
+x-enrichment:
+  date: '2026-10-09'
+  status: enriched
+  artifacts_added: 59
+  pass: modular-v1
+  engine: identity=anthropic,contract=anthropic,surfaces=anthropic,docs=anthropic,regulatory=anthropic
+x-coverage:
+  state: covered
+  reason: identity-verified
+  detail: 'Enriched 2026-10-09: website and identity verified (verified) from the provider''s own pages; probed URLs below.'
+  evidence:
+  - url: https://www.publiq.be/
+    status: 200
+  - url: https://docs.publiq.be/
+    status: 200
+  - url: https://platform.publiq.be/nl
+    status: 200
+  - url: https://github.com/cultuurnet
+    status: 200
+  - url: https://helpdesk.publiq.be/hc/nl
+    status: 403

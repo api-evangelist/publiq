@@ -1,0 +1,32 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist overlay for publiq UiTdatabank Taxonomy API
+  version: 1.0.0
+extends: ../openapi/_original/publiq-uitdatabank-taxonomy-openapi.yml
+x-generated: '2026-10-09'
+x-method: generated
+x-source: openapi/publiq-uitdatabank-taxonomy-openapi.yml
+x-rationale: Adds documentation links and agent-facing hints (read-only/destructive flags per operation, derived from the
+  HTTP method) without mutating the original contract.
+actions:
+- target: $
+  description: Link the provider documentation for this API.
+  update:
+    externalDocs:
+      description: UiTdatabank Taxonomy API documentation (docs.publiq.be)
+      url: https://docs.publiq.be/docs/uitdatabank/taxonomy-api/reference/operations/list-terms
+- target: $.info
+  description: 'Point to cross-cutting publiq docs: authentication, errors, release notes.'
+  update:
+    x-apievangelist:
+      provider: publiq
+      authentication_docs: https://docs.publiq.be/docs/authentication
+      errors_docs: https://docs.publiq.be/docs/errors
+      release_notes: https://docs.publiq.be/docs/release-notes
+      support: https://platform.publiq.be/nl/ondersteuning
+- target: $.paths['/terms'].get
+  update:
+    x-agent-hints:
+      readOnly: true
+      destructive: false
+      requiresAuth: false

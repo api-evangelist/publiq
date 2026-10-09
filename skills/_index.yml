@@ -1,0 +1,55 @@
+generated: '2026-10-09'
+method: generated
+source: Packaged Agent Skills generated from the publiq OpenAPI contracts under openapi/. Every operationId verified verbatim
+  in the spec. No provider-published skills or AGENTS.md found (https://docs.publiq.be/AGENTS.md 404).
+skills:
+- file: publiq-search-uitdatabank-events.md
+  name: search-uitdatabank-events
+  api: openapi/publiq-uitdatabank-search-openapi.yml
+  operations:
+  - get-events
+  - get-places
+  - get-offers
+  - get-organizers
+- file: publiq-create-and-publish-an-event.md
+  name: create-and-publish-an-event
+  api: openapi/publiq-uitdatabank-entry-openapi.yml
+  operations:
+  - place-get
+  - event-post
+  - image-post
+  - event-images-post
+  - event-workflow-status-put
+  - event-get
+- file: publiq-check-in-a-uitpas-passholder.md
+  name: check-in-a-uitpas-passholder
+  api: openapi/publiq-uitpas-openapi.yml
+  operations:
+  - get-passes-uitpasNumber
+  - get-checkin-status
+  - post-checkins
+  - get-checkins
+- file: publiq-register-a-uitpas-ticket-sale.md
+  name: register-a-uitpas-ticket-sale
+  api: openapi/publiq-uitpas-openapi.yml
+  operations:
+  - get-tariffs
+  - post-ticket-sales
+  - get-ticket-sales
+  - delete-ticket-sales
+- file: publiq-redeem-a-uitpas-reward.md
+  name: redeem-a-uitpas-reward
+  api: openapi/publiq-uitpas-openapi.yml
+  operations:
+  - get-rewards
+  - get-rewards-id-redeem-status
+  - post-rewards-redeemed
+  - delete-rewards-redeemed-redeemedRewardId
+- file: publiq-register-a-museum-visit.md
+  name: register-a-museum-visit
+  api: openapi/publiq-museumpassmusees-partner-openapi.yml
+  operations:
+  - get-passes
+  - post-visits
+  - get-external-cards-type-identification
+  - post-external-cards-type-identification-visits

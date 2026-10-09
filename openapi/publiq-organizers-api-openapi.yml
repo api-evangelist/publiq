@@ -1,0 +1,2636 @@
+openapi: 3.2.0
+info:
+  title: Publiq Organizers API
+  contact:
+    name: publiq helpdesk
+    email: technical-support@publiq.be
+    url: https://docs.publiq.be
+  x-refined-note:
+  - x-source differs across the merged source definitions and was not carried
+  version: '1.0'
+  description: 'Operations tagged Organizers across 6 of this provider''s published API definitions: uitdatabank-entry.json, uitdatabank-search.json, uitpas-uitpas.json, publiq-uitdatabank-entry-openapi.yml, publiq-uitdatabank-search-openapi.yml, publiq-uitpas-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://io-test.uitdatabank.be
+  description: Testing
+- url: https://io.uitdatabank.be
+  description: Production
+- url: https://search-test.uitdatabank.be
+  description: Testing
+- description: Production
+  url: https://search.uitdatabank.be
+- url: https://api-test.uitpas.be
+  description: Testing
+- url: https://api.uitpas.be
+  description: Production
+tags:
+- name: Organizers
+paths:
+  /organizers:
+    post:
+      summary: organizer - create
+      description: 'Creates a new organizer.
+
+
+        > Organizers are required to have a unique `url` value to avoid accidental duplicate organizers.
+
+
+        > This request is also supported with an older, deprecated schema that was used to create an organizer with just its required fields.'
+      operationId: organizer-post
+      tags:
+      - Organizers
+      responses:
+        '201':
+          description: The organizer has been created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The id of newly created organizer.
+                  organizerId:
+                    type: string
+                    description: The id of newly created organizer. (Deprecated in favor of `id`.)
+                    deprecated: true
+                  url:
+                    type: string
+                    description: The url of the JSON-LD data of the newly created organizer.
+                required:
+                - id
+                - organizerId
+                - url
+              examples:
+                Example:
+                  value:
+                    id: 6b476d79-c404-425f-8b1c-357e39a60410
+                    organizerId: 6b476d79-c404-425f-8b1c-357e39a60410
+                    url: https://io-test.uitdatabank.be/organizers/6b476d79-c404-425f-8b1c-357e39a60410
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data
+
+            * https://api.publiq.be/probs/uitdatabank/duplicate-url'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples: {}
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      requestBody:
+        description: The complete details of the new organizer to create.
+        content:
+          application/json:
+            schema:
+              anyOf:
+              - $ref: ../models/organizer.json
+              - $ref: ../models/organizer-post-deprecated.json
+            examples:
+              Organizer with all possible fields:
+                value:
+                  mainLanguage: nl
+                  name:
+                    nl: Nederlandse naam
+                  url: https://www.publiq.be
+                  address:
+                    nl:
+                      addressCountry: BE
+                      addressLocality: Brussel
+                      postalCode: '1000'
+                      streetAddress: Wetstraat 1
+                  contactPoint:
+                    phone:
+                    - +32/1234567890
+                    email:
+                    - info@publiq.be
+                    url:
+                    - https://www.publiq.be
+                  labels:
+                  - label1
+                  - label2
+                  hiddenLabels:
+                  - labelA
+                  - labelB
+                  images:
+                  - '@id': https://io-test.uitdatabank.be/images/74969172-E2A6-4626-BA63-4B6919242A24
+                  - '@id': https://io-test.uitdatabank.be/images/85b04295-479c-40f5-b3dd-469dfb4387b3
+                    description: optional overwritten description
+                    copyrightHolder: optional overwritten copyright holder
+                    inLanguage: nl
+              Organizer with only required fields:
+                value:
+                  mainLanguage: nl
+                  name:
+                    nl: Nederlandse naam
+                  url: https://www.publiq.be
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    parameters: []
+    get:
+      summary: Search organizers
+      tags:
+      - Organizers
+      responses:
+        '200':
+          description: A single page of search results. If `?embed=true` is used, the search results will contain the complete JSON details. Otherwise only `@id` and `@type` will be returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  itemsPerPage:
+                    type: integer
+                    example: 30
+                    description: The amount of results that is being returned per page.
+                  totalItems:
+                    type: integer
+                    example: 2345
+                    description: Total amount of results for the given query parameters.
+                  member:
+                    type: array
+                    description: Search results (paginated). Note that the complete search results details will only be returned if `?embed=true` is used. Otherwise only the `@id` will be returned.
+                    items:
+                      $ref: ../models/organizer.json
+                  facet:
+                    type: object
+                    description: Facet counts per possible filter & value.
+                    properties:
+                      regions:
+                        $ref: ../models/common-facets.json
+                required:
+                - itemsPerPage
+                - totalItems
+                - member
+              examples:
+                Example:
+                  value:
+                    itemsPerPage: 20
+                    totalItems: 3
+                    member:
+                    - '@id': https://io-test.uitdatabank.be/organizers/7dc08012-488b-4e2b-b318-625d9bce03d7
+                      '@type': Organizer
+                    - '@id': https://io-test.uitdatabank.be/organizers/c683ddfe-4ff9-4b4b-a198-b9f553cfc479
+                      '@type': Organizer
+                    - '@id': https://io-test.uitdatabank.be/organizers/15d5de07-57e6-4015-84c6-e9c94ccfd9ef
+                      '@type': Organizer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: get-organizers
+      description: 'Returns a paginated list of organizers that match the given filters.
+
+
+        ### Repeating query parameters
+
+
+        Parameters that have the type `array[string]` and `[]` as a suffix in their name in the list of query parameters below can be repeated to filter on multiple values with an `AND` operator. For example:
+
+
+        * `?labels[]=uitpas` to only include results that have the label `uitpas`
+
+        * `?labels[]=uitpas&labels[]=paspartoe` to only include results that have both the labels `uitpas` and `paspartoe`'
+      parameters:
+      - $ref: '#/components/parameters/x-client-id'
+      - $ref: '#/components/parameters/x-api-key'
+      - $ref: '#/components/parameters/q'
+      - $ref: '#/components/parameters/name'
+      - $ref: '#/components/parameters/website'
+      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/domain'
+      - $ref: '#/components/parameters/postalCode'
+      - $ref: '#/components/parameters/addressCountry'
+      - $ref: '#/components/parameters/creator'
+      - $ref: '#/components/parameters/contributors'
+      - $ref: '#/components/parameters/facets'
+      - $ref: '#/components/parameters/regions'
+      - $ref: '#/components/parameters/coordinates'
+      - $ref: '#/components/parameters/embed'
+      - $ref: '#/components/parameters/distance'
+      - $ref: '#/components/parameters/bounds'
+      - $ref: '#/components/parameters/labels'
+      - $ref: '#/components/parameters/hasImages'
+      - $ref: '#/components/parameters/workflowStatusOrganizer'
+      - $ref: '#/components/parameters/sortScore'
+      - $ref: '#/components/parameters/sortCreated'
+      - $ref: '#/components/parameters/sortModified'
+      security:
+      - CLIENT_IDENTIFICATION: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /organizers/{organizerId}:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    get:
+      summary: organizer - get
+      operationId: organizer-get
+      responses:
+        '200':
+          description: Organizer details
+          content:
+            application/json:
+              schema:
+                $ref: ../models/organizer-with-read-example.json
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: Returns an the organizer with the given `organizerId`
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      tags:
+      - Organizers
+    put:
+      summary: organizer - update
+      operationId: organizer-put
+      responses:
+        '200':
+          description: The organizer has been updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The id of the updated organizer.
+                  organizerId:
+                    type: string
+                    description: The id of the updated organizer. (Deprecated in favor of `id`.)
+                    deprecated: true
+                  url:
+                    type: string
+                    description: The url of the JSON-LD data of the updated organizer.
+                required:
+                - id
+                - organizerId
+                - url
+              examples:
+                Example:
+                  value:
+                    id: 6b476d79-c404-425f-8b1c-357e39a60410
+                    organizerId: 6b476d79-c404-425f-8b1c-357e39a60410
+                    url: https://io-test.uitdatabank.be/organizers/6b476d79-c404-425f-8b1c-357e39a60410
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data
+
+            * https://api.publiq.be/probs/uitdatabank/duplicate-url'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples: {}
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      description: 'Updates the organizer with the given `organizerId` by completely overwriting it with the properties in the given JSON.
+
+
+        > Any existing (optional) properties on the organizer that are not included in the update request will be removed from the organizer.
+
+
+        > Certain existing `labels` or `hiddenLabels` may be kept on the organizer even if they are not included in the update request. For example if they were added via the UiTdatabank UI, or if the client or user making the request does not have sufficient permission to remove specific labels.'
+      requestBody:
+        description: The complete details of the organizer to update.
+        content:
+          application/json:
+            schema:
+              $ref: ../models/organizer.json
+            examples:
+              Organizer with all possible fields:
+                value:
+                  mainLanguage: nl
+                  name:
+                    nl: Nederlandse naam
+                  url: https://www.publiq.be
+                  address:
+                    nl:
+                      addressCountry: BE
+                      addressLocality: Brussel
+                      postalCode: '1000'
+                      streetAddress: Wetstraat 1
+                  contactPoint:
+                    phone:
+                    - +32/1234567890
+                    email:
+                    - info@publiq.be
+                    url:
+                    - https://www.publiq.be
+                  labels:
+                  - label1
+                  - label2
+                  hiddenLabels:
+                  - labelA
+                  - labelB
+                  images:
+                  - '@id': https://io-test.uitdatabank.be/images/74969172-E2A6-4626-BA63-4B6919242A24
+                  - '@id': https://io-test.uitdatabank.be/images/85b04295-479c-40f5-b3dd-469dfb4387b3
+                    description: optional overwritten description
+                    copyrightHolder: optional overwritten copyright holder
+                    inLanguage: nl
+              Organizer with only required fields:
+                value:
+                  mainLanguage: nl
+                  name:
+                    nl: Nederlandse naam
+                  url: https://www.publiq.be
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      tags:
+      - Organizers
+    delete:
+      summary: organizer - delete
+      description: '> Note: only users with the permissions `Organisaties beheren` can delete an organizer.
+
+
+        Delete the organizer with the given `organizerId`.'
+      operationId: delete-organizer
+      tags:
+      - Organizers
+      responses:
+        '204':
+          description: No Content. The organizer was deleted successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      x-internal: true
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /organizers/{organizerId}/address/{language}:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    - $ref: '#/components/parameters/language'
+    put:
+      summary: address - update
+      description: 'Updates the address of the organizer with the given `organizerId`. The new address of the request body will be set on the organizer in the given `language`.
+
+
+        An address consists of the following properties which are all required:
+
+        * streetAddress: the street name and street number
+
+        * postalCode: the postal code
+
+        * addressLocality: the town or city
+
+        * addressCountry: the 2-character country code'
+      operationId: organizer-address-put
+      tags:
+      - Organizers
+      responses:
+        '204':
+          description: No Content. The organizer address has been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (streetAddress) are missing
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      requestBody:
+        description: New address to set on the organizer (localized in the given language in the URL).
+        content:
+          application/json:
+            schema:
+              $ref: ../models/organizer-address-put.json
+            examples:
+              Example:
+                value:
+                  streetAddress: Kerkstraat 2
+                  postalCode: '3000'
+                  addressLocality: Leuven
+                  addressCountry: BE
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /organizers/{organizerId}/address:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    put:
+      summary: address.nl - update
+      description: '> This endpoint is deprecated, use `PUT /organizers/{organizerId}/address/{language}` instead.
+
+
+        Updates the address of the organizer with the given `organizerId`. The new address of the request body will be set on the organizer in the default language `nl`.
+
+
+        An address consists of the following properties which are all required:
+
+        * streetAddress: the street name and street number
+
+        * postalCode: the postal code
+
+        * addressLocality: the town or city
+
+        * addressCountry: the 2-character country code'
+      operationId: organizer-address-nl-put
+      tags:
+      - Organizers
+      responses:
+        '204':
+          description: No Content. The organizer address has been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (streetAddress) are missing
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      requestBody:
+        description: New address to set on the organizer (localized in the `nl` language).
+        content:
+          application/json:
+            schema:
+              $ref: ../models/organizer-address-put.json
+            examples:
+              Example:
+                value:
+                  streetAddress: Kerkstraat 2
+                  postalCode: '3000'
+                  addressLocality: Leuven
+                  addressCountry: BE
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      deprecated: true
+    delete:
+      summary: address - delete
+      description: Delete the address of the organizer with the given `organizerId`.
+      operationId: organizer-address-delete
+      tags:
+      - Organizers
+      responses:
+        '204':
+          description: No Content. The organizer address has been deleted successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      x-internal: true
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /organizers/{organizerId}/contact-point:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    put:
+      summary: contactPoint - update
+      description: 'Updates the contact point information of the organizer with the given `organizerId`. A contact point has a list of the following properties:
+
+        * Url: an array of valid urls
+
+        * Email: an array of valid emails
+
+        * Phone: an array of phone numbers
+
+
+        All properties are optional.'
+      operationId: organizer-contactPoint-put
+      tags:
+      - Organizers
+      responses:
+        '204':
+          description: No Content. The organizer contact point has been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples: {}
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      requestBody:
+        description: New contact point to set on the organizer.
+        content:
+          application/json:
+            schema:
+              $ref: ../models/organizer-contactPoint-put.json
+            examples:
+              Update multiple values:
+                value:
+                  url:
+                  - https://www.publiq.be
+                  - https://www.cultuurnet.be
+                  email:
+                  - info@publiq.be
+                  - info@cultuurnet.be
+                  phone:
+                  - 016 10 20 30
+                  - 016 11 22 33
+                  - 016 99 99 99
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /organizers/{organizerId}/contributors:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    get:
+      summary: contributors - get
+      operationId: organizer-contributors-get
+      responses:
+        '200':
+          description: An array of contributors.
+          content:
+            application/json:
+              schema:
+                $ref: ../models/common-contributors.json
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+      - Organizers
+      description: Returns a JSON array of contributors, meaning users that have edit rights on the organizer.
+      x-internal: true
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    put:
+      summary: contributors - update
+      operationId: organizer-contributors-put
+      responses:
+        '204':
+          description: No Content. The contributors have been successfully updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Example:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+      - Organizers
+      description: Updates the list of contributors on the organizer. These users will have edit rights on the organizer.
+      x-internal: true
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/organizer-contributors-put.json
+            examples:
+              Example:
+                value:
+                - info@publiq.be
+                - vragen@publiq.be
+        description: New list of contributors of the organizer. Previous contributors of the organizer that are not included in this list will be removed.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /organizers/{organizerId}/description/{language}:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    - $ref: '#/components/parameters/language'
+    put:
+      summary: description - update
+      description: Updates the description of the organizer with the given `organizerId`. The new description of the request body will be set on the organizer in the given `language`. The new description needs to be at least one character long.
+      operationId: organizer-description-put
+      tags:
+      - Organizers
+      responses:
+        '204':
+          description: No Content. The organizer description has been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (description) are missing
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      requestBody:
+        description: New description to set on the organizer (localized in the given language in the URL).
+        content:
+          application/json:
+            schema:
+              $ref: ../models/organizer-description-put.json
+            examples:
+              Example:
+                value:
+                  description: This organizer is responsible for creating cultural events for schools around Brussels.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    delete:
+      summary: description - delete
+      operationId: organizer-description-delete
+      responses:
+        '204':
+          description: No Content. The description was deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+      - Organizers
+      description: Deletes the description in the given `language` from the organizer with the given `organizerId`.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /organizers/{organizerId}/educational-description/{language}:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    - $ref: '#/components/parameters/language'
+    put:
+      summary: educational description - update
+      description: Updates the educational description of the organizer with the given `organizerId`. The new educational description of the request body will be set on the organizer in the given `language`. The new educational description needs to be at least one character long.
+      operationId: organizer-educational-description-put
+      tags:
+      - Organizers
+      responses:
+        '204':
+          description: No Content. The organizer educational description has been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (description) are missing
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      requestBody:
+        description: New educational description to set on the organizer (localized in the given language in the URL).
+        content:
+          application/json:
+            schema:
+              $ref: ../models/organizer-educational-description-put.json
+            examples:
+              Example:
+                value:
+                  educationalDescription: This organizer is responsible for creating cultural events for schools around Brussels.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    delete:
+      summary: educational description - delete
+      operationId: organizer-educational-description-delete
+      tags:
+      - Organizers
+      responses:
+        '204':
+          description: No Content. The educational description has been deleted.
+        '400':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      description: Deletes the educational description in the given `language` from the organizer with the given `organizerId`.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /organizers/{organizerId}/images:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    post:
+      summary: images - add
+      operationId: organizer-images-post
+      responses:
+        '204':
+          description: The image was added to the organizer.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /url
+                      error: The required properties url is missing.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/organizer-image-post.json
+            examples:
+              Example:
+                value:
+                  id: 546a90cd-a238-417b-aa98-1b6c50c1345c
+                  language: nl
+                  copyrightHolder: publiq
+                  description: Picture of the last publiq event
+        description: The image to add to an organizer.
+      description: 'Add an image to an organizer.
+
+
+        The image objects contains the following properties:
+
+        * `id`: the id of the image which is required
+
+        * `language`: an optional language of the image and description
+
+        * `copyrightHolder`: the optional copyright holder of the image
+
+        * `description`: the description of the image which is also optional
+
+
+        > The optional fields that are not provided will get the values from the properties of the orginally uploaded image.'
+      tags:
+      - Organizers
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    patch:
+      summary: images - patch
+      operationId: organizer-images-patch
+      responses:
+        '204':
+          description: The images were updated.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /0
+                      error: The required properties (id) are missing.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: 'Update one or more images of an organizer.
+
+
+        The images to update are identified by their `id`. It is possible to update one or more of the following properties:
+
+
+        * The `language` of an image
+
+        * The `description` of an image
+
+        * The `copyrightHolder` of an image
+
+
+        Only images included in the `PATCH` request will be updated. Other images that also exist on the organizer will not be removed or updated.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/organizer-images-patch.json
+        description: Images to update on the organizer. Images previously added to the organizer but not included in this request will be preserved.
+      tags:
+      - Organizers
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /organizers/{organizerId}/images/{imageId}:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    - $ref: '#/components/parameters/imageId'
+    delete:
+      summary: images - delete
+      tags:
+      - Organizers
+      responses:
+        '204':
+          description: The image was removed from the organizer.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: organizer-image-delete
+      description: Remove an image from an organizer.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /organizers/{organizerId}/labels/{labelName}:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    - $ref: '#/components/parameters/labelName'
+    put:
+      summary: labels - add
+      description: 'Adds the given label to the organizer with the given `organizerId`.
+
+
+        If the specified label does not exist yet in UiTdatabank a new label will be created with default visibility and public permissions (usable by anyone), and linked to the organizer.
+
+
+        The label must be longer than 1 character and shorter than 255 characters. The label can also not contain the semicolon character. It should match the regex `^(?=.{2,255}$)(?=.*\S.*\S.*)[^;]*$`'
+      operationId: organizer-labels-add
+      tags:
+      - Organizers
+      responses:
+        '204':
+          description: No Content. The label has been added successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    delete:
+      summary: labels - delete
+      description: 'Deletes the given label from the organizer with the given `organizerId`.
+
+
+        The label must be longer than 1 character and shorter than 255 characters. The label can also not contain the semicolon character. It should match the regex `^(?=.{2,255}$)(?=.*\S.*\S.*)[^;]*$`'
+      operationId: organizer-labels-delete
+      tags:
+      - Organizers
+      responses:
+        '204':
+          description: No Content. The label has been deleted from the organizer successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /organizers/{organizerId}/images/main:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    put:
+      summary: mainImage - update
+      tags:
+      - Organizers
+      responses:
+        '204':
+          description: Main image was set
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /imageId
+                      error: The required properties (imageId) are missing.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: organizer-mainImage-update
+      description: 'Sets the main image of an organizer. This only requires the `imageId` of the image to set as main.
+
+
+        > For backwards compatible reasons `mediaObjectId` is also supported.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/organizer-main-image-put.json
+            examples:
+              Example:
+                value:
+                  imageId: 4b349765-9499-4d35-b295-c82ede576cf0
+        description: The image id of the new main image.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /organizers/{organizerId}/name/{language}:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    - $ref: '#/components/parameters/language'
+    put:
+      summary: name - update
+      description: Updates the name of the organizer with the given `organizerId`. The new name of the request body will be set on the organizer in the given `language`. The new name needs to be at least one character long.
+      operationId: organizer-name-put
+      tags:
+      - Organizers
+      responses:
+        '204':
+          description: No Content. The organizer name has been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (name) are missing
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      requestBody:
+        description: New name to set on the organizer (localized in the given language in the URL).
+        content:
+          application/json:
+            schema:
+              $ref: ../models/organizer-name-put.json
+            examples:
+              Example:
+                value:
+                  name: publiq
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /organizers/{organizerId}/name:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    put:
+      summary: name.nl - update
+      description: '> This endpoint is deprecated, use `PUT /organizers/{organizerId}/name/{language}` instead.
+
+
+        Updates the name of the organizer with the given `organizerId`. The new name of the request body will be set on the organizer with default language `nl`. The new name needs to be at least one character long.'
+      operationId: organizer-name-nl-put
+      tags:
+      - Organizers
+      responses:
+        '204':
+          description: No Content. The organizer name has been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (name) are missing
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      requestBody:
+        description: New name to set on the organizer (localized in the `nl` language).
+        content:
+          application/json:
+            schema:
+              $ref: ../models/organizer-name-put.json
+            examples:
+              Example:
+                value:
+                  name: publiq
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      deprecated: true
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /organizers/{organizerId}/permissions:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    get:
+      summary: permissions - get
+      tags:
+      - Organizers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  permissions:
+                    type: array
+                    description: The permissions granted to the user for the organizer.
+                    items:
+                      $ref: ../models/permission.json
+                required:
+                - permissions
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: get-organizers-organizerId-permissions
+      x-internal: true
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      description: Get user permissions relating to an organizer.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /organizers/{organizerId}/url:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    put:
+      summary: url - update
+      description: Updates the url of the organizer with the given `organizerId`. The provided url can not be in use on another organizer.
+      operationId: organizer-url-put
+      tags:
+      - Organizers
+      responses:
+        '204':
+          description: No Content. The organizer url has been updated successfully.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data
+
+            * https://api.publiq.be/probs/uitdatabank/duplicate-url'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (url) are missing
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      requestBody:
+        description: New url to set on the organizer.
+        content:
+          application/json:
+            schema:
+              $ref: ../models/organizer-url-put.json
+            examples:
+              Example:
+                value:
+                  url: https://www.publiq.be
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /organizers/{organizerId}/verenigingsloket:
+    parameters:
+    - $ref: '#/components/parameters/organizerId'
+    get:
+      summary: verenigingsloket - get
+      description: 'Gets the verenigingsloket information for the organizer with the given `organizerId`. This endpoint returns the vcode, URL and status from the verenigingsloket registry.
+
+
+        The status can either be "confirmed" or "cancelled".'
+      operationId: organizer-verenigingsloket-get
+      tags:
+      - Organizers
+      responses:
+        '200':
+          description: Verenigingsloket information for the organizer.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  vcode:
+                    type: string
+                    description: The verenigingsloket vcode identifier.
+                    example: V0019001
+                  url:
+                    type: string
+                    format: uri
+                    description: The URL to the organization page on verenigingsloket.be
+                    example: https://www.verenigingsloket.be/nl/verenigingen/V0019001
+                  status:
+                    type: string
+                    enum:
+                    - confirmed
+                    - pending
+                    - rejected
+                    example: confirmed
+                    description: The status can either be "confirmed" or "cancelled".
+                required:
+                - vcode
+                - url
+                - status
+              examples:
+                Confirmed organization:
+                  value:
+                    vcode: V0019001
+                    url: https://www.verenigingsloket.be/nl/verenigingen/V0019001
+                    status: confirmed
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Organizer not found in verenigingsloket.
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    type: https://api.publiq.be/probs/url/not-found
+                    title: Organizer a7527e85-7d03-465f-b169-f9dab1c812cc not found in verenigingsloket.
+                    status: 404
+                properties:
+                  type:
+                    type: string
+                    description: 'https://api.publiq.be/probs/url/not-found
+
+                      '
+                  title:
+                    type: string
+                    description: Description of error
+                  status:
+                    type: integer
+                    description: 'http code: 404'
+                  detail:
+                    type: string
+                    x-stoplight:
+                      id: v4517t1mds4p1
+                    description: Details of error
+                required:
+                - type
+                - title
+                - status
+              examples:
+                Example 1:
+                  value:
+                    type: https://api.publiq.be/probs/url/not-found
+                    title: Organizer a7527e85-7d03-465f-b169-f9dab1c812cc not found in verenigingsloket.
+                    status: 404
+                Example 2:
+                  value:
+                    type: https://api.publiq.be/probs/url/not-found
+                    title: Not Found
+                    status: 404
+                    detail: The Organizer with id "a7527e85-7d03-465f-b169-f9dab1c812cc!" was not found.
+        '503':
+          description: Failed to connect to verenigingsloket
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    type: https://api.publiq.be/uitdatabank/verenigingsloket-api-failure
+                    title: Failed to connect to verenigingsloket
+                    status: 503
+                properties:
+                  type:
+                    type: string
+                    description: https://api.publiq.be/uitdatabank/verenigingsloket-api-failure
+                  title:
+                    type: string
+                    description: Description of error
+                  status:
+                    type: integer
+                    description: HTTP code 503
+                required:
+                - type
+                - title
+                - status
+              examples:
+                Example 1:
+                  value:
+                    type: https://api.publiq.be/uitdatabank/verenigingsloket-api-failure
+                    title: Failed to connect to verenigingsloket
+                    status: 503
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      x-internal: true
+    delete:
+      summary: Delete organizers organizer id verenigingsloket
+      tags:
+      - Organizers
+      operationId: delete-organizers-organizerId-verenigingsloket
+      responses:
+        '201':
+          description: Connection created with Verenigingsloket
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '503':
+          description: Failed to connect to verenigingsloket.
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    type: https://api.publiq.be/uitdatabank/verenigingsloket-api-failure
+                    title: Failed to connect to verenigingsloket
+                    status: 503
+                properties:
+                  type:
+                    type: string
+                    description: https://api.publiq.be/uitdatabank/verenigingsloket-api-failure
+                  title:
+                    type: string
+                    description: Failed to connect to verenigingsloket
+                  status:
+                    type: integer
+                    description: Http status code 503
+                required:
+                - type
+                - title
+                - status
+              examples:
+                Example 1:
+                  value:
+                    type: https://api.publiq.be/uitdatabank/verenigingsloket-api-failure
+                    title: Failed to connect to verenigingsloket
+                    status: 503
+      description: 'Disconnect an organizer from the Verenigingsloket. The organizer’s status in Verenigingsloket will be updated to “cancelled.”
+
+        Only owners (and godusers) are authorized to perform this action.'
+      x-internal: true
+      x-summary-source: derived
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /organizers/{id}:
+    parameters:
+    - schema:
+        type: string
+      name: id
+      in: path
+      required: true
+      description: ID of the organizer
+    get:
+      summary: Retrieve organizer by ID
+      tags:
+      - Organizers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organizer'
+              examples:
+                Example:
+                  value:
+                    id: c097fa2e-d9be-42e6-b41a-ec3d4d4cbad1
+                    name: CC De Werf
+                    address:
+                      postalCode: '9300'
+                      city: Aalst
+                    cardSystems:
+                    - id: 1
+                      name: UiTPAS Dender
+                      branding:
+                        logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+                        primaryColor: rgba(0,0,0,1.0)
+                        secondaryColor: rgba(97,166,14,1.0)
+                      links:
+                        website: https://www.uitpas.be
+                      cities:
+                      - postalCode: '9300'
+                        name: Aalst
+                      - postalCode: '9400'
+                        name: Ninove
+                      permanent: true
+                      cardlessRegistrationType: NONE
+                    linkedLocationId: db18c985-c6a3-4454-9875-b28f74a9b823
+        '401':
+          $ref: '#/components/responses/Unauthorized_2'
+        '403':
+          $ref: '#/components/responses/Forbidden_2'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      operationId: get-organizers-organizerId
+      description: 'Retrieve organizer by ID.
+
+
+        The caller of this request must have `ORGANIZERS_SEARCH` permission for the given organizer.'
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      parameters: []
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /organizers/{organizerId}/admins:
+    parameters:
+    - schema:
+        type: string
+      name: organizerId
+      in: path
+      required: true
+      description: The ID of the organizer.
+    get:
+      summary: Retrieve admin users for organizer
+      tags:
+      - Organizers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizerAdminsPaginatedCollection'
+              examples:
+                Example:
+                  value:
+                    totalItems: 1
+                    member:
+                    - userId: d50e6c3c-8aff-430a-86ce-b125fdc3b998
+                      email: admin1@example.com
+                      type: ADMIN
+        '401':
+          $ref: '#/components/responses/Unauthorized_2'
+        '403':
+          $ref: '#/components/responses/Forbidden_2'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      operationId: get-organizers-organizerId-admins
+      description: 'Retrieve all admin users of the given organizer.
+
+
+        The caller of this request must have `ORGANIZERS_ADMINS_READ` permission for the given organizer or the caller must be an organizer admin user (any type) of the given organizer.'
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      parameters:
+      - $ref: '#/components/parameters/start'
+      - $ref: '#/components/parameters/limit'
+    post:
+      summary: Add admin user for organizer
+      operationId: post-organizers-organizerId-admins
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizerAdmin'
+              examples:
+                Example:
+                  value:
+                    id: 9306c939-04c9-4585-ad71-000fa01ded6f
+                    userId: d50e6c3c-8aff-430a-86ce-b125fdc3b998
+                    email: newadmin@example.com
+                    type: ADMIN
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          headers: {}
+        '401':
+          $ref: '#/components/responses/Unauthorized_2'
+        '403':
+          $ref: '#/components/responses/Forbidden_2'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          headers: {}
+      tags:
+      - Organizers
+      description: 'Add a new admin user for the given organizer.
+
+
+        The caller of this request must have `ORGANIZERS_ADMINS_WRITE` permission for the given organizer or the caller must be an organizer admin user of type `ADMIN` of the given organizer.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizerAdmin'
+            examples:
+              Example:
+                value:
+                  email: newadmin@example.com
+                  type: ADMIN
+        description: Request body with the email of the new organizer admin.
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /organizers/{organizerId}/admins/{adminUserId}:
+    parameters:
+    - schema:
+        type: string
+      name: organizerId
+      in: path
+      required: true
+      description: The ID of the organizer.
+    - schema:
+        type: string
+      name: adminUserId
+      in: path
+      required: true
+      description: The ID of the organizer admin user.
+    delete:
+      summary: Remove admin user from organizer
+      operationId: delete-organizers-organizerId-admins-adminId
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/Unauthorized_2'
+        '403':
+          $ref: '#/components/responses/Forbidden_2'
+        '404':
+          description: Not Found
+          headers: {}
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Organizers
+      description: 'Remove an existing admin user from the given organizer.
+
+
+        The caller of this request must have `ORGANIZERS_ADMINS_WRITE` permission for the given organizer or the caller must be an organizer admin user of type `ADMIN` of the given organizer.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+components:
+  responses:
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organizer abcd1234
+    NotFound:
+      description: 'The requested resource (URL) could not be found.
+
+        This can be due to one of multiple reasons:
+
+
+        * The endpoint has a typo and/or does not exist on the API
+
+        * One of the path parameters contains a value that is invalid or does not exist
+
+        * One of the required query parameters is missing
+
+        * One of the query parameters has an invalid value
+
+
+        The `detail` property of the response should contain more specific information.
+
+
+        The `type` will always be `https://api.publiq.be/probs/url/not-found`.'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/url/not-found
+                title: URL not found
+                status: 404
+                detail: The resource with id "76C6AC08-763C-492E-A68C-CBC43A857229" was not found.
+    UnsupportedMediaType:
+      description: The request does not work with the provided content-type. Check the detail to know which content-type you should use for this request. The `type` will always be `https://api.publiq.be/probs/body/unsupported-media-type`.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/body/unsupported-media-type
+                title: Unsupported Media Type
+                status: 415
+                detail: POST requests require Content-Type text/plain.
+    Unauthorized_2:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    Forbidden_2:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+    Unauthorized_3:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error_4'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    Forbidden_3:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error_4'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+  parameters:
+    imageId:
+      name: imageId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 365f99a4-5490-4313-8ee9-adebea2dceb0
+      description: The unique uuid of an already uploaded image.
+    labelName:
+      name: labelName
+      in: path
+      required: true
+      schema:
+        type: string
+        example: MyLabel
+        pattern: ^(?=.{2,255}$)(?=.*\S.*\S.*)[^;]*$
+      description: The label to add to an event, place or organizer. The label name should be longer than 1 character but shorter than 255 characters. The label name should not contain semicolons.
+    language:
+      name: language
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+        - nl
+        - fr
+        - en
+        - de
+      description: The language of the request body properties
+    organizerId:
+      name: organizerId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: F2D5D20C-CC98-4979-9CD2-453ABAD979B5
+      description: Unique id of an organizer, in the format of a UUID
+    q:
+      schema:
+        type: string
+        example: labels:"ook voor kinderen" OR labels:"ook voor jongeren"
+      in: query
+      name: q
+      description: An advanced query in Lucene syntax, allowing you to construct complex AND/OR filters on specific fields.
+    labels:
+      schema:
+        type: array
+        items:
+          type: string
+      in: query
+      name: labels[]
+      style: form
+      description: Returns only results that have the given label(s) in either their `labels` or `hiddenLabels` properties. May be repeated to only return results that have all the given labels. See the operation's description above for more info on how to repeat parameters.
+      explode: true
+    addressCountry:
+      schema:
+        type: string
+        example: BE
+        pattern: ^[A-Z][A-Z]$
+        default: BE
+      in: query
+      name: addressCountry
+      description: Returns only results that have the exact same country code in their address. Formatted as an [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code. The default value can be disabled by setting the value to `*` or by using the `disableDefaultFilters` query parameter.
+    hasImages:
+      schema:
+        type: boolean
+      in: query
+      name: hasImages
+      description: Returns only results that have one or more items inside their `images` property if set to `true`. Returns only results without `images` property if set to `false`.
+    coordinates:
+      schema:
+        type: string
+        pattern: ^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$
+        example: 50.8511740,4.338674
+      in: query
+      name: coordinates
+      description: A pair of latitude and longitude coordinates to find results that are located within a distance of the given geographical point. Must be used in combination with the `distance` parameter.
+    sortCreated:
+      schema:
+        type: string
+        enum:
+        - asc
+        - desc
+      in: query
+      name: sort[created]
+      description: Sorts the results by their `created` date-time, either with the oldest results first (`asc`) or the newest results first (`desc`). See (the guide about sorting)[../docs/search-api/sorting.md] for more information.
+    sortScore:
+      schema:
+        type: string
+        enum:
+        - asc
+        - desc
+      in: query
+      name: sort[score]
+      description: Sorts the results by their score (relevance), either with the lowest score first (`asc`) or the highest score first (`desc`). See (the guide about sorting)[../docs/search-api/sorting.md] for more information.
+    distance:
+      schema:
+        type: string
+        pattern: ^\s*(\d+\.?\d*)\s*(mi|miles|yd|yards|ft|feet|in|inch|km|kilometers|m|meters|cm|centimeters|mm|millimeters|NM|nmi|nauticalmiles)\s*$
+        example: 10km
+      in: query
+      name: distance
+      description: Returns only results that are geographically located within the given distance from the `coordinates` parameter.
+    creator:
+      schema:
+        type: string
+        example: lxBfdgJwUaJUgm7CBCeKF2eE2fnsyLCB@clients
+      in: query
+      name: creator
+      description: 'Returns only results that have a creator with the given user identifier. Due to historic reasons and evolutions in the id management systems, a user identifier can be one of: a UUID (for creators that had an UiTiD v1), an Auth0 user id (for new UiTiD v2 creators), or in some very old cases even an email address or nickname. (No new events or places are created with an email address or nickname as creator.) Can also be a client id suffixed with `@clients` in the case of results created with a client access token instead of a user access token.'
+    x-api-key:
+      schema:
+        type: string
+      in: header
+      name: x-api-key
+      description: The API key of your project on https://projectaanvraag.uitdatabank.be (if not using a client id). May also be replaced with an `apiKey` query parameter. Will be deprecated in favour of `x-client-id` in the future, but will still be supported.
+      deprecated: true
+    postalCode:
+      schema:
+        type: string
+        example: '1000'
+      in: query
+      name: postalCode
+      description: Returns only results that have the exact same postal code in their address. Typically 4 digits for Belgian addresses but can also be a different format for international addresses.
+    regions:
+      schema:
+        type: array
+        items:
+          type: string
+      in: query
+      name: regions[]
+      description: Returns only results that are geographically located in the given region. Regions may be fetched programmatically from [https://search.uitdatabank.be/autocomplete.json](https://search.uitdatabank.be/autocomplete.json).
+      style: form
+      explode: true
+    domain:
+      schema:
+        type: string
+        example: www.publiq.be
+      in: query
+      name: domain
+      description: Returns only results that have a website on the given domain. Domains in the query parameter and on the search results are normalized to reduce false negatives.
+    facets:
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - regions
+          - types
+          - themes
+          - facilities
+          - labels
+      in: query
+      name: facets[]
+      description: Adds an extra `facet` property in the response with possible values for a given filter, and a prediction of the total results if applied. May be repeated to include facet counts for multiple filters. See the operation's description above for more info on how to repeat parameters. See (the guide about facets)[../docs/search-api/advanced/facets.md] for more information.
+      style: form
+      explode: true
+    website:
+      schema:
+        type: string
+        example: https://www.publiq.be/example
+      in: query
+      name: website
+      description: Returns only results that have the given URL as their website. URLs in the query parameter and on the search results are normalized to reduce false negatives.
+    bounds:
+      schema:
+        type: string
+        example: 34.172684,-118.604794|34.236144,-118.500938
+        pattern: ^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)\|[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$
+      in: query
+      name: bounds
+      description: Returns only results that are located in a specific geographical area defined by a pair of south-west coordinates and north-east coordinates. The two pairs of coordinates are separated by a pipe character (`|`).
+    contributors:
+      schema:
+        format: email
+        type: string
+        example: technical-support@publiq.be
+      in: query
+      name: contributors
+      description: Returns results for which a particular user / email address is a contributor
+    workflowStatusOrganizer:
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - ACTIVE
+          - DELETED
+          - '*'
+          example: ACTIVE
+      style: form
+      explode: false
+      in: query
+      name: workflowStatus
+      description: Returns only results with exactly the same workflow status as the given enum value. Accepts multiple comma-separated values to return results that have one of the given workflow statuses. Defaults to only return results that have the workflow status `ACTIVE`. The default value can be reset by setting the parameter to `*`. See (the guide about default filters)[../docs/search-api/common-filters/default-filters.md] for more information.
+    embed:
+      schema:
+        type: boolean
+      in: query
+      name: embed
+      description: Returns the results with the actual JSON bodies of the individual items
+    x-client-id:
+      schema:
+        type: string
+      in: header
+      name: x-client-id
+      description: The client id of your project (if not using an API key). May also be replaced with a `clientId` query parameter.
+    sortModified:
+      schema:
+        type: string
+        enum:
+        - asc
+        - desc
+      in: query
+      name: sort[modified]
+      description: Sorts the results by their `modified` date-time, either with the least recently modified results first (`asc`) or the most recently modified results first (`desc`). See (the guide about sorting)[../docs/search-api/sorting.md] for more information.
+    id:
+      schema:
+        type: string
+        example: f29d2182-2db0-4f99-831a-8e6a64c1c9c1
+      in: query
+      name: id
+      description: Returns only results that have the exact same id. An id can be extracted from an event, place, or organizer URI by taking all the characters after the last `/`. For example for the URI `https://io-test.uitdatabank.be/events/75573a64-ddc8-4fd0-8b07-d258939dd74f` the id is `75573a64-ddc8-4fd0-8b07-d258939dd74f`. Note that while it will be a UUID in most cases, it is not guaranteed to always be one!
+    name:
+      schema:
+        type: string
+        example: publiq
+      in: query
+      name: name
+      description: Returns only results whose name autocompletes on the given name. For example searching for `pub` will return matches with `publiq` in the name.
+    start:
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      in: query
+      name: start
+      description: Position to start returning results from. When set to `0` the results starting from the very first position will be returned. When set to for example `10` the results 0-9 will be skipped and the ones starting from position 10 will be returned. Can be used in combination with `limit` for pagination.
+    limit:
+      schema:
+        type: integer
+        default: 20
+        minimum: 0
+      in: query
+      name: limit
+      description: 'Maximum amount of results to return. Can be used in combination with `start` for pagination. **Important**: the maximum value for `limit` is `500`. Exceeding this value will result in an error.'
+  schemas:
+    Error:
+      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
+    CardSystem:
+      title: CardSystem
+      description: A region, usually one or multiple municipalities in Belgium, that uses UiTPAS and provides discounts and/or rewards. For example "Paspartoe" (Brussels), UiTPAS Leuven, UiTPAS Hasselt, UiTPAS Gent, and so on.
+      type: object
+      x-tags:
+      - Models
+      example:
+        id: 1
+        name: UiTPAS Dender
+        branding:
+          logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+          primaryColor: rgba(0,0,0,1.0)
+          secondaryColor: rgba(97,166,14,1.0)
+        links:
+          website: https://www.uitpas.be
+        cities:
+        - postalCode: '9300'
+          name: Aalst
+        - postalCode: '9400'
+          name: Ninove
+        permanent: true
+      properties:
+        id:
+          type: integer
+          description: ID of the card system
+        name:
+          type: string
+          description: Name of the card system. This field is always available in responses.
+        branding:
+          type: object
+          description: Branding information of the card system
+          properties:
+            logo:
+              type: string
+              description: URL to the logo of the card system
+            primaryColor:
+              type: string
+              description: Color code of the primary branding color.
+            secondaryColor:
+              type: string
+              description: Color code of the secondary branding color.
+        links:
+          type: object
+          description: Links of the card system
+          properties:
+            website:
+              type: string
+              description: URL of the website of the card system
+        cities:
+          type: array
+          description: List of cities that are part of this card system
+          items:
+            $ref: '#/components/schemas/City'
+        permanent:
+          type: boolean
+          description: Indicates whether this is a permanent card system
+        allowsCardlessRegistration:
+          type: boolean
+          description: Indicates if cardless registration is enabled
+        cardlessRegistrationType:
+          type: string
+          description: Indicates the types of online cardless registrations this cardsystem supports.
+          enum:
+          - ALL
+          - REGULAR
+          - SOCIALTARIFF
+          - NONE
+        socialTariffInfo:
+          type: string
+          description: Optional information about social tariff entitlement in this card system.
+      required:
+      - id
+    OrganizerAdmin:
+      title: OrganizerAdmin
+      x-stoplight:
+        id: 6or68aa5gscq9
+      type: object
+      description: An admin user for an organizer.
+      x-tags:
+      - Models
+      properties:
+        userId:
+          type: string
+          description: UiTiD user ID of this organizer admin. This field is always available in responses.
+          x-stoplight:
+            id: xrz0hu56plasy
+        email:
+          type: string
+          x-stoplight:
+            id: as12vt0gw8i9i
+          description: 'Email of the organizer admin. '
+        type:
+          type: string
+          x-stoplight:
+            id: a804wfrysxttx
+          description: Type of the organizer admin.
+          enum:
+          - MEMBER
+          - ADMIN
+      required:
+      - email
+      - type
+    City:
+      title: City
+      type: object
+      x-tags:
+      - Models
+      example:
+        postalCode: '9300'
+        name: Aalst
+      properties:
+        postalCode:
+          type: string
+          description: Postalcode of the city
+        name:
+          type: string
+          description: Name of the city
+      required:
+      - postalCode
+      - name
+    OrganizerAdminsPaginatedCollection:
+      title: OrganizerAdminsPaginatedCollection
+      x-stoplight:
+        id: ixcgvbnnh23z2
+      type: object
+      x-tags:
+      - Models
+      description: Paginated response object for organizer admins.
+      properties:
+        totalItems:
+          type: integer
+          description: Total number of organizer results (can be more than the amount of results in the response).
+        member:
+          type: array
+          description: List of organizer results for this specific (paginated) request.
+          items:
+            $ref: '#/components/schemas/OrganizerAdmin'
+    Organizer:
+      title: Organizer
+      type: object
+      description: An organisation that partners with UiTPAS to provide discounts and/or rewards, and/or allows points to be collected at their events.
+      x-tags:
+      - Models
+      properties:
+        id:
+          type: string
+          description: Unique ID of an UiTPAS organizer. (Same as its ID in UiTdatabank)
+        name:
+          type: string
+          description: Human-readable name of an UiTPAS organizer.
+        cardSystems:
+          type: array
+          description: Card systems linked to this organizer
+          items:
+            $ref: '#/components/schemas/CardSystem'
+        linkedLocationId:
+          type: string
+          description: ID of the location linked to this organizer.
+          readOnly: true
+        address:
+          type: object
+          description: Address of this organizer. This property is alway available in responses.
+          required:
+          - city
+          properties:
+            street:
+              type: string
+              description: Street address of this organizer
+            postalCode:
+              type: string
+              description: Postal code of this organizer
+            city:
+              type: string
+              description: City of this organizer
+          readOnly: true
+      required:
+      - id
+    OrganizersPaginatedResponse:
+      title: OrganizersPaginatedResponse
+      type: object
+      x-tags:
+      - Models
+      description: Paginated response object for organizers
+      properties:
+        totalItems:
+          type: integer
+          description: Total number of organizer results (can be more than the amount of results in the response).
+        member:
+          type: array
+          description: List of organizer results for this specific (paginated) request.
+          items:
+            $ref: '#/components/schemas/Organizer'
+    Error_2:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+    common-facet:
+      title: facet
+      description: A single facet for a specific filter. Every facet has a human-readable name and total count to show to end-users to drill down search results.
+      type: object
+      properties:
+        name:
+          type: object
+          title: name
+          description: An internationalized name with one or more localized names.
+          minProperties: 1
+          properties:
+            nl:
+              type: string
+              title: name.localized
+              description: A human-readable name in the `nl` (Dutch) language.
+              minLength: 1
+              maxLength: 90
+              pattern: \S
+              examples:
+              - Example name
+            fr:
+              type: string
+              title: name.localized
+              description: A human-readable name in the `fr` (French) language.
+              minLength: 1
+              maxLength: 90
+              pattern: \S
+              examples:
+              - Example name
+            de:
+              type: string
+              title: name.localized
+              description: A human-readable name in the `de` (German) language.
+              minLength: 1
+              maxLength: 90
+              pattern: \S
+              examples:
+              - Example name
+            en:
+              type: string
+              title: name.localized
+              description: A human-readable name in the `en` (English) language.
+              minLength: 1
+              maxLength: 90
+              pattern: \S
+              examples:
+              - Example name
+          examples:
+          - nl: Voorbeeld van een naam
+            fr: Exemple d'un nom
+            de: Beispiel eines Namens
+            en: Example of a name
+        count:
+          type: integer
+          description: Total results if the filter is applied with this value (= the key referencing this object).
+        children:
+          type: object
+          description: Children facets, in the case of filters with a hierarchy.
+          additionalProperties:
+            $ref: '#/components/schemas/common-facet'
+      required:
+      - name
+      - count
+      examples:
+      - name:
+          nl: Vlaams-Brabant
+          fr: Brabant Flamand
+          en: Flemish Brabant
+        count: 22
+        children:
+          gem-leuven:
+            name:
+              nl: Leuven
+              fr: Louvain
+            count: 17
+          gem-diest:
+            name:
+              nl: Diest
+              fr: Diest
+            count: 5
+    Error_3:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+    Error_4:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+  securitySchemes:
+    USER_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A user access token, obtained by redirecting the end user to publiq's authorization server to login using the **Authorization Code OAuth Flow**. See the [authentication docs about user access tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+    CLIENT_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
+    CLIENT_IDENTIFICATION:
+      name: x-client-id
+      type: apiKey
+      in: header
+    CUSTOM_TOKEN:
+      name: x-custom-token
+      type: apiKey
+      in: header
+x-refined-from:
+- uitdatabank-entry.json
+- uitdatabank-search.json
+- uitpas-uitpas.json
+- publiq-uitdatabank-entry-openapi.yml
+- publiq-uitdatabank-search-openapi.yml
+- publiq-uitpas-openapi.yml

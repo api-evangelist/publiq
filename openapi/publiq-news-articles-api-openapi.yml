@@ -1,0 +1,409 @@
+openapi: 3.2.0
+info:
+  title: Publiq News articles API
+  version: '3.0'
+  contact:
+    name: publiq helpdesk
+    email: technical-support@publiq.be
+    url: https://docs.publiq.be
+  x-refined-note:
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged News articles across 2 of this provider''s published API definitions: uitdatabank-entry.json, publiq-uitdatabank-entry-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://io-test.uitdatabank.be
+  description: Testing
+- url: https://io.uitdatabank.be
+  description: Production
+tags:
+- name: News articles
+paths:
+  /news-articles:
+    post:
+      summary: news article - create
+      operationId: news-articles-post
+      responses:
+        '201':
+          description: The News Article was created successfully
+          content:
+            application/ld+json:
+              schema:
+                $ref: ../models/newsArticle.json
+            application/json:
+              schema:
+                $ref: ../models/newsArticle.json
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /url
+                      error: The required property url is missing.
+      description: 'Creates a news article.
+
+
+        > If a news article with the same `url` and `about` already exists, this request will result in a `400` error response to prevent duplicates. If you want to update the existing news article instead, find it programmatically using `GET /news-articles` with `url` and `about` query parameters, and send a `PUT /news-articles/{articleId}` request instead.
+
+
+        > For backward compatibility with older API clients, this path is also available at `/news_articles`. However the preferred path is `/news-articles`.'
+      x-internal: true
+      requestBody:
+        description: The complete details of the new news article to create.
+        content:
+          application/json:
+            schema:
+              $ref: ../models/newsArticle-post.json
+      tags:
+      - News articles
+    get:
+      summary: news article - search
+      description: 'Returns the details of all news articles matching the provided search. The search can be created based on a combination of 3 query parameters:
+
+        - `publisher`
+
+        - `about`
+
+        - `url`
+
+
+        Basic pagination is supported and the results are limited to 30 news articles.
+
+
+        The extra query parameter `page` can be used to get news articles after the first 30 results.
+
+
+        > For backward compatibility with older API clients, this path is also available at `/news_articles`. However the preferred path is `/news-articles`.'
+      operationId: news-articles-get
+      responses:
+        '200':
+          description: News Articles details
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  hydra:member:
+                    type: array
+                    description: News article results for the requested page.
+                    items:
+                      $ref: ../models/newsArticle.json
+              examples:
+                Example:
+                  value:
+                    hydra:member:
+                    - id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+                      headline: API reward for publiq
+                      inLanguage: en
+                      text: This year publiq won an API reward for it's innovative RESTful API
+                      about: 17284745-7bcf-461a-aad0-d3ad54880e75
+                      publisher: BILL
+                      publisherLogo: https://www.bill.be/img/favicon.png
+                      url: https://www.bill.be/blog/publiq-award
+                    - id: 9bf7f5fa-4a0b-4475-9ebb-f776e33510f5
+                      headline: madewithlove maakt een API
+                      inLanguage: nl
+                      text: madewithlove maakt een RESTful API in samenwerking met publiq
+                      about: a359d337-4f83-4d05-9b81-b1f048ad2309
+                      publisher: BUZZ
+                      publisherLogo: https://www.buzz.be/img/favicon.png
+                      url: https://www.buzz.be/blog/api
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/newsArticle.json
+              examples:
+                Example:
+                  value:
+                  - id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+                    headline: API reward for publiq
+                    inLanguage: en
+                    text: This year publiq won an API reward for it's innovative RESTful API
+                    about: 17284745-7bcf-461a-aad0-d3ad54880e75
+                    publisher: BILL
+                    publisherLogo: https://www.bill.be/img/favicon.png
+                    url: https://www.bill.be/blog/publiq-award
+                  - id: 9bf7f5fa-4a0b-4475-9ebb-f776e33510f5
+                    headline: madewithlove maakt een API
+                    inLanguage: nl
+                    text: madewithlove maakt een RESTful API in samenwerking met publiq
+                    about: a359d337-4f83-4d05-9b81-b1f048ad2309
+                    publisher: BUZZ
+                    publisherLogo: https://www.buzz.be/img/favicon.png
+                    url: https://www.buzz.be/blog/api
+      x-internal: true
+      parameters:
+      - schema:
+          type: string
+          minLength: 1
+        in: query
+        name: publisher
+        description: The publisher of the News Article
+      - schema:
+          type: string
+          format: uuid
+        in: query
+        name: about
+        description: The id of the event this News Article is about
+      - schema:
+          $ref: ../models/common-string-uri.json
+        in: query
+        name: url
+        description: The url of the News Article
+      - schema:
+          type: integer
+        in: query
+        name: page
+        description: The page the results should start from
+      tags:
+      - News articles
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /news-articles/{articleId}:
+    parameters:
+    - $ref: '#/components/parameters/articleId'
+    get:
+      summary: news article - get
+      description: 'Returns the details of a news article with the given article id.
+
+
+        > For backward compatibility with older API clients, this path is also available at `/news_articles/{articleId}`. However the preferred path is `/news-articles/{articleId}`.'
+      operationId: news-article-get
+      responses:
+        '200':
+          description: News Article details
+          content:
+            application/ld+json:
+              schema:
+                $ref: ../models/newsArticle.json
+              examples:
+                Example:
+                  value:
+                    id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+                    headline: API reward for publiq
+                    inLanguage: nl
+                    text: This year publiq won an API reward for it's innovative RESTful API
+                    about: 17284745-7bcf-461a-aad0-d3ad54880e75
+                    publisher: BILL
+                    publisherLogo: https://www.bill.be/img/favicon.png
+                    url: https://www.bill.be/blog/publiq-award
+            application/json:
+              schema:
+                $ref: ../models/newsArticle.json
+              examples:
+                Example:
+                  value:
+                    '@context': /contexts/NewsArticle
+                    '@id': /news-articles/497f6eca-6276-4993-bfeb-53cbbbba6f08
+                    '@type': https://schema.org/NewsArticle
+                    id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+                    headline: API reward for publiq
+                    inLanguage: nl
+                    text: This year publiq won an API reward for it's innovative RESTful API
+                    about: 17284745-7bcf-461a-aad0-d3ad54880e75
+                    publisher: BILL
+                    publisherLogo: https://www.bill.be/img/favicon.png
+                    url: https://www.bill.be/blog/publiq-award
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-internal: true
+      tags:
+      - News articles
+    put:
+      summary: news article - update
+      operationId: news-article-put
+      responses:
+        '200':
+          description: The News Article was update successfully.
+          content:
+            application/ld+json:
+              schema:
+                $ref: ../models/newsArticle.json
+            application/json:
+              schema:
+                $ref: ../models/newsArticle.json
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /url
+                      error: The required property url is missing.
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: 'Updates an existing news article.
+
+
+        > For backward compatibility with older API clients, this path is also available at `/news_articles/{articleId}`. However the preferred path is `/news-articles/{articleId}`.'
+      x-internal: true
+      requestBody:
+        description: The complete details of the news article to update.
+        content:
+          application/json:
+            schema:
+              $ref: ../models/newsArticle-post.json
+      tags:
+      - News articles
+    delete:
+      summary: news article - delete
+      operationId: news-article-delete
+      responses:
+        '204':
+          description: The News Article with the given article id was deleted.
+      description: 'Delete a news article with the given article id.
+
+
+        > For backward compatibility with older API clients, this path is also available at `/news_articles/{articleId}`. However the preferred path is `/news-articles/{articleId}`.'
+      x-internal: true
+      tags:
+      - News articles
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+components:
+  responses:
+    NotFound:
+      description: 'The requested resource (URL) could not be found.
+
+        This can be due to one of multiple reasons:
+
+
+        * The endpoint has a typo and/or does not exist on the API
+
+        * One of the path parameters contains a value that is invalid or does not exist
+
+        * One of the required query parameters is missing
+
+        * One of the query parameters has an invalid value
+
+
+        The `detail` property of the response should contain more specific information.
+
+
+        The `type` will always be `https://api.publiq.be/probs/url/not-found`.'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/url/not-found
+                title: URL not found
+                status: 404
+                detail: The resource with id "76C6AC08-763C-492E-A68C-CBC43A857229" was not found.
+  schemas:
+    Error:
+      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
+    Error_2:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+  parameters:
+    articleId:
+      name: articleId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+      description: Unique id of a news article, in the format of a UUID
+  securitySchemes:
+    USER_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A user access token, obtained by redirecting the end user to publiq's authorization server to login using the **Authorization Code OAuth Flow**. See the [authentication docs about user access tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+    CLIENT_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
+x-refined-from:
+- uitdatabank-entry.json
+- publiq-uitdatabank-entry-openapi.yml

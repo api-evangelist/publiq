@@ -1,0 +1,35 @@
+generated: '2026-10-09'
+method: searched
+source: https://www.publiq.be/nl/projecten/publiq-platform/prijzen
+name: publiq platform pricing (publicatietools)
+audience: developer-api
+pricing_basis: tiered-subscription
+published: true
+currency: EUR
+delivery:
+  delivery: managed
+plans:
+- name: Basic plan
+  price: 125
+  price_text: €125 jaarlijks
+  billing_period: year
+  description: Met het Basic plan zorg je zelf voor de setup, terwijl je toegang krijgt tot alle functionaliteiten van de Search API of widgets voor slechts €125 per jaar.
+  features:
+  - toegang tot de meest volledige vrijetijdsdatabank, via Search API of widgets
+  - publicatie op één website
+  - documentatie
+  limits:
+  - publicatie op één website
+- name: Custom plan
+  price: Contact sales
+  price_text: Prijs in overleg
+  description: Met ons Custom plan bieden we op maat gemaakte oplossingen die voldoen aan jouw use case en doelpubliek.
+  features:
+  - 100% op maat
+  - publicatie op meerdere websites
+  - training op maat mogelijk
+  - data dashboards
+  limits: []
+free_usage: De vermelde prijzen gelden alleen voor onze publicatietools Search API en widgets. Data toevoegen aan de UiTdatabank (via de user interface of onze Entry API) en het gebruiken van de UiTPAS
+  API is volledig gratis.
+note: Members of the UiTnetwerk may be entitled to a free integration ("Dan heb je wellicht recht op een gratis integratie."). Page is in Dutch.

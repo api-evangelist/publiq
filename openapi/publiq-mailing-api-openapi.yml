@@ -1,0 +1,195 @@
+openapi: 3.2.0
+info:
+  title: Publiq Mailing API
+  version: '3.0'
+  contact:
+    name: publiq helpdesk
+    email: technical-support@publiq.be
+    url: https://docs.publiq.be
+  x-refined-note:
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Mailing across 2 of this provider''s published API definitions: uitdatabank-entry.json, publiq-uitdatabank-entry-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://io-test.uitdatabank.be
+  description: Testing
+- url: https://io.uitdatabank.be
+  description: Production
+tags:
+- name: Mailing
+paths:
+  /mailing-list/{mailinglistId}:
+    parameters:
+    - schema:
+        type: integer
+      name: mailinglistId
+      in: path
+      required: true
+      description: The mailing list id
+    put:
+      summary: Subscribe to mailing list
+      operationId: put-mailing-list
+      tags:
+      - Mailing
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data
+
+            * https://api.publiq.be/probs/uitdatabank/failed-subscription-to-newsletter'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                The given request body could not be parsed as json:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-syntax
+                    title: Invalid body syntax
+                    status: 400
+                    detail: The given request body could not be parsed as json.
+                The property email is required:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The property 'email' is required.
+                The given request body could not be parsed as json.:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-syntax
+                    title: Invalid body syntax
+                    status: 400
+                    detail: The given request body could not be parsed as json.
+                Failed to subscribe to newsletter:
+                  value:
+                    type: https://api.publiq.be/probs/uitdatabank/failed-subscription-to-newsletter
+                    title: Failed to subscribe to newsletter
+                    status: 400
+                    detail: Details of the mailservice error
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  email: koen@test.be
+              properties:
+                email:
+                  type: string
+                  description: Must be a valid e-mail address
+            examples:
+              Example:
+                value:
+                  email: john.doe@publiq.be
+        description: Send the email to subscribe.
+      description: This endpoint allows users to subscribe an email address to a specified mailing list.
+      x-internal: true
+      security:
+      - USER_ACCESS_TOKEN: []
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+components:
+  responses:
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+  schemas:
+    Error:
+      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
+    Error_2:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+  securitySchemes:
+    USER_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A user access token, obtained by redirecting the end user to publiq's authorization server to login using the **Authorization Code OAuth Flow**. See the [authentication docs about user access tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+    CLIENT_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
+x-refined-from:
+- uitdatabank-entry.json
+- publiq-uitdatabank-entry-openapi.yml

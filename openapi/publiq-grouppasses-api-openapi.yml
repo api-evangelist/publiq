@@ -1,0 +1,802 @@
+openapi: 3.2.0
+info:
+  title: Publiq Grouppasses API
+  version: '4.0'
+  contact:
+    name: publiq helpdesk
+    email: technical-support@publiq.be
+    url: https://docs.publiq.be
+  x-refined-note:
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Grouppasses across 2 of this provider''s published API definitions: uitpas-uitpas.json, publiq-uitpas-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api-test.uitpas.be
+  description: Testing
+- url: https://api.uitpas.be
+  description: Production
+tags:
+- name: Grouppasses
+paths:
+  /grouppasses:
+    parameters: []
+    get:
+      summary: Search grouppasses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrouppassesPaginatedResponse'
+              examples:
+                Example:
+                  value:
+                    totalItems: 1
+                    member:
+                    - id: b5a5bb75-6cae-452b-b029-d12d3b425b1b
+                      name: Test groep
+                      uitpasNumber: 0900000045410
+                      cardStatus: ACTIVE
+                      email: testgrouppass@example.com
+                      creationDate: '2019-08-24T14:15:22+00:00'
+                      socialTariff:
+                        status: ACTIVE
+                        endDate: '2024-12-31T01:00:00+00:00'
+                        totalTicketsPerYear: 20
+                        availableTickets: 9
+                      cardSystem:
+                        id: 1
+                        name: UiTPAS Dender
+                        branding:
+                          logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+                          primaryColor: rgba(0,0,0,1.0)
+                          secondaryColor: rgba(97,166,14,1.0)
+                        links:
+                          website: https://www.uitpas.be
+                        cities:
+                        - postalCode: '9300'
+                          name: Aalst
+                        - postalCode: '9400'
+                          name: Ninove
+                        permanent: true
+                      address:
+                        postalCode: '9300'
+                        city: Aalst
+                        country: be
+                      telephone: 012/456789
+                Example with client identification:
+                  value:
+                    totalItems: 1
+                    member:
+                    - id: b5a5bb75-6cae-452b-b029-d12d3b425b1b
+                      uitpasNumber: 0900000045410
+                      cardStatus: ACTIVE
+                      creationDate: '2019-08-24T14:15:22+00:00'
+                      socialTariff:
+                        status: ACTIVE
+                        endDate: '2024-12-31T01:00:00+00:00'
+                        totalTicketsPerYear: 20
+                        availableTickets: 9
+                      cardSystem:
+                        id: 1
+                        name: UiTPAS Dender
+                        branding:
+                          logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+                          primaryColor: rgba(0,0,0,1.0)
+                          secondaryColor: rgba(97,166,14,1.0)
+                        links:
+                          website: https://www.uitpas.be
+                        cities:
+                        - postalCode: '9300'
+                          name: Aalst
+                        - postalCode: '9400'
+                          name: Ninove
+                        permanent: true
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/uitpas/invalid-uitpas-number
+
+            * https://api.publiq.be/probs/url/query-limit-exceeded
+
+
+            The detail property might include more information for the client developer.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          description: Too Many Requests
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      operationId: get-grouppasses
+      description: 'Retrieve grouppasses based on search parameters.
+
+
+        **Note**: For now this endpoint requires either `uitpasNumber` or `chipNumber`, so this endpoint currently cannot be used to search _all_ grouppasses.
+
+
+        > **Important:**
+
+        > * This endpoint might return `grouppass` entities for `BLOCKED` or `DELETED` cards. Clients using this endpoint MUST check `cardStatus` for `ACTIVE` cards before proceeding regular operations with this `grouppass`.
+
+        > * When the caller is identified with client identification, this endpoint is rate limited (see the `429` response) and only a subset of the `grouppass` properties is returned. See the individual property descriptions.
+
+
+        The caller of this request, identified by client identification, client access token or user access token, must have `GROUPPASSES_SEARCH` permission.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      - CLIENT_IDENTIFICATION: []
+      parameters:
+      - schema:
+          type: string
+        in: query
+        name: uitpasNumber
+        description: Unique UiTPAS number of the grouppass to look up. Required unless `chipNumber` is used.
+      - schema:
+          type: string
+        in: query
+        name: chipNumber
+        description: Hexadecimal notation of the chip number of a grouppass UiTPAS card. Required unless`uitpasNumber` is used.
+      - $ref: '#/components/parameters/start'
+      - $ref: '#/components/parameters/limit'
+      - schema:
+          type: string
+          enum:
+          - asc
+          - desc
+        in: query
+        name: sort[name]
+        description: Sorts the grouppasses by ti name in ascending or descending order. By default passholders are sorted by name, ascending order.
+      tags:
+      - Grouppasses
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /grouppasses/{passholderId}:
+    parameters:
+    - schema:
+        type: string
+      name: passholderId
+      in: path
+      required: true
+      description: ID of the Grouppass
+    get:
+      summary: Retrieve grouppass by ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Grouppass'
+              examples:
+                Example:
+                  value:
+                    id: b5a5bb75-6cae-452b-b029-d12d3b425b1b
+                    name: Test groep
+                    uitpasNumber: 0900000045410
+                    cardStatus: ACTIVE
+                    email: testgrouppass@example.com
+                    creationDate: '2019-08-24T14:15:22+00:00'
+                    socialTariff:
+                      status: ACTIVE
+                      endDate: '2024-12-31T01:00:00+00:00'
+                      totalTicketsPerYear: 20
+                      availableTickets: 9
+                    cardSystem:
+                      id: 1
+                      name: UiTPAS Dender
+                      branding:
+                        logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+                        primaryColor: rgba(0,0,0,1.0)
+                        secondaryColor: rgba(97,166,14,1.0)
+                      links:
+                        website: https://www.uitpas.be
+                      cities:
+                      - postalCode: '9300'
+                        name: Aalst
+                      - postalCode: '9400'
+                        name: Ninove
+                      permanent: true
+                    address:
+                      postalCode: '9300'
+                      city: Aalst
+                      country: be
+                    telephone: 012/456789
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      operationId: get-grouppasses-passholderId
+      description: 'Retrieve a grouppass by ID.
+
+
+        The caller of this request must have `GROUPPASSES_SEARCH` permission.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      parameters: []
+      tags:
+      - Grouppasses
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /grouppasses/{passholderId}/coupons:
+    parameters:
+    - schema:
+        type: string
+      name: passholderId
+      in: path
+      description: Unique ID of an grouppass.
+      required: true
+    get:
+      summary: Get coupons of grouppass
+      operationId: get-grouppasses-passholderId-coupons
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GrantedCoupon'
+              examples:
+                Example:
+                  value:
+                  - id: 21343
+                    coupon:
+                      id: COUPON_13
+                      name: Gratis naar de film in groep
+                      description: Gratis naar de film omschrijving
+                    validityPeriod:
+                      begin: '2026-01-31T23:00:00+00:00'
+                      end: '2026-06-30T22:00:00+00:00'
+                    status: ACTIVE
+                    remaining:
+                      volume: 100
+                      period: ABSOLUTE
+        '400':
+          description: 'Bad request. Possible error types:
+
+
+            * https://api.publiq.be/probs/uitpas/passholder-no-active-cardsystems
+
+            * https://api.publiq.be/probs/uitpas/organizer-not-found
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: 'Retrieve coupons of given grouppass.
+
+
+        The caller of this method must have `GROUPPASS_COUPONS_READ` permission.'
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      tags:
+      - Grouppasses
+      parameters:
+      - schema:
+          type: string
+          enum:
+          - ACTIVE
+          - EXPIRED
+          - ALL
+          default: ACTIVE
+        in: query
+        name: status
+        description: Status of the granted coupon
+      - schema:
+          type: string
+        in: query
+        name: organizerId
+        description: Filter coupons that are applicable in card systems of this organizer
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+components:
+  responses:
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+  schemas:
+    Error:
+      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
+    GrantedCoupon:
+      type: object
+      x-stoplight:
+        id: '6952809026004'
+      properties:
+        id:
+          type: integer
+          x-stoplight:
+            id: gy3cnzbjsos7m
+          description: ID of this granted coupon
+        coupon:
+          type: object
+          x-stoplight:
+            id: 7uhshingout9h
+          required:
+          - id
+          - name
+          description: The coupon of this granted coupon
+          properties:
+            id:
+              type: string
+              x-stoplight:
+                id: 9lc2aar0ke5mt
+              description: ID of the coupon
+            name:
+              type: string
+              x-stoplight:
+                id: ju827c3hyobo6
+              description: Name of the coupon
+            description:
+              type: string
+              x-stoplight:
+                id: 0m1k758km1di4
+              description: Description of the coupon
+        validityPeriod:
+          type: object
+          x-stoplight:
+            id: d7x4iwrrak9tm
+          description: Validatity period of this coupon
+          properties:
+            begin:
+              type: string
+              x-stoplight:
+                id: hzer6iazpfcpd
+              format: date-time
+              description: Coupon is valid from this date
+            end:
+              type: string
+              x-stoplight:
+                id: p62zqlsppr3gg
+              format: date-time
+              description: Coupon is valid until this date. After this date, this coupon will appear as status `EXPIRED`
+          required:
+          - begin
+        status:
+          type: string
+          x-stoplight:
+            id: pua8h5vd8410c
+          enum:
+          - ACTIVE
+          - EXPIRED
+          description: Status of this granted coupon
+        remaining:
+          type: object
+          x-stoplight:
+            id: wp3luo60wgz57
+          description: Remaining ticket sales for this granted coupon (is applicable)
+          properties:
+            volume:
+              type: integer
+              x-stoplight:
+                id: tmfnerf0ntoor
+              description: Volume of the remaining ticketsales
+            period:
+              type: string
+              x-stoplight:
+                id: a0yelgv8k0gy1
+              enum:
+              - ABSOLUTE
+              - DAY
+              - WEEK
+              - MONTH
+              - QUARTER
+              - YEAR
+              description: Period of the remaining ticketsales
+          required:
+          - volume
+          - period
+      required:
+      - id
+      - coupon
+      - status
+      title: GrantedCoupon
+    Grouppass:
+      title: Grouppass
+      x-stoplight:
+        id: upy28l7gpkmzw
+      type: object
+      x-tags:
+      - Models
+      description: "Grouppass is a special kind of UiTPAS concept: it has an `uitpasNumber` like regular passholders, but it can only participate in ticket sale flows (either social tariff or using coupons). \n\nThe social tariff for grouppasses is a little bit different from regular passholders, because a grouppass is entitled to buy a certain amount of `totalTicketsPerYear`, of which the remaining amount is indicated by `availableTickets`.\n\nA grouppass cannot check-in at events, or redeem rewards.\n\nA `Grouppass` can be identified by its `id`. However, there are cases where the grouppass is identified using its UiTPAS number. Every grouppass has one (and only one) uitpas number."
+      x-examples:
+        Example:
+          id: b5a5bb75-6cae-452b-b029-d12d3b425b1b
+          name: Test groep
+          uitpasNumber: 0900000045410
+          email: testgrouppass@example.com
+          creationDate: '2019-08-24T14:15:22+00:00'
+          socialTariff:
+            status: ACTIVE
+            endDate: '2024-12-31T01:00:00+00:00'
+            totalTicketsPerYear: 20
+            availableTickets: 9
+          cardSystem:
+            id: 1
+            name: UiTPAS Dender
+            branding:
+              logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+              primaryColor: rgba(0,0,0,1.0)
+              secondaryColor: rgba(97,166,14,1.0)
+            links:
+              website: https://www.uitpas.be
+            cities:
+            - postalCode: '9300'
+              name: Aalst
+            - postalCode: '9400'
+              name: Ninove
+            permanent: true
+          address:
+            postalCode: '9300'
+            city: Aalst
+            country: be
+          telephone: 012/456789
+      properties:
+        id:
+          type: string
+          description: This field is always available in responses.
+          readOnly: true
+        uitpasNumber:
+          type: string
+          description: The UiTPAS number of this grouppass. This field is always available in responses.
+        name:
+          type: string
+          description: Name of the grouppass. Not available when the caller is identified with client identification.
+        cardStatus:
+          type: string
+          x-stoplight:
+            id: nnzfui82in9z5
+          description: Status of the card linked to this grouppass.
+          enum:
+          - PROVISIONED
+          - LOCAL_STOCK
+          - ACTIVE
+          - BLOCKED
+          - DELETED
+        email:
+          type: string
+          description: Contact email address of the grouppass. Not available when the caller is identified with client identification.
+        creationDate:
+          type: string
+          format: date-time
+          description: This field is always available in responses.
+          readOnly: true
+        socialTariff:
+          type: object
+          x-stoplight:
+            id: 59mykno6i5b0b
+          description: Social tariff of the grouppass (if applicable)
+          properties:
+            status:
+              type: string
+              x-stoplight:
+                id: f035pqngnrdtf
+              enum:
+              - ACTIVE
+              - EXPIRED
+              description: 'Status of the social tariff:
+
+                - `ACTIVE`: the grouppass is entitled to social tariff
+
+                - `EXPIRED`: the grouppass is NOT entitled to social tariff anymore
+
+                '
+            endDate:
+              type: string
+              x-stoplight:
+                id: mtikoui6mpcn5
+              description: Exact moment the grouppass's right to a social tariff expires.
+              format: date-time
+            totalTicketsPerYear:
+              type: integer
+              x-stoplight:
+                id: 93mtfqrw53djc
+              description: Total number of tickets this grouppass can buy per year.
+            availableTickets:
+              type: integer
+              x-stoplight:
+                id: qytz7wdi7sqg4
+              description: Number of available ticketsales
+          required:
+          - status
+        cardSystem:
+          $ref: '#/components/schemas/CardSystem'
+        address:
+          type: object
+          description: Address of the grouppass. Not available when the caller is identified with client identification.
+          properties:
+            street:
+              type: string
+              description: Full street name, number and box of the grouppass
+            postalCode:
+              type: string
+              description: Postal code of the municipality.
+            city:
+              type: string
+              description: Human-readable name of the municipality.
+            country:
+              type: string
+              description: ISO 3166-1 alpha-2 country code.
+          required:
+          - postalCode
+          - city
+        telephone:
+          type: string
+          x-stoplight:
+            id: 46g76ybvflcsd
+          description: Telephone contact number of this grouppass. Not available when the caller is identified with client identification.
+      required:
+      - cardStatus
+      - cardSystem
+    CardSystem:
+      title: CardSystem
+      description: A region, usually one or multiple municipalities in Belgium, that uses UiTPAS and provides discounts and/or rewards. For example "Paspartoe" (Brussels), UiTPAS Leuven, UiTPAS Hasselt, UiTPAS Gent, and so on.
+      type: object
+      x-tags:
+      - Models
+      example:
+        id: 1
+        name: UiTPAS Dender
+        branding:
+          logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+          primaryColor: rgba(0,0,0,1.0)
+          secondaryColor: rgba(97,166,14,1.0)
+        links:
+          website: https://www.uitpas.be
+        cities:
+        - postalCode: '9300'
+          name: Aalst
+        - postalCode: '9400'
+          name: Ninove
+        permanent: true
+      properties:
+        id:
+          type: integer
+          description: ID of the card system
+        name:
+          type: string
+          description: Name of the card system. This field is always available in responses.
+        branding:
+          type: object
+          description: Branding information of the card system
+          properties:
+            logo:
+              type: string
+              description: URL to the logo of the card system
+            primaryColor:
+              type: string
+              description: Color code of the primary branding color.
+            secondaryColor:
+              type: string
+              description: Color code of the secondary branding color.
+        links:
+          type: object
+          description: Links of the card system
+          properties:
+            website:
+              type: string
+              description: URL of the website of the card system
+        cities:
+          type: array
+          description: List of cities that are part of this card system
+          items:
+            $ref: '#/components/schemas/City'
+        permanent:
+          type: boolean
+          description: Indicates whether this is a permanent card system
+        allowsCardlessRegistration:
+          type: boolean
+          description: Indicates if cardless registration is enabled
+        cardlessRegistrationType:
+          type: string
+          description: Indicates the types of online cardless registrations this cardsystem supports.
+          enum:
+          - ALL
+          - REGULAR
+          - SOCIALTARIFF
+          - NONE
+        socialTariffInfo:
+          type: string
+          description: Optional information about social tariff entitlement in this card system.
+      required:
+      - id
+    GrouppassesPaginatedResponse:
+      title: GrouppassesPaginatedResponse
+      x-stoplight:
+        id: jd1p42sik46m7
+      type: object
+      x-tags:
+      - Models
+      description: Paginated response object for grouppasses
+      properties:
+        totalItems:
+          type: integer
+          description: Total amount of passholder results (can be more than the amount of results in the response).
+        member:
+          type: array
+          description: List of passholder results for this specific (paginated) request.
+          items:
+            $ref: '#/components/schemas/Grouppass'
+    City:
+      title: City
+      type: object
+      x-tags:
+      - Models
+      example:
+        postalCode: '9300'
+        name: Aalst
+      properties:
+        postalCode:
+          type: string
+          description: Postalcode of the city
+        name:
+          type: string
+          description: Name of the city
+      required:
+      - postalCode
+      - name
+    Error_2:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+  parameters:
+    start:
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      in: query
+      name: start
+      description: Position to start returning results from. When set to `0` the results starting from the very first position will be returned. When set to for example `10` the results 0-9 will be skipped and the ones starting from position 10 will be returned. Can be used in combination with `limit` for pagination.
+    limit:
+      schema:
+        type: integer
+        default: 20
+        minimum: 0
+      in: query
+      name: limit
+      description: 'Maximum amount of results to return. Can be used in combination with `start` for pagination. **Important**: the maximum value for `limit` is `500`. Exceeding this value will result in an error.'
+  securitySchemes:
+    USER_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A user access token, obtained by redirecting the end user to publiq's authorization server to login using the **Authorization Code OAuth Flow**. See the [authentication docs about user access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
+    CLIENT_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+    CLIENT_IDENTIFICATION:
+      name: x-client-id
+      type: apiKey
+      in: header
+    CUSTOM_TOKEN:
+      name: x-custom-token
+      type: apiKey
+      in: header
+x-refined-from:
+- uitpas-uitpas.json
+- publiq-uitpas-openapi.yml

@@ -1,0 +1,14 @@
+generated: '2026-10-09'
+method: none
+source:
+- https://docs.publiq.be/docs/errors
+- https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+name: publiq rate limits
+limit_count: 0
+limits: []
+note: No numeric rate limits are published. The UiTPAS error reference documents a 429 problem type https://api.publiq.be/probs/uitpas/rate-limited ("cannot complete because it was performed too many times
+  in a given period"), and the museumPASSmusées OpenAPI says 503 responses may include a Retry-After hint. No X-RateLimit-* / RateLimit-* headers documented. Pagination caps (start<=10000, limit<=2000)
+  on Search API are page-size limits, recorded in conventions.
+exhaustion_status: 429
+headers:
+- Retry-After (503, museumPASSmusées)

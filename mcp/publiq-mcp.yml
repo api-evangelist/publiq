@@ -1,0 +1,312 @@
+generated: '2026-10-09'
+method: derived
+status: candidate
+source: openapi/ (5 publiq OpenAPI contracts); search for an official server returned nothing
+search_evidence:
+- 'WebSearch "publiq UiTdatabank MCP server" (2026-10-09): no publiq/UiTdatabank MCP server in results'
+- 'GitHub search mcp user:cultuurnet (provider GitHub org hosting apidocs): total_count 0'
+- 'preflight mcp_tool_table empty; hosts probed: platform.publiq.be, docs.publiq.be, helpdesk.publiq.be, status.publiq.be,
+  www.publiq.be'
+deployment:
+  mode: none
+  auth: unknown
+  verified: derived
+server:
+  name: publiq
+  transport: null
+  note: No official MCP server is published by publiq. Tools below are a candidate list derived from OpenAPI operationIds;
+    nobody ships this server.
+auth_note: 'Backing operations use publiq platform credentials: CLIENT_ACCESS_TOKEN / USER_ACCESS_TOKEN (OAuth2 tokens) and,
+  for Search, CLIENT_IDENTIFICATION (x-client-id); Taxonomy API needs no auth. See https://docs.publiq.be/docs/authentication'
+tools:
+- name: get_events
+  description: Search events
+  api: UiTdatabank Search API
+  openapi: openapi/publiq-uitdatabank-search-openapi.yml
+  operationId: get-events
+  method: GET
+  path: /events
+  read_only: true
+  destructive: false
+- name: get_places
+  description: Search places
+  api: UiTdatabank Search API
+  openapi: openapi/publiq-uitdatabank-search-openapi.yml
+  operationId: get-places
+  method: GET
+  path: /places
+  read_only: true
+  destructive: false
+- name: get_offers
+  description: Search events & places (offers)
+  api: UiTdatabank Search API
+  openapi: openapi/publiq-uitdatabank-search-openapi.yml
+  operationId: get-offers
+  method: GET
+  path: /offers
+  read_only: true
+  destructive: false
+- name: get_organizers
+  description: Search organizers
+  api: UiTdatabank Search API
+  openapi: openapi/publiq-uitdatabank-search-openapi.yml
+  operationId: get-organizers
+  method: GET
+  path: /organizers
+  read_only: true
+  destructive: false
+- name: get_terms
+  description: List taxonomy terms
+  api: UiTdatabank Taxonomy API
+  openapi: openapi/publiq-uitdatabank-taxonomy-openapi.yml
+  operationId: get-terms
+  method: GET
+  path: /terms
+  read_only: true
+  destructive: false
+- name: event_get
+  description: event - get
+  api: UiTdatabank Entry API
+  openapi: openapi/publiq-uitdatabank-entry-openapi.yml
+  operationId: event-get
+  method: GET
+  path: /events/{eventId}
+  read_only: true
+  destructive: false
+- name: event_post
+  description: event - create
+  api: UiTdatabank Entry API
+  openapi: openapi/publiq-uitdatabank-entry-openapi.yml
+  operationId: event-post
+  method: POST
+  path: /events
+  read_only: false
+  destructive: false
+- name: event_put
+  description: event - update
+  api: UiTdatabank Entry API
+  openapi: openapi/publiq-uitdatabank-entry-openapi.yml
+  operationId: event-put
+  method: PUT
+  path: /events/{eventId}
+  read_only: false
+  destructive: false
+- name: event_workflow_status_put
+  description: workflowStatus - update
+  api: UiTdatabank Entry API
+  openapi: openapi/publiq-uitdatabank-entry-openapi.yml
+  operationId: event-workflow-status-put
+  method: PUT
+  path: /events/{eventId}/workflow-status
+  read_only: false
+  destructive: false
+- name: event_images_post
+  description: images - add
+  api: UiTdatabank Entry API
+  openapi: openapi/publiq-uitdatabank-entry-openapi.yml
+  operationId: event-images-post
+  method: POST
+  path: /events/{eventId}/images
+  read_only: false
+  destructive: false
+- name: image_post
+  description: image - upload
+  api: UiTdatabank Entry API
+  openapi: openapi/publiq-uitdatabank-entry-openapi.yml
+  operationId: image-post
+  method: POST
+  path: /images
+  read_only: false
+  destructive: false
+- name: place_get
+  description: place - get
+  api: UiTdatabank Entry API
+  openapi: openapi/publiq-uitdatabank-entry-openapi.yml
+  operationId: place-get
+  method: GET
+  path: /places/{placeId}
+  read_only: true
+  destructive: false
+- name: place_post
+  description: place - create
+  api: UiTdatabank Entry API
+  openapi: openapi/publiq-uitdatabank-entry-openapi.yml
+  operationId: place-post
+  method: POST
+  path: /places
+  read_only: false
+  destructive: false
+- name: organizer_get
+  description: organizer - get
+  api: UiTdatabank Entry API
+  openapi: openapi/publiq-uitdatabank-entry-openapi.yml
+  operationId: organizer-get
+  method: GET
+  path: /organizers/{organizerId}
+  read_only: true
+  destructive: false
+- name: organizer_post
+  description: organizer - create
+  api: UiTdatabank Entry API
+  openapi: openapi/publiq-uitdatabank-entry-openapi.yml
+  operationId: organizer-post
+  method: POST
+  path: /organizers
+  read_only: false
+  destructive: false
+- name: event_calendar_summary_get
+  description: calendar summary - get
+  api: UiTdatabank Entry API
+  openapi: openapi/publiq-uitdatabank-entry-openapi.yml
+  operationId: event-calendar-summary-get
+  method: GET
+  path: /events/{eventId}/calendar-summary
+  read_only: true
+  destructive: false
+- name: get_passes_uitpasNumber
+  description: Retrieve pass by UiTPAS number
+  api: UiTPAS API
+  openapi: openapi/publiq-uitpas-openapi.yml
+  operationId: get-passes-uitpasNumber
+  method: GET
+  path: /passes/{uitpasNumber}
+  read_only: true
+  destructive: false
+- name: get_passholders
+  description: Search passholders
+  api: UiTPAS API
+  openapi: openapi/publiq-uitpas-openapi.yml
+  operationId: get-passholders
+  method: GET
+  path: /passholders
+  read_only: true
+  destructive: false
+- name: get_passholders_passholderId
+  description: Retrieve passholder by ID
+  api: UiTPAS API
+  openapi: openapi/publiq-uitpas-openapi.yml
+  operationId: get-passholders-passholderId
+  method: GET
+  path: /passholders/{passholderId}
+  read_only: true
+  destructive: false
+- name: get_checkin_status
+  description: Get checkin status
+  api: UiTPAS API
+  openapi: openapi/publiq-uitpas-openapi.yml
+  operationId: get-checkin-status
+  method: GET
+  path: /checkin-status
+  read_only: true
+  destructive: false
+- name: post_checkins
+  description: Check in passholder
+  api: UiTPAS API
+  openapi: openapi/publiq-uitpas-openapi.yml
+  operationId: post-checkins
+  method: POST
+  path: /checkins
+  read_only: false
+  destructive: false
+- name: get_tariffs
+  description: Get tariffs
+  api: UiTPAS API
+  openapi: openapi/publiq-uitpas-openapi.yml
+  operationId: get-tariffs
+  method: GET
+  path: /tariffs
+  read_only: true
+  destructive: false
+- name: post_ticket_sales
+  description: Register ticket sale(s)
+  api: UiTPAS API
+  openapi: openapi/publiq-uitpas-openapi.yml
+  operationId: post-ticket-sales
+  method: POST
+  path: /ticket-sales
+  read_only: false
+  destructive: false
+- name: delete_ticket_sales
+  description: Cancel a ticket sale registration
+  api: UiTPAS API
+  openapi: openapi/publiq-uitpas-openapi.yml
+  operationId: delete-ticket-sales
+  method: DELETE
+  path: /ticket-sales/{ticketSaleId}
+  read_only: false
+  destructive: true
+- name: get_rewards
+  description: Search rewards
+  api: UiTPAS API
+  openapi: openapi/publiq-uitpas-openapi.yml
+  operationId: get-rewards
+  method: GET
+  path: /rewards
+  read_only: true
+  destructive: false
+- name: get_rewards_id_redeem_status
+  description: Check redeem status of a reward for a passholder
+  api: UiTPAS API
+  openapi: openapi/publiq-uitpas-openapi.yml
+  operationId: get-rewards-id-redeem-status
+  method: GET
+  path: /rewards/{rewardId}/redeem-status
+  read_only: true
+  destructive: false
+- name: post_rewards_redeemed
+  description: Redeem reward
+  api: UiTPAS API
+  openapi: openapi/publiq-uitpas-openapi.yml
+  operationId: post-rewards-redeemed
+  method: POST
+  path: /rewards/redeemed
+  read_only: false
+  destructive: false
+- name: get_card_systems
+  description: Search card systems
+  api: UiTPAS API
+  openapi: openapi/publiq-uitpas-openapi.yml
+  operationId: get-card-systems
+  method: GET
+  path: /card-systems
+  read_only: true
+  destructive: false
+- name: get_passes
+  description: Look up pass by card number
+  api: museumPASSmusées Partner API
+  openapi: openapi/publiq-museumpassmusees-partner-openapi.yml
+  operationId: get-passes
+  method: GET
+  path: /passes/{cardNumber}
+  read_only: true
+  destructive: false
+- name: post_visits
+  description: Register a museum visit
+  api: museumPASSmusées Partner API
+  openapi: openapi/publiq-museumpassmusees-partner-openapi.yml
+  operationId: post-visits
+  method: POST
+  path: /visits
+  read_only: false
+  destructive: false
+- name: get_external_cards_type_identification
+  description: Look up external card
+  api: museumPASSmusées Partner API
+  openapi: openapi/publiq-museumpassmusees-partner-openapi.yml
+  operationId: get-external-cards-type-identification
+  method: GET
+  path: /external-cards/{type}/{identification}
+  read_only: true
+  destructive: false
+- name: post_external_cards_type_identification_visits
+  description: Register a museum visit for an external card
+  api: museumPASSmusées Partner API
+  openapi: openapi/publiq-museumpassmusees-partner-openapi.yml
+  operationId: post-external-cards-type-identification-visits
+  method: POST
+  path: /external-cards/{type}/{identification}/visits
+  read_only: false
+  destructive: false
+coverage:
+  candidate_tools: 32
+  total_operations: 254

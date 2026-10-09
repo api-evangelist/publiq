@@ -1,0 +1,20 @@
+generated: '2026-10-09'
+method: none
+source:
+- https://packagist.org/packages/list.json?vendor=cultuurnet
+- https://packagist.org/packages/list.json?vendor=publiq
+packages: []
+note: 'no first-party package: every candidate a model listed was unowned (harvest-packages.py --audit)'
+rejected:
+- name: cultuurnet/search-v3
+  registry: packagist
+  reason: 'registry metadata names neither the provider''s domain nor its GitHub org: official downgraded (harvest-packages.py --audit)'
+- name: cultuurnet/calendar-summary-v3
+  registry: packagist
+  reason: 'registry metadata names neither the provider''s domain nor its GitHub org: official downgraded (harvest-packages.py --audit)'
+- name: cultuurnet/culturefeed-php
+  registry: packagist
+  reason: 'registry metadata names neither the provider''s domain nor its GitHub org: official downgraded (harvest-packages.py --audit)'
+- name: '@steinv/publiq-uitpas-sdk'
+  registry: npm
+  reason: 'official: false as written'

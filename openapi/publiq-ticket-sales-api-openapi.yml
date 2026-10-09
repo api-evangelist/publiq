@@ -1,0 +1,1462 @@
+openapi: 3.2.0
+info:
+  title: Publiq Ticket sales API
+  version: '4.0'
+  contact:
+    name: publiq helpdesk
+    email: technical-support@publiq.be
+    url: https://docs.publiq.be
+  x-refined-note:
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Ticket sales across 2 of this provider''s published API definitions: uitpas-uitpas.json, publiq-uitpas-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api-test.uitpas.be
+  description: Testing
+- url: https://api.uitpas.be
+  description: Production
+tags:
+- name: Ticket sales
+paths:
+  /tariffs:
+    parameters: []
+    get:
+      summary: Get tariffs
+      tags:
+      - Ticket sales
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TariffsResponse'
+              examples:
+                Single tariff example:
+                  value:
+                    available:
+                    - id: SOCIALTARIFF-1
+                      name: Kansentarief
+                      price: 1.5
+                      type: SOCIALTARIFF
+                      remaining: 1
+                Multiple tariffs example:
+                  value:
+                    available:
+                    - id: SOCIALTARIFF-1
+                      name: Kansentarief
+                      price: 1.5
+                      remaining: 1
+                      type: SOCIALTARIFF
+                    - id: COUPON1234
+                      name: Cultuurbon 6 euro
+                      price: 4
+                      remaining: 1
+                      type: COUPON
+                    - id: COUPON2345
+                      name: 2 euro korting op een specifiek event
+                      price: 8
+                      remaining: 1
+                      type: COUPON
+                Single tariff with multiple number of tickets:
+                  value:
+                    available:
+                    - id: SOCIALTARIFF
+                      name: Kansentarief
+                      price: 1.5
+                      remaining: 20
+                      type: SOCIALTARIFF
+                No available tariffs with message about social tariff:
+                  value:
+                    available: []
+                    endUserMessage:
+                      nl: Je hebt geen recht meer op kansentarief voor deze activiteit. Je kan maximaal 1 ticket per maand kopen aan kansentarief voor deze activiteit.
+                Coupon tariff with message about social tariff:
+                  value:
+                    available:
+                    - id: COUPON2345
+                      name: 2 euro korting op een specifiek event
+                      price: 8
+                      remaining: 1
+                      type: COUPON
+                    endUserMessage:
+                      nl: Je hebt geen recht meer op kansentarief voor deze activiteit. Je kan maximaal 1 ticket per maand kopen aan kansentarief voor deze activiteit.
+                No available tariffs with message about coupon:
+                  value:
+                    available: []
+                    endUserMessage:
+                      nl: Je hebt een coupon voor deze activiteit, maar je kan hiermee maximaal 1 ticket per maand kopen.
+        '400':
+          description: 'Bad Request. The response will include a JSON body with more details in the form of a RFC7807 error model. Possible error types:
+
+
+            * https://api.publiq.be/probs/uitpas/event-not-found
+
+            * https://api.publiq.be/probs/uitpas/passholder-not-found
+
+            * https://api.publiq.be/probs/uitpas/passholder-no-active-cardsystems
+
+            * https://api.publiq.be/probs/uitpas/social-tariff-expired
+
+            * https://api.publiq.be/probs/uitpas/social-tariff-suspended
+
+            * https://api.publiq.be/probs/uitpas/invalid-uitpasnumber
+
+            * https://api.publiq.be/probs/uitpas/invalid-card
+
+            * https://api.publiq.be/probs/uitpas/invalid-card-status
+
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Event not found:
+                  value:
+                    type: https://api.publiq.be/probs/uitpas/event-not-found
+                    title: Event id 267B6FCF-46F8-4DA2-8D7D-AADCD2C2715E not found
+                    status: 400
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      operationId: get-tariffs
+      description: 'Returns the possible UiTPAS discounted **tariffs for an event and a passholder**.
+
+
+        This UiTPAS tariffs are calculated based on:
+
+
+        - **The regular price** of the ticket.
+
+        This is the price your user would have to pay for the specific ticket without UiTPAS discount.
+
+        - **The UiTPAS number** of the passholder. UiTPAS discounts are personal so it''s important to identify the passholder to retrieve a list of possible tariffs.
+
+        - **The event id** of the UiTdatabank event. UiTPAS discounts are limited to specific UiTdatabank events, so it''s important to specify the event id to retrieve a list of possible tariffs.
+
+
+        > ##### Important
+
+        > The regular price of the ticket should generally be one of the price categories set on the event in UiTdatabank to make financial reporting clearer.
+
+
+        The caller of this request must have `TARIFFS_READ` permission for the organizer of the given event.'
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      parameters:
+      - schema:
+          type: number
+        in: query
+        name: regularPrice
+        description: The regular price the passholder would have to pay for the ticket if they are not eligible for discounts
+        required: true
+      - schema:
+          type: string
+        in: query
+        name: eventId
+        description: The id of the event for which the ticket is sold
+        required: true
+      - schema:
+          type: string
+        in: query
+        name: uitpasNumber
+        description: UiTPAS Number identifying the passholder who wants to buy a ticket
+        required: true
+      - schema:
+          type: string
+          enum:
+          - ANY
+          - SOCIALTARIFF
+          - COUPON
+          default: ANY
+        in: query
+        name: type
+        description: Return only available tariffs of this type. Defaults to ANY type.
+        required: false
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /tariffs/static:
+    parameters: []
+    get:
+      summary: Get static tariffs without passholder
+      tags:
+      - Ticket sales
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TariffsResponse'
+              examples:
+                Social tariff:
+                  value:
+                    available:
+                    - id: SOCIALTARIFF-1
+                      name: Kansentarief
+                      price: 1.5
+                      type: SOCIALTARIFF
+                      remaining: 1
+        '400':
+          description: 'Bad Request. The response will include a JSON body with more details in the form of a RFC7807 error model. Possible error types:
+
+
+            * https://api.publiq.be/probs/uitpas/event-not-found
+
+            * https://api.publiq.be/probs/uitpas/social-tariff-not-available
+
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Event not found:
+                  value:
+                    type: https://api.publiq.be/probs/uitpas/event-not-found
+                    title: Event id 267B6FCF-46F8-4DA2-8D7D-AADCD2C2715E not found
+                    status: 400
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      operationId: get-tariffs-static
+      description: 'Returns the **static** UiTPAS discounted **tariffs for an event**.
+
+
+        > ##### Important
+
+        > UiTPAS tariffs are different for each indiviual passholder, but this endpoint does NOT take the passholder into consideration. Use this endpoint only in specific cases, e.g. when listing the UiTPAS tariff before the passholder is known. The actual passholder tariffs might be different than this response. Use GET /tariffs to retrieve indidivual tariffs for a passholder.
+
+
+        This UiTPAS tariffs are calculated based on:
+
+
+        - **The regular price** of the ticket.
+
+        This is the price your user would have to pay for the specific ticket without UiTPAS discount.
+
+        - **The event id** of the UiTdatabank event. UiTPAS discounts are limited to specific UiTdatabank events, so it''s important to specify the event id to retrieve a list of possible tariffs.
+
+
+        Because the passholder is unknown, UiTPAS will return the tariffs for a passholder with social tariff, who lives in the same region as the event organizer.
+
+
+        The caller of this request must have `TARIFFS_READ` permission for the organizer of the given event.'
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      parameters:
+      - schema:
+          type: number
+        in: query
+        name: regularPrice
+        description: The regular price the passholder would have to pay for the ticket if they are not eligible for discounts
+        required: true
+      - schema:
+          type: string
+        in: query
+        name: eventId
+        description: The id of the event for which the ticket is sold
+        required: true
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /ticket-sales:
+    parameters: []
+    post:
+      summary: Register ticket sale(s)
+      tags:
+      - Ticket sales
+      operationId: post-ticket-sales
+      responses:
+        '200':
+          description: Ticket sale registration(s) succeeded
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TicketSale'
+              examples:
+                Single ticket sale example:
+                  value:
+                  - id: '21345'
+                    tariff:
+                      id: COUPON1234
+                      name: Cultuurbon 6 euro
+                      price: 1.5
+                      type: COUPON
+                    uitpasNumber: '0560002524314'
+                    eventId: 31e926e2-a35f-11eb-bcbc-0242ac130002
+                    regularPrice: 10
+                    regularPriceLabel: Optional descriptive label of the regular price. Used in financial reporting.
+                Multiple ticket sales example:
+                  value:
+                  - id: '21345'
+                    tariff:
+                      id: COUPON1234
+                      name: Cultuurbon 6 euro
+                      price: 4
+                      type: COUPON
+                    uitpasNumber: '0560002524314'
+                    eventId: 31e926e2-a35f-11eb-bcbc-0242ac130002
+                    regularPrice: 10
+                    regularPriceLabel: Optional descriptive label of the regular price. Used in financial reporting.
+                  - id: '21346'
+                    tariff:
+                      id: SOCIALTARIFF
+                      name: Kansentarief
+                      price: 1.5
+                      type: SOCIALTARIFF
+                    uitpasNumber: 0940002524123
+                    eventId: 31e926e2-a35f-11eb-bcbc-0242ac130002
+                    regularPrice: 10
+                    regularPriceLabel: Optional descriptive label of the regular price. Used in financial reporting.
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data
+
+            * https://api.publiq.be/probs/uitpas/social-tariff-expired
+
+            * https://api.publiq.be/probs/uitpas/social-tariff-suspended
+
+            * https://api.publiq.be/probs/uitpas/maximum-reached
+
+            * https://api.publiq.be/probs/uitpas/invalid-number-of-tickets
+
+            * https://api.publiq.be/probs/uitpas/event-not-found
+
+            * https://api.publiq.be/probs/uitpas/passholder-not-found
+
+            * https://api.publiq.be/probs/uitpas/invalid-uitpasnumber
+
+            * https://api.publiq.be/probs/uitpas/invalid-card
+
+            * https://api.publiq.be/probs/uitpas/invalid-card-status
+
+            * https://api.publiq.be/probs/uitpas/passholder-no-active-cardsystems
+
+            * https://api.publiq.be/probs/uitpas/invalid-coupon
+
+
+
+            The type indicates the error on one of the failed ticket sale registrations. All other ticket sale registration in the request will be rolled back in case of an error.
+
+
+            The property `jsonPointer` will a referene to the erroneous `TicketSaleRequest` object if applicable.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Social tariff discount expired:
+                  value:
+                    type: https://api.publiq.be/probs/uitpas/social-tariff-discount-expired
+                    title: Social tariff discount expired
+                    status: 400
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      description: 'Registers one or more new ticket sales **with a discounted UiTPAS tariff**, so the UiTPAS organiser can get reimbursed for the discount.
+
+
+        Before you can register a discounted ticket sale, you will need to request the possible discounted tariffs from the `GET /tariffs` endpoint and let your end user pick one of the available tariffs. Afterward, you can register a ticket sale using this endpoint.
+
+
+        You will need:
+
+
+        - The `uitpasNumber` of the passholder buying the ticket.
+
+        - The `eventId` of the UiTdatabank event.
+
+        - The chosen `tariff` from the `GET /tariffs` request. (only the `id` is required)
+
+        - The `regularPrice` the passholder would normally have to pay for this ticket
+
+
+        Optionally you can include:
+
+        - a `regularPriceLabel` describing the regular price if you have multiple price
+
+        categories, which can be useful in the financial reporting overview.
+
+
+        If you want to register more than one ticket sale for the same passholder, for the same event, at the same tariff, use multiple `TicketSale` objects in this request. Do note this is only possible if `remaining` was higher than one in the `GET /tariffs` request.
+
+
+        The `passholder` field of `TicketSale` is ignored in the request body. It is included in the response if applicable (passholder can be empty in some cases, e.g. for group passes), but only if the caller of this request has `PASSHOLDERS_SEARCH` permission.
+
+
+        > ##### Error handling
+
+        > **If one of the ticket sales is invalid** (for example the chosen tariff is incorrect or expired), **none of the ticket sales will be registered**. You will instead get an error response with more details about the problem, and can then retry the registration without the incorrect ticket sales or ask the end user to change the tickets and/or tariffs that they want.
+
+
+        The caller of this request must have `TICKETSALES_REGISTER` permission for the organizer of the given event.'
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/TicketSale'
+            examples:
+              Example for one ticket sale:
+                value:
+                - tariff:
+                    id: COUPON1234
+                  uitpasNumber: '0560002524314'
+                  eventId: 31e926e2-a35f-11eb-bcbc-0242ac130002
+                  regularPrice: 10
+                  regularPriceLabel: Optional descriptive label of the regular price. Used in financial reporting.
+              Example for multiple ticket sales:
+                value:
+                - tariff:
+                    id: COUPON1234
+                  uitpasNumber: '0560002524314'
+                  eventId: 31e926e2-a35f-11eb-bcbc-0242ac130002
+                  regularPrice: 10
+                  regularPriceLabel: Base tariff
+                - tariff:
+                    id: SOCIALTARIFF
+                  uitpasNumber: 0930002523422
+                  eventId: 31e926e2-a35f-11eb-bcbc-0242ac130002
+                  regularPrice: 10
+                  regularPriceLabel: Base tariff
+                - tariff:
+                    id: REWARD21343
+                  uitpasNumber: 0985002524385
+                  eventId: 31e926e2-a35f-11eb-bcbc-0242ac130002
+                  regularPrice: 10
+              Example for multiple ticket sales at the same tariff:
+                value:
+                - uitpasNumber: '0560002524314'
+                  tariff:
+                    id: SOCIALTARIFF
+                  eventId: 31e926e2-a35f-11eb-bcbc-0242ac130002
+                  regularPrice: 10
+                  regularPriceLabel: Optional descriptive label of the regular price. Used in financial reporting.
+                - uitpasNumber: '0560002524314'
+                  tariff:
+                    id: SOCIALTARIFF
+                  eventId: 31e926e2-a35f-11eb-bcbc-0242ac130002
+                  regularPrice: 10
+                  regularPriceLabel: Optional descriptive label of the regular price. Used in financial reporting.
+                - uitpasNumber: '0560002524314'
+                  tariff:
+                    id: SOCIALTARIFF
+                  eventId: 31e926e2-a35f-11eb-bcbc-0242ac130002
+                  regularPrice: 10
+                  regularPriceLabel: Optional descriptive label of the regular price. Used in financial reporting.
+                - uitpasNumber: '0560002524314'
+                  tariff:
+                    id: SOCIALTARIFF
+                  eventId: 31e926e2-a35f-11eb-bcbc-0242ac130002
+                  regularPrice: 10
+                  regularPriceLabel: Optional descriptive label of the regular price. Used in financial reporting.
+                - uitpasNumber: '0560002524314'
+                  tariff:
+                    id: SOCIALTARIFF
+                  eventId: 31e926e2-a35f-11eb-bcbc-0242ac130002
+                  regularPrice: 10
+                  regularPriceLabel: Optional descriptive label of the regular price. Used in financial reporting.
+              Example using a reward tariff:
+                value:
+                - tariff:
+                    id: REWARD1234
+                  uitpasNumber: '0560002524314'
+                  eventId: 31e926e2-a35f-11eb-bcbc-0242ac130002
+                  regularPrice: 10
+        description: One or more new ticket sales to register.
+    get:
+      summary: Retrieve existing ticket sales
+      tags:
+      - Ticket sales
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketSalesPaginatedResponse'
+              examples:
+                Example without passholder (default):
+                  value:
+                    totalItems: 2
+                    member:
+                    - id: '21345'
+                      creationDate: '2026-08-24T12:57:02Z'
+                      tariff:
+                        id: COUPON1234
+                        name: Cultuurbon 6 euro
+                        price: 4
+                        type: COUPON
+                      uitpasNumber: '0560002524314'
+                      eventId: 31e926e2-a35f-11eb-bcbc-0242ac130002
+                      regularPrice: 10
+                      regularPriceLabel: Optional descriptive label of the regular price. Used in financial reporting.
+                    - id: '21346'
+                      creationDate: '2026-08-24T13:45:59Z'
+                      tariff:
+                        id: COUPON1234
+                        name: Cultuurbon 6 euro
+                        price: 1.5
+                        type: COUPON
+                      uitpasNumber: '0560002524314'
+                      eventId: 31e926e2-a35f-11eb-bcbc-0242ac130002
+                      regularPrice: 10
+                      regularPriceLabel: Optional descriptive label of the regular price. Used in financial reporting.
+                Example with passholder (PASSHOLDERS_SEARCH permission required):
+                  value:
+                    totalItems: 2
+                    member:
+                    - id: '21345'
+                      creationDate: '2026-08-24T12:57:02Z'
+                      tariff:
+                        id: COUPON1234
+                        name: Cultuurbon 6 euro
+                        price: 4
+                        type: COUPON
+                      uitpasNumber: '0560002524314'
+                      eventId: 31e926e2-a35f-11eb-bcbc-0242ac130002
+                      regularPrice: 10
+                      regularPriceLabel: Optional descriptive label of the regular price. Used in financial reporting.
+                      passholder:
+                        id: 1be0fb53-0695-405b-ac09-deafead650af
+                        name: Peeters
+                        firstName: Marc
+                        inszNumber: 00000009007
+                        dateOfBirth: '2000-01-01'
+                        postalCode: '9300'
+                        address:
+                          postalCode: '9300'
+                          city: Aalst
+                        creationDate: '2012-08-24T14:15:22+00:00'
+                        registrationOrganizer:
+                          id: '1234'
+                          name: Example UiTPAS Organizer
+                        points: 10
+                        uitidStatus: UNREGISTERED
+                        uitpasNumber: 0930012345615
+                        cardSystemMemberships:
+                        - cardSystem:
+                            id: 12
+                            name: UiTPAS Oostende
+                            branding:
+                              logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+                              primaryColor: rgba(0,0,0,1.0)
+                              secondaryColor: rgba(97,166,14,1.0)
+                            links:
+                              website: https://www.uitpas.be
+                            cities:
+                            - postalCode: '8400'
+                              name: Oostende
+                            permanent: true
+                          uitpasNumber: 0930012345615
+                          currentCard:
+                            uitpasNumber: 0930012345615
+                            status: ACTIVE
+                          status: ACTIVE
+                          socialTariff:
+                            status: ACTIVE
+                            endDate: '2022-08-24T14:15:22+00:00'
+                            inGracePeriod: false
+                            expired: false
+                    - id: '21346'
+                      creationDate: '2026-08-21T12:12:02Z'
+                      tariff:
+                        id: COUPON1234
+                        name: Cultuurbon 6 euro
+                        price: 1.5
+                        type: COUPON
+                      uitpasNumber: '0560002524314'
+                      eventId: 31e926e2-a35f-11eb-bcbc-0242ac130002
+                      regularPrice: 10
+                      regularPriceLabel: Optional descriptive label of the regular price. Used in financial reporting.
+                      passholder:
+                        id: 1be0fb53-0695-405b-ac09-deafead650af
+                        name: Peeters
+                        firstName: Marc
+                        inszNumber: 00000009007
+                        dateOfBirth: '2000-01-01'
+                        postalCode: '9300'
+                        address:
+                          postalCode: '9300'
+                          city: Aalst
+                        creationDate: '2012-08-24T14:15:22+00:00'
+                        registrationOrganizer:
+                          id: '1234'
+                          name: Example UiTPAS Organizer
+                        points: 10
+                        uitidStatus: UNREGISTERED
+                        uitpasNumber: 0930012345615
+                        cardSystemMemberships:
+                        - cardSystem:
+                            id: 12
+                            name: UiTPAS Oostende
+                            branding:
+                              logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+                              primaryColor: rgba(0,0,0,1.0)
+                              secondaryColor: rgba(97,166,14,1.0)
+                            links:
+                              website: https://www.uitpas.be
+                            cities:
+                            - postalCode: '8400'
+                              name: Oostende
+                            permanent: true
+                          uitpasNumber: 0930012345615
+                          currentCard:
+                            uitpasNumber: 0930012345615
+                            status: ACTIVE
+                          status: ACTIVE
+                          socialTariff:
+                            status: ACTIVE
+                            endDate: '2022-08-24T14:15:22+00:00'
+                            inGracePeriod: false
+                            expired: false
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/url/query-limit-exceeded
+
+
+            The detail property might include more information for the client developer.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      operationId: get-ticket-sales
+      description: 'Retrieve ticket sales based on search parameters. At least one of the following query paramaters is required: `eventId`, `passholderId`. If `passholderId` is specified, then also `organizerId` is required.
+
+
+        The caller of this request must have `TICKETSALES_SEARCH` permission for the organizer of the given event.
+
+
+        The `passholder` is included in the response if applicable (passholder can be empty in some cases, e.g. for group passes), and only if the caller of this request has PASSHOLDERS_SEARCH permission.'
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      parameters:
+      - schema:
+          type: string
+        in: query
+        name: eventId
+        description: Filter ticket sales on this UiTdatabank event.
+      - $ref: '#/components/parameters/start'
+      - $ref: '#/components/parameters/limit'
+      - schema:
+          type: string
+        in: query
+        name: passholderId
+        description: Filter ticket sales on this passholder. Filtering on `organizerId` is required when using this filter.
+      - schema:
+          type: array
+          items:
+            type: string
+        in: query
+        name: organizerId
+        description: Filter ticket sales for events of this organizer, or events taking place on the location of this organizer.
+        explode: true
+      - schema:
+          type: string
+        in: query
+        name: eventTitle
+        description: Filter ticket sales on this (partial) UiTdatabank event title.
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+  /ticket-sales/{ticketSaleId}:
+    parameters:
+    - schema:
+        type: string
+      name: ticketSaleId
+      in: path
+      required: true
+      description: Id of the previously registered ticket sale
+    delete:
+      summary: Cancel a ticket sale registration
+      operationId: delete-ticket-sales
+      responses:
+        '204':
+          description: No content. The ticket sale was successfully canceled.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Ticket Sale not found:
+                  value:
+                    type: https://api.publiq.be/probs/uitpas/ticket-sale-not-found
+                    title: Ticket sale not found
+                    status: 404
+      description: 'Cancels a single ticket sale registration by its id. (Returned in the response of the ticket sale registration request.)
+
+
+        The caller of this request must have `TICKETSALES_REGISTER` permission for the organizer of the event of the ticketsale.'
+      tags:
+      - Ticket sales
+      security:
+      - USER_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+      - CLIENT_ACCESS_TOKEN:
+        - https://api.publiq.be/auth/uitpas
+    servers:
+    - url: https://api-test.uitpas.be
+      description: Testing
+    - url: https://api.uitpas.be
+      description: Production
+components:
+  schemas:
+    Tariff:
+      type: object
+      title: Tariff
+      description: 'The Tariff describes the discounted price a passholder has to pay for a given ticket. '
+      x-internal: false
+      example:
+        id: SOCIALTARIFF-1
+        name: UiTPAS Kansentarief
+        price: 1.5
+        type: SOCIALTARIFF
+      x-tags:
+      - Models
+      properties:
+        id:
+          type: string
+          description: ID of the tariff
+        name:
+          type: string
+          description: Human-readable name of the tariff
+          readOnly: true
+        price:
+          type: number
+          description: Discounted price to pay for this tariff, in euro.
+          readOnly: true
+        type:
+          type: string
+          enum:
+          - SOCIALTARIFF
+          - COUPON
+          description: Type of discount being applied.
+          readOnly: true
+      required:
+      - id
+    Error:
+      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
+    TicketSalesPaginatedResponse:
+      title: TicketSalesPaginatedResponse
+      type: object
+      x-tags:
+      - Models
+      description: Paginated response object for ticket sales
+      properties:
+        totalItems:
+          type: integer
+          description: Total number of ticket sale results (can be more than the amount of results in the response).
+        member:
+          type: array
+          description: List of ticket sale results for this specific (paginated) request.
+          items:
+            $ref: '#/components/schemas/TicketSale'
+    TariffsResponse:
+      title: TariffsResponse
+      description: Response object for tariffs
+      type: object
+      example:
+        available:
+        - id: SOCIALTARIFF-1
+          name: UiTPAS Kansentarief
+          price: 1.5
+          type: SOCIALTARIFF
+          remaining: 1
+      x-tags:
+      - Models
+      properties:
+        available:
+          type: array
+          description: List of available tariffs.
+          items:
+            $ref: '#/components/schemas/TariffAvailibility'
+        endUserMessage:
+          type: object
+          description: 'Optional property that, if provided, contains information for the end-user about potentially unavailable tariffs (while the end user might expect otherwise). e.g. if no tariff of type `SOCIALTARIFF` is available, while the passholder has a valid social tariff, this field can contain a human-readable explanation of the problem, specifically for end-users, in one or more languages. An `nl` value is always provided, other languages may be provided. When this property is included, it is strongly encouraged to show this to the end-user. It is also important to note that this message is context-aware: e.g. when filtering tariffs on `type=SOCIALTARIFF`, this message won''t include information about coupons. Furthermore keep in mind this ''end user message'' does not necessarily contain a fatal error. A message might be relevant to show while there are still other tariffs available.'
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+    CardSystemMembershipCard:
+      title: CardSystemMembershipCard
+      x-stoplight:
+        id: c61r94oays9ih
+      type: object
+      description: Representation of an UiTPAS card embedded in a CardSystemMembership.
+      properties:
+        uitpasNumber:
+          type: string
+          x-stoplight:
+            id: wt5795os9zlly
+          description: UiTPAS number of this card.
+        cardType:
+          type: string
+          x-stoplight:
+            id: 0wg00e7ok83tp
+          enum:
+          - NFC_CARD
+          - DIGITAL
+          description: Type of this card.
+        status:
+          type: string
+          x-stoplight:
+            id: ic0htdaaq5wmr
+          description: Status of this card.
+          enum:
+          - ACTIVE
+          - BLOCKED
+          - DELETED
+      required:
+      - uitpasNumber
+      - status
+    City:
+      title: City
+      type: object
+      x-tags:
+      - Models
+      example:
+        postalCode: '9300'
+        name: Aalst
+      properties:
+        postalCode:
+          type: string
+          description: Postalcode of the city
+        name:
+          type: string
+          description: Name of the city
+      required:
+      - postalCode
+      - name
+    Organizer:
+      title: Organizer
+      type: object
+      description: An organisation that partners with UiTPAS to provide discounts and/or rewards, and/or allows points to be collected at their events.
+      x-tags:
+      - Models
+      properties:
+        id:
+          type: string
+          description: Unique ID of an UiTPAS organizer. (Same as its ID in UiTdatabank)
+        name:
+          type: string
+          description: Human-readable name of an UiTPAS organizer.
+        cardSystems:
+          type: array
+          description: Card systems linked to this organizer
+          items:
+            $ref: '#/components/schemas/CardSystem'
+        linkedLocationId:
+          type: string
+          description: ID of the location linked to this organizer.
+          readOnly: true
+        address:
+          type: object
+          description: Address of this organizer. This property is alway available in responses.
+          required:
+          - city
+          properties:
+            street:
+              type: string
+              description: Street address of this organizer
+            postalCode:
+              type: string
+              description: Postal code of this organizer
+            city:
+              type: string
+              description: City of this organizer
+          readOnly: true
+      required:
+      - id
+    Passholder:
+      title: Passholder
+      type: object
+      x-tags:
+      - Models
+      description: "Person who holds an UiTPAS, the end-user of an UiTPAS. \n\nA `Passholder` can be identified by its `id`. However, there are cases where the passholder identifies using one of its UiTPAS numbers. That number is CardSystem specific, so it can be found under `cardSystemMemberships`. Every passholder should have at least one cardsystem membership."
+      x-examples: {}
+      properties:
+        id:
+          type: string
+          description: This field is always available in responses and ignored in create and update operations.
+          readOnly: true
+        name:
+          type: string
+          description: Last name of the passholder.
+        firstName:
+          type: string
+          description: First name of the passholder.
+        inszNumber:
+          type: string
+          description: Unique national (Belgian) INSZ number of an individual passholder to look up.
+        uitpasNumber:
+          type: string
+          description: The UiTPAS number of this passholder. This field contains the UiTPAS number of the oldest, still active cardsystem membership, that has an active card. This field is always available in responses and ignored in create and update operations.
+        cardSystemMemberships:
+          type: array
+          description: This field is always available in responses and ignored in create and update operations.
+          items:
+            $ref: '#/components/schemas/CardSystemMembership'
+          readOnly: true
+        email:
+          type: string
+          description: Contact email address of the passholder. Not present for every passholder. Multiple passholders can have the same email address.
+        creationDate:
+          type: string
+          format: date-time
+          description: This field is always available in responses and ignored in create and update operations.
+          readOnly: true
+        dateOfBirth:
+          type: string
+          format: date
+          description: Date that the passholder was born.
+        gender:
+          type: string
+          enum:
+          - MALE
+          - FEMALE
+          - X
+          description: Gender of the passholder.
+        registrationOrganizer:
+          allOf:
+          - $ref: '#/components/schemas/Organizer'
+          writeOnly: true
+          description: Only used in passholder creation or update.
+        points:
+          type: integer
+          description: Amount of points the passholder has currently saved (and not used).This field is always available in responses and ignored in create and update operations.
+          readOnly: true
+        uitidStatus:
+          type: string
+          enum:
+          - REGISTERED
+          - UNREGISTERED
+          description: Whether or not the passholder has a an UiTiD registered. This field is always available in responses and ignored in create and update operations.
+          readOnly: true
+        address:
+          type: object
+          description: Address that the passholder lives at. Always present in responses. Passholders living outside of Belgium (usually near the border) will only have a `postalCode` and `city` in their address.
+          required:
+          - postalCode
+          - city
+          properties:
+            street:
+              type: string
+              description: Street name, number and optional box number of the address.
+            number:
+              type: string
+              description: House number. This field is deprecated and will be empty. The house number is part of the `street` property.
+              deprecated: true
+            box:
+              type: string
+              description: Postal box number. This field is deprecated and will be empty. The box number is part of the `street` property.
+              deprecated: true
+            postalCode:
+              type: string
+              description: Postal code of the municipality.
+            city:
+              type: string
+              description: Human-readable name of the municipality.
+            country:
+              type: string
+              description: ISO 3166-1 alpha-2 country code.
+        postalCode:
+          type: string
+          deprecated: true
+          description: Postal code of the municipality that the passholder lives in. Deprecated in favor of `address.postalCode`
+          readOnly: true
+        city:
+          type: string
+          deprecated: true
+          description: Name of the municipality that the passholder lives in. Deprecated in favor of `address.city`.
+          readOnly: true
+        phoneNumber:
+          type: string
+          description: Phone number that the passholder has registered, for example for SMS alerts.
+        optInPreferences:
+          type: object
+          description: Permissions that the passholder has given to be contacted.
+          properties:
+            serviceMails:
+              type: boolean
+              description: Important information about the functionality of UiTPAS.
+            milestoneMails:
+              type: boolean
+              description: Notification when you reach an important UiTPAS milestone, for example a specific amount of points or an exclusive reward becomes available to you.
+            infoMails:
+              type: boolean
+              description: Rewards, actions and events selected specifically for the passholder based on their UiTPAS history.
+            sms:
+              type: boolean
+              description: Free (sporadic) SMS messages with rewards, actions and events selected specifically for the passholder based on their UiTPAS history.
+            post:
+              type: boolean
+              description: Sporadic post mail with information about UiTPAS. Will be sent to the passholder's postal address.
+          required:
+          - serviceMails
+          - milestoneMails
+          - infoMails
+          - sms
+          - post
+        nationality:
+          type: string
+          description: Human-readable name of the passholder's nationality.
+        parentalConsent:
+          type: boolean
+          description: Only used in passholder creation and updates. Set to true for under-aged passholder that have parental consent.
+          writeOnly: true
+        legalTermsPaper:
+          type: boolean
+          description: Only used in passholder creation and updates. Set to true for passholders that received legal terms on paper.
+          writeOnly: true
+        legalTermsDigital:
+          type: boolean
+          description: Only used in passholder creation and updates. Set to true for passholders that received legal terms digitally.
+          writeOnly: true
+        registrationCardSystemId:
+          type: integer
+          description: Only used in passholder creation. Set to the id of the card system of which the passholder has to become a member.
+          writeOnly: true
+        registrationVoucher:
+          type: string
+          description: Only used in passholder creation when the ser has a price reduction voucher.
+          writeOnly: true
+        registrationCardType:
+          type: string
+          description: Only used and mandatory in passholder c
+          enum:
+          - DIGITAL
+          - NFC_CARD
+          writeOnly: true
+        registrationUitpasNumber:
+          type: string
+          description: Only used in passholder creation using a physical card.
+          writeOnly: true
+        registrationSocialTariffEndDate:
+          type: string
+          description: Only used in passholder creation using a `registrationUitpasNumber` with social tariff. Or when updating a passholder with social tariff. During registration, if no `registrationSocialTariffEndDate` is specified and `registrationUitpasNumber` has social tariff, a default date of April 30 of next year is used.
+          format: date
+          writeOnly: true
+        registrationPicture:
+          type: string
+          description: Base64 encoded string of the picture of this passholder. Only used in passholder creation.
+          format: byte
+          x-stoplight:
+            id: ikgxjklji2guj
+          writeOnly: true
+        registrationNote:
+          type: string
+          description: Only used in passholder creation. The admin-private note about this pas
+          x-stoplight:
+            id: 449kx338dtu1q
+          writeOnly: true
+      required:
+      - name
+      - firstName
+      - dateOfBirth
+      - registrationOrganizer
+      - address
+    CardSystem:
+      title: CardSystem
+      description: A region, usually one or multiple municipalities in Belgium, that uses UiTPAS and provides discounts and/or rewards. For example "Paspartoe" (Brussels), UiTPAS Leuven, UiTPAS Hasselt, UiTPAS Gent, and so on.
+      type: object
+      x-tags:
+      - Models
+      example:
+        id: 1
+        name: UiTPAS Dender
+        branding:
+          logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+          primaryColor: rgba(0,0,0,1.0)
+          secondaryColor: rgba(97,166,14,1.0)
+        links:
+          website: https://www.uitpas.be
+        cities:
+        - postalCode: '9300'
+          name: Aalst
+        - postalCode: '9400'
+          name: Ninove
+        permanent: true
+      properties:
+        id:
+          type: integer
+          description: ID of the card system
+        name:
+          type: string
+          description: Name of the card system. This field is always available in responses.
+        branding:
+          type: object
+          description: Branding information of the card system
+          properties:
+            logo:
+              type: string
+              description: URL to the logo of the card system
+            primaryColor:
+              type: string
+              description: Color code of the primary branding color.
+            secondaryColor:
+              type: string
+              description: Color code of the secondary branding color.
+        links:
+          type: object
+          description: Links of the card system
+          properties:
+            website:
+              type: string
+              description: URL of the website of the card system
+        cities:
+          type: array
+          description: List of cities that are part of this card system
+          items:
+            $ref: '#/components/schemas/City'
+        permanent:
+          type: boolean
+          description: Indicates whether this is a permanent card system
+        allowsCardlessRegistration:
+          type: boolean
+          description: Indicates if cardless registration is enabled
+        cardlessRegistrationType:
+          type: string
+          description: Indicates the types of online cardless registrations this cardsystem supports.
+          enum:
+          - ALL
+          - REGULAR
+          - SOCIALTARIFF
+          - NONE
+        socialTariffInfo:
+          type: string
+          description: Optional information about social tariff entitlement in this card system.
+      required:
+      - id
+    TariffAvailibility:
+      example:
+        id: COUPON5678
+        name: Cultuurbon 8 euro
+        price: 2
+        remaining: 1
+        type: COUPON
+      description: The `TariffAvailibility` includes all information about the `Tariff`, which describes the discounted price a passholder has to pay for a given ticket, and the `remaining` number of tickets this passholder can buy for this event at this Tariff.
+      title: TariffAvailibility
+      allOf:
+      - $ref: '#/components/schemas/Tariff'
+      - type: object
+        properties:
+          remaining:
+            type: integer
+            example: 1
+            readOnly: true
+            description: Amount of tickets available at this price for this event, for the given passholder.
+        required:
+        - remaining
+      x-tags:
+      - Models
+    TicketSale:
+      description: 'Model used both for registering new ticket sales and when searching for past ticket sales.
+
+
+        The `passholder` field is automatically included in responses if you have PASSHOLDERS_SEARCH permission. It is not required for ticket sale registrations.'
+      type: object
+      example:
+        regularPrice: 10
+        regularPriceLabel: Volwassenen
+        tariff:
+          id: COUPON1234
+        eventId: CBA2D826-9E85-47BD-8E0B-2BC7882E68FB
+        uitpasNumber: '1234567890'
+      title: TicketSale
+      x-tags:
+      - Models
+      properties:
+        id:
+          type: string
+          description: Unique id of a registered ticket sale. Not required for new ticket sale registrations
+          readOnly: true
+        creationDate:
+          type: string
+          x-stoplight:
+            id: jptbuymhglbl0
+          format: date-time
+          description: Creation date of the ticket sale. Always available in response.
+          readOnly: true
+        regularPrice:
+          type: number
+          description: Regular price of the ticket before UiTPAS discounts
+        regularPriceLabel:
+          type: string
+          description: Optional descriptive label of the regular price. Used in financial reporting
+        tariffId:
+          type: string
+          description: Unique ID of the tariff that was paid for the ticket. (Deprecated, use `tariff.id` instead.)
+          deprecated: true
+        tariff:
+          $ref: '#/components/schemas/Tariff'
+        eventId:
+          type: string
+          minLength: 1
+          description: Id of the event that the ticket sale was for
+        eventTitle:
+          type: string
+          x-stoplight:
+            id: werwwukp0fgy1
+          description: Title of the event that the ticket sale was for
+          readOnly: true
+        uitpasNumber:
+          type: string
+          minLength: 1
+          description: The passholder's UiTPAS number used to register this ticket sale. Note that the uitpasNumber of a passholder might change over time. This field will always contain the uitpasNumber used when registering the ticket sale. To identify the passholder, use the `passholder` field.
+        passholder:
+          $ref: '#/components/schemas/Passholder'
+      required:
+      - regularPrice
+      - tariff
+      - eventId
+      - uitpasNumber
+    CardSystemMembership:
+      title: CardSystemMembership
+      description: Membership info of an individual passholder in a specific card system.
+      type: object
+      x-tags:
+      - Models
+      properties:
+        cardSystem:
+          $ref: '#/components/schemas/CardSystem'
+        uitpasNumber:
+          type: string
+          description: This is a convenience propery that contains the uitpasNumber of the `currentCard` if there is a current card and that card is `ACTIVE`.
+        currentCard:
+          $ref: '#/components/schemas/CardSystemMembershipCard'
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - BLOCKED
+          description: Whether the membership is active or blocked.
+          readOnly: true
+        socialTariff:
+          type: object
+          description: 'If the passholder has (or had) right to a social tariff, this object contains details like the  end date. Check the `status` of the `socialTariff`: the passholder is only currently entitled to a social tariff is `status` is `ACTIVE`. '
+          properties:
+            status:
+              type: string
+              enum:
+              - ACTIVE
+              - EXPIRED
+              - SUSPENDED
+              description: 'Status of the social tariff:
+
+                - `ACTIVE`: the passholder is entitled to social tariff
+
+                - `EXPIRED`: the passholder is NOT entitled to social tariff anymore
+
+                - `SUSPENDED`: the passholder is temporarily NOT entitled to social tariff. In this case a extra property `suspendedUntilDate` will also be available.'
+            endDate:
+              type: string
+              format: date-time
+              description: Exact moment the passholder's right to a social tariff expires.
+            inGracePeriod:
+              type: boolean
+              description: When the end date of the right to a social tariff has passed, the passholder may still be in a grace period that they can buy tickets at a social tariff until their right to a social tariff has been renewed.
+            suspendedUntilDate:
+              type: string
+              format: date-time
+              description: Date until this social tarif is suspended (only available when status is `SUSPENDED`)
+            expired:
+              type: boolean
+              description: If true, the passholder's right to a social tariff has completely expired (the end date has passed and the passholder is no longer in a grace period). **This property is deprecated.** Please use the `status` property instead.
+              deprecated: true
+          required:
+          - status
+          - endDate
+      required:
+      - cardSystem
+    Error_2:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+  responses:
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+  parameters:
+    limit:
+      schema:
+        type: integer
+        default: 20
+        minimum: 0
+      in: query
+      name: limit
+      description: 'Maximum amount of results to return. Can be used in combination with `start` for pagination. **Important**: the maximum value for `limit` is `500`. Exceeding this value will result in an error.'
+    start:
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      in: query
+      name: start
+      description: Position to start returning results from. When set to `0` the results starting from the very first position will be returned. When set to for example `10` the results 0-9 will be skipped and the ones starting from position 10 will be returned. Can be used in combination with `limit` for pagination.
+  securitySchemes:
+    USER_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A user access token, obtained by redirecting the end user to publiq's authorization server to login using the **Authorization Code OAuth Flow**. See the [authentication docs about user access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
+    CLIENT_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+    CLIENT_IDENTIFICATION:
+      name: x-client-id
+      type: apiKey
+      in: header
+    CUSTOM_TOKEN:
+      name: x-custom-token
+      type: apiKey
+      in: header
+x-refined-from:
+- uitpas-uitpas.json
+- publiq-uitpas-openapi.yml

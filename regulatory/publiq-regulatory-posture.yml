@@ -1,0 +1,99 @@
+generated: '2026-10-09'
+method: searched
+source: https://www.publiq.be/nl/privacy
+language: nl
+notes: >-
+  All source pages are in Dutch; quotes are verbatim Dutch, notes give an English reading. The
+  Algemene Verwerkingsvoorwaarden (general processing terms) apply to UiTPAS-API users, who act as
+  PROCESSOR for publiq vzw (controller) per Gebruiksvoorwaarden 8.3. Clauses drawn from that document
+  therefore bind the API integrator toward publiq, not publiq toward its users. The Responsible
+  Disclosure Policy (https://www.publiq.be/projecten/publiq-platform/responsible-disclosure-policy, 200)
+  speaks to no signal in this vocabulary and is not used here.
+signals:
+  data_subject_request:
+    url: https://www.publiq.be/nl/privacy
+    section: '5. Rechten van betrokkenen'
+    channel: dpo@publiq.be
+    rights_named: [information/access, portability, rectification, withdrawal of consent, erasure, restriction, objection]
+    escalation: Gegevensbeschermingsautoriteit (Belgian Data Protection Authority), contact@apd-gba.be
+    evidence:
+    - source: https://www.publiq.be/nl/privacy
+      http_status: 200
+      fetched: '2026-10-09'
+      quote: "het recht om informatie op te vragen over de verwerking van je persoonsgegevens; het recht om je persoonsgegevens over te laten dragen aan een andere partij; het recht om je persoonsgegevens te wijzigen; het recht om je toestemming in te trekken, als de verwerking op toestemming is gebaseerd; het recht om je gegevens te laten verwijderen indien de gegevens niet langer nodig zijn voor de doeleinden waarvoor zij zijn verkregen of wanneer je je toestemming intrekt."
+    - source: https://www.publiq.be/nl/privacy
+      http_status: 200
+      fetched: '2026-10-09'
+      quote: "Voor het uitoefenen van deze rechten kan je contact opnemen met onze helpdesk via dpo@publiq.be . Om te controleren of jij daadwerkelijk de betrokkene bent, kan gevraagd worden om je te identificeren."
+    note: >-
+      GDPR data-subject rights are listed (access, portability, rectification, consent withdrawal, erasure,
+      plus restriction and objection) with a DPO channel and identity verification; no response deadline is
+      stated. Complaints escalate to the DPO and the Belgian supervisory authority.
+  data_retention:
+    url: https://www.publiq.be/nl/privacy
+    section: '3. Hoelang worden jouw persoonsgegevens bewaard?'
+    evidence:
+    - source: https://www.publiq.be/nl/privacy
+      http_status: 200
+      fetched: '2026-10-09'
+      quote: "We bewaren je persoonsgegevens niet langer dan noodzakelijk is voor de doeleinden waarvoor ze zijn verzameld of zoals wettelijk vereist."
+    note: >-
+      A purpose-limitation retention statement only ("no longer than necessary ... or as legally required");
+      no concrete retention periods are published.
+  subprocessors:
+    url: https://www.publiq.be/nl/privacy
+    section: '4. Met wie delen wij jouw persoonsgegevens?'
+    evidence:
+    - source: https://www.publiq.be/nl/privacy
+      http_status: 200
+      fetched: '2026-10-09'
+      quote: "Verder zijn een aantal partijen betrokken bij de werkzaamheden van publiq, die om die reden een rol spelen in de verwerking van persoonsgegevens. Dit zijn onze zogenaamde “verwerkers”. Met deze verwerkers is een verwerkersovereenkomst afgesloten waarin precies is omschreven welke persoonsgegevens voor welk doel mogen worden verwerkt."
+    - source: https://www.publiq.be/projecten/publiq-platform/gebruiksvoorwaarden
+      http_status: 200
+      fetched: '2026-10-09'
+      quote: "Voor de uitvoering van haar diensten heeft publiq het recht om onderaannemers van haar keuze in te schakelen."
+    - source: https://www.publiq.be/projecten/publiq-platform/algemene-verwerkingsvoorwaarden
+      http_status: 200
+      fetched: '2026-10-09'
+      quote: "De Verwerker houdt een actueel overzicht bij van de overeenkomsten met Subverwerkers en kan deze binnen redelijke termijn op eenvoudig verzoek bezorgen aan de Verwerkingsverantwoordelijke."
+    note: >-
+      publiq acknowledges using processors under data-processing agreements and reserves the right to use
+      subcontractors of its choice, but publishes no named subprocessor list. The DPA clause (Artikel 6)
+      obliges the UiTPAS-API integrator, as processor, to obtain publiq's prior specific approval for
+      subprocessors and keep a list available on request.
+  incident_notification:
+    url: https://www.publiq.be/projecten/publiq-platform/algemene-verwerkingsvoorwaarden
+    section: '7.3. Bijstand bij Datalekken'
+    stated_window: 24 hours (processor to controller)
+    evidence:
+    - source: https://www.publiq.be/projecten/publiq-platform/algemene-verwerkingsvoorwaarden
+      http_status: 200
+      fetched: '2026-10-09'
+      quote: "De Verwerker verbindt zich ertoe elk Datalek en alle ernstige pogingen tot onrechtmatige of ongeautoriseerde Verwerkingen of toegangen tot Persoonsgegevens zonder onredelijke vertraging, en uiterlijk 24 uur na kennisname, te melden aan de Verwerkingsverantwoordelijke conform artikel 33.3 van de AVG."
+    note: >-
+      Direction matters: this binds the UiTPAS-API user (processor) to notify publiq (controller) of a data
+      breach within 24 hours. It is not a commitment by publiq to notify its API users.
+  data_residency:
+    url: https://www.publiq.be/projecten/publiq-platform/algemene-verwerkingsvoorwaarden
+    section: 'Artikel 8: Plaats van Verwerking'
+    evidence:
+    - source: https://www.publiq.be/projecten/publiq-platform/algemene-verwerkingsvoorwaarden
+      http_status: 200
+      fetched: '2026-10-09'
+      quote: "De Verwerker Verwerkt de Persoonsgegevens alleen binnen de Europese Economische Ruimte, tenzij hierover met de Verwerkingsverantwoordelijke andere afspraken zijn gemaakt."
+    note: >-
+      EEA-only processing, imposed on the UiTPAS-API integrator as processor of publiq's data unless agreed
+      otherwise in writing. publiq's own hosting location is not stated on these pages.
+  exit_assistance:
+    url: https://www.publiq.be/projecten/publiq-platform/algemene-verwerkingsvoorwaarden
+    section: 'Artikel 3: Duur'
+    evidence:
+    - source: https://www.publiq.be/projecten/publiq-platform/algemene-verwerkingsvoorwaarden
+      http_status: 200
+      fetched: '2026-10-09'
+      quote: "Na beëindiging van de Verwerkingsovereenkomst dient de Verwerker aan de Verwerkingsverantwoordelijke zonder onredelijke vertraging, en onverwijld op verzoek, een kopie te bezorgen van alle Persoonsgegevens die door haar in het kader van de Samenwerking Verwerkt worden, in gestructureerd, gangbaar en machine leesbaar formaat."
+    note: >-
+      On termination the processor (the integrator) must return all personal data to publiq in a
+      structured, machine-readable format and then destroy all copies. This is data return toward publiq,
+      not an exit-assistance promise by publiq to its users; the platform terms instead say publiq may
+      suspend or end the publication tools without any right to compensation.

@@ -1,0 +1,18 @@
+generated: '2026-10-09'
+method: searched
+source:
+- https://docs.publiq.be/docs/widgets/inleiding
+- https://github.com/cultuurnet/apidocs/blob/main/projects/widgets/docs/inleiding.md
+- https://github.com/cultuurnet/apidocs/blob/main/projects/widgets/docs/publiceren-en-embedden-op-je-website.md
+families:
+- family: UiTwidgets
+  kind: hosted embeddable HTML/JS calendar module
+  description: UiTwidgets (of kortweg "widgets") zijn kant-en-klare HTML/JS modules die je in je website kan integreren om zo snel en eenvoudig een volledig doorzoekbare UiTagenda op je website te publiceren.
+  configuration: Configured in publiq widget builder (widgetbouwer); settings stored on a <script> tag
+  parts:
+  - zoekbox
+  - zoekresultaten
+  - verfijningen (facets)
+  - detailpagina
+  loader: Unique per-widget HTTPS <script> embed code issued after publishing; later published changes apply to the existing script tag
+  docs: https://docs.publiq.be/docs/widgets/inleiding

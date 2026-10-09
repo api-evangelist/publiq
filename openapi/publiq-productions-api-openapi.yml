@@ -1,0 +1,413 @@
+openapi: 3.2.0
+info:
+  title: Publiq Productions API
+  version: '3.0'
+  contact:
+    name: publiq helpdesk
+    email: technical-support@publiq.be
+    url: https://docs.publiq.be
+  x-refined-note:
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Productions across 2 of this provider''s published API definitions: uitdatabank-entry.json, publiq-uitdatabank-entry-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://io-test.uitdatabank.be
+  description: Testing
+- url: https://io.uitdatabank.be
+  description: Production
+tags:
+- name: Productions
+paths:
+  /productions/{productionId1}/merge/{productionId2}:
+    parameters:
+    - $ref: '#/components/parameters/productionId1'
+    - $ref: '#/components/parameters/productionId2'
+    post:
+      summary: productions - merge
+      operationId: productions-merge
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+      - Productions
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      x-internal: true
+      description: Merges to productions into one. If the request is successful a `204 No Content` will be returned.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /productions/{productionId}/events/{eventId}:
+    parameters:
+    - $ref: '#/components/parameters/productionId'
+    - $ref: '#/components/parameters/eventId'
+    put:
+      summary: productions - add event
+      operationId: productions-add-event
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+      - Productions
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      x-internal: true
+      description: Add a single event to an existing production. If the request is successful a `204 No Content` will be returned.
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /productions/skip:
+    post:
+      summary: productions - skip
+      operationId: productions-skip
+      responses:
+        '200':
+          description: The production was skipped successfully
+          content:
+            application/ld+json:
+              schema:
+                $ref: ../models/productions-skip.json
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required property (eventIds) is missing.
+      tags:
+      - Productions
+      description: Skip a pair of suggested events. The suggested pair will not be linked to a production and will not be suggested again.
+      security:
+      - USER_ACCESS_TOKEN: []
+      - CLIENT_ACCESS_TOKEN: []
+      x-internal: true
+      requestBody:
+        description: The complete details of the new production to create.
+        content:
+          application/json:
+            schema:
+              $ref: ../models/productions-skip.json
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+  /productions:
+    post:
+      summary: productions - create
+      operationId: productions-create
+      responses:
+        '201':
+          description: The production was created successfully
+          content:
+            application/ld+json:
+              schema:
+                $ref: ../models/production-post.json
+            application/json:
+              schema:
+                $ref: ../models/production-post.json
+        '400':
+          description: 'Bad Request. Possible error types:
+
+
+            * https://api.publiq.be/probs/body/missing
+
+            * https://api.publiq.be/probs/body/invalid-syntax
+
+            * https://api.publiq.be/probs/body/invalid-data'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Invalid data:
+                  value:
+                    type: https://api.publiq.be/probs/body/invalid-data
+                    title: Invalid body data
+                    status: 400
+                    schemaErrors:
+                    - jsonPointer: /
+                      error: The required properties (name) are missing.
+      description: Creates a production
+      x-internal: true
+      requestBody:
+        description: The complete details of the new production to create.
+        content:
+          application/json:
+            schema:
+              $ref: ../models/production-post.json
+      tags:
+      - Productions
+    get:
+      summary: productions - search
+      description: Get a list of existing productions filtered by a search string
+      operationId: productions-get
+      responses:
+        '200':
+          description: Production details
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  hydra:member:
+                    type: array
+                    description: Production results for the requested page.
+                    items:
+                      $ref: ../models/production.json
+              examples:
+                Example:
+                  value:
+                    hydra:member:
+                    - productionId: c356dac7-133b-4847-805f-91a8c3c09da6
+                      name: Alex Agnew speelt 'Wake Me Up When It's Over'
+                      events:
+                      - 4f37a230-8d8d-4dab-a527-62e879629bae
+                      - 7f32b131-deb9-483f-ab32-98541d3c3b77
+                      - c41effec-0e04-4e01-8804-9ea9b4c6b528
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/production.json
+              examples:
+                Example 1:
+                  value:
+                  - productionId: c356dac7-133b-4847-805f-91a8c3c09da6
+                    name: Alex Agnew speelt 'Wake Me Up When It's Over'
+                    events:
+                    - 4f37a230-8d8d-4dab-a527-62e879629bae
+                    - 7f32b131-deb9-483f-ab32-98541d3c3b77
+                    - c41effec-0e04-4e01-8804-9ea9b4c6b528
+      x-internal: true
+      parameters:
+      - schema:
+          type: string
+          minLength: 1
+        in: query
+        name: name
+        description: The name or part of the name of the production(s) to search (case-insensitive).
+      - schema:
+          type: integer
+        in: query
+        name: start
+        description: The number of productions to skip from the start of the result set. When omitted it starts from the first position (0).
+      - schema:
+          type: integer
+        in: query
+        name: limit
+        description: The limit of productions included in the result set. When omitted it defaults to 30 items.
+      tags:
+      - Productions
+    servers:
+    - url: https://io-test.uitdatabank.be
+      description: Testing
+    - url: https://io.uitdatabank.be
+      description: Production
+components:
+  parameters:
+    eventId:
+      name: eventId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: F2D5D20C-CC98-4979-9CD2-453ABAD979B5
+      description: Unique id of an event, in the format of a UUID
+    productionId2:
+      name: productionId2
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+      description: Unique id of a production that is merged into another production, in the format of a UUID
+    productionId1:
+      name: productionId1
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+      description: Unique id of a production into which another production is merged, in the format of a UUID
+    productionId:
+      name: productionId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+      description: Unique id of a production
+  responses:
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organizer abcd1234
+    NotFound:
+      description: 'The requested resource (URL) could not be found.
+
+        This can be due to one of multiple reasons:
+
+
+        * The endpoint has a typo and/or does not exist on the API
+
+        * One of the path parameters contains a value that is invalid or does not exist
+
+        * One of the required query parameters is missing
+
+        * One of the query parameters has an invalid value
+
+
+        The `detail` property of the response should contain more specific information.
+
+
+        The `type` will always be `https://api.publiq.be/probs/url/not-found`.'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/url/not-found
+                title: URL not found
+                status: 404
+                detail: The resource with id "76C6AC08-763C-492E-A68C-CBC43A857229" was not found.
+  schemas:
+    Error:
+      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
+    Error_2:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+  securitySchemes:
+    USER_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A user access token, obtained by redirecting the end user to publiq's authorization server to login using the **Authorization Code OAuth Flow**. See the [authentication docs about user access tokens](https://docs.publiq.be/docs/authentication/methods/client-access-token) for more info.
+    CLIENT_ACCESS_TOKEN:
+      type: oauth2
+      flows: {}
+      description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
+x-refined-from:
+- uitdatabank-entry.json
+- publiq-uitdatabank-entry-openapi.yml

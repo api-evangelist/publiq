@@ -1,0 +1,219 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/publiq/main/json-schema/publiq-pass-schema.json",
+  "title": "Pass",
+  "description": "The `Pass` entity includes basic information about the UiTPAS and its related `Passholder`.  ",
+  "x-generated": "2026-10-09",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/publiq-uitpas-openapi.yml#/components/schemas/Pass",
+  "type": "object",
+  "x-tags": [
+    "Models"
+  ],
+  "properties": {
+    "passholderId": {
+      "type": "string",
+      "description": "ID of the passholder associated with this pass",
+      "readOnly": true
+    },
+    "passType": {
+      "type": "string",
+      "x-stoplight": {
+        "id": "5l6ksrclyqezu"
+      },
+      "description": "Indicates whether this pass belongs to an individual passholder or a group (Grouppas)",
+      "enum": [
+        "INDIVIDUAL",
+        "GROUP"
+      ],
+      "readOnly": true
+    },
+    "uitpasNumber": {
+      "type": "string",
+      "description": "UiTPAS number of this pass",
+      "readOnly": true
+    },
+    "firstName": {
+      "type": "string",
+      "description": "First name of the passholder."
+    },
+    "points": {
+      "type": "integer",
+      "description": "Number of points of the passholder of this pass",
+      "readOnly": true
+    },
+    "postalCode": {
+      "type": "string",
+      "description": "Postal code of the passholder of this pass",
+      "readOnly": true
+    },
+    "cardSystem": {
+      "$ref": "#/$defs/CardSystem"
+    },
+    "socialTariff": {
+      "type": "object",
+      "description": "Information about the possible social tariff of the passholder. This object is always present, however a passholder is only entitled to social tariff if the `status` property has value `ACTIVE`.",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "ACTIVE",
+            "EXPIRED",
+            "NONE"
+          ],
+          "description": "Status of the social tariff:\n- `ACTIVE`: the passholder is entitled to social tariff\n- `EXPIRED`: the passholder is NOT entitled to social tariff anymore\n- `NONE`: the passholder is NOT entitled to social tariff"
+        },
+        "endDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Exact expiration date of the passholder's entitlement to a social tariff. This property must not be used to determine the social tariff status, because `status` can be `ACTIVE` while the `endDate` is in the past during a 'grace period'. This property is not available when status is `NONE`.",
+          "readOnly": true
+        }
+      }
+    },
+    "messages": {
+      "type": "array",
+      "description": "Message that, if present, must be displayed to the user",
+      "items": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "string",
+            "enum": [
+              "INFO",
+              "WARN",
+              "ERROR"
+            ],
+            "description": "Severity level of the message",
+            "readOnly": true
+          },
+          "text": {
+            "type": "string",
+            "description": "Actual text of the message to be displayed to the user"
+          }
+        },
+        "required": [
+          "level",
+          "text"
+        ]
+      },
+      "readOnly": true
+    }
+  },
+  "required": [
+    "passholderId",
+    "passType",
+    "uitpasNumber",
+    "firstName",
+    "points",
+    "postalCode",
+    "cardSystem",
+    "socialTariff"
+  ],
+  "readOnly": true,
+  "$defs": {
+    "CardSystem": {
+      "title": "CardSystem",
+      "description": "A region, usually one or multiple municipalities in Belgium, that uses UiTPAS and provides discounts and/or rewards. For example \"Paspartoe\" (Brussels), UiTPAS Leuven, UiTPAS Hasselt, UiTPAS Gent, and so on.",
+      "type": "object",
+      "x-tags": [
+        "Models"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "ID of the card system"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the card system. This field is always available in responses."
+        },
+        "branding": {
+          "type": "object",
+          "description": "Branding information of the card system",
+          "properties": {
+            "logo": {
+              "type": "string",
+              "description": "URL to the logo of the card system"
+            },
+            "primaryColor": {
+              "type": "string",
+              "description": "Color code of the primary branding color."
+            },
+            "secondaryColor": {
+              "type": "string",
+              "description": "Color code of the secondary branding color."
+            }
+          }
+        },
+        "links": {
+          "type": "object",
+          "description": "Links of the card system",
+          "properties": {
+            "website": {
+              "type": "string",
+              "description": "URL of the website of the card system"
+            }
+          }
+        },
+        "cities": {
+          "type": "array",
+          "description": "List of cities that are part of this card system",
+          "items": {
+            "$ref": "#/$defs/City"
+          }
+        },
+        "permanent": {
+          "type": "boolean",
+          "description": "Indicates whether this is a permanent card system"
+        },
+        "allowsCardlessRegistration": {
+          "type": "boolean",
+          "description": "Indicates if cardless registration is enabled"
+        },
+        "cardlessRegistrationType": {
+          "type": "string",
+          "description": "Indicates the types of online cardless registrations this cardsystem supports.",
+          "enum": [
+            "ALL",
+            "REGULAR",
+            "SOCIALTARIFF",
+            "NONE"
+          ]
+        },
+        "socialTariffInfo": {
+          "type": "string",
+          "description": "Optional information about social tariff entitlement in this card system."
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "City": {
+      "title": "City",
+      "type": "object",
+      "x-tags": [
+        "Models"
+      ],
+      "properties": {
+        "postalCode": {
+          "type": "string",
+          "description": "Postalcode of the city"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the city"
+        }
+      },
+      "required": [
+        "postalCode",
+        "name"
+      ]
+    }
+  }
+}

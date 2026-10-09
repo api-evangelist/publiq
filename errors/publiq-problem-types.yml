@@ -1,0 +1,450 @@
+generated: '2026-10-09'
+method: searched
+source:
+- https://docs.publiq.be/docs/errors
+- https://github.com/cultuurnet/apidocs/blob/main/projects/errors/docs/format.md
+- https://github.com/cultuurnet/apidocs/blob/main/projects/uitdatabank/docs/errors.md
+- https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- https://github.com/cultuurnet/apidocs/blob/main/projects/authentication/docs/errors.md
+format: rfc7807
+content_type: application/problem+json
+envelope:
+  required:
+  - type
+  - title
+  - status
+  optional:
+  - detail
+  extensions:
+  - endUserMessage
+  note: 'Docs: "Make sure to always compare the full URL and not just the last part" of type. endUserMessage is a localized message intended for end users.'
+type_namespace: https://api.publiq.be/probs/
+problem_count: 69
+problems:
+- status: 400
+  title: Body missing
+  type: https://api.publiq.be/probs/body/missing
+  namespace: body
+  description: The endpoint requires a body inside the request but none was included.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/errors/docs/type-body.md
+- status: 400
+  title: Invalid body syntax
+  type: https://api.publiq.be/probs/body/invalid-syntax
+  namespace: body
+  description: The body you included (typically JSON) has an invalid syntax and cannot be parsed by the API.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/errors/docs/type-body.md
+- status: 400
+  title: Invalid body data
+  type: https://api.publiq.be/probs/body/invalid-data
+  namespace: body
+  description: The body you included (typically JSON) has invalid or missing properties. The response should also either include a `detail` with more info about the validation error, or a [schemaErrors](./format.md#schemaErrors)
+    property with a list of one or more schema validation problems.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/errors/docs/type-body.md
+- status: 400
+  title: File missing
+  type: https://api.publiq.be/probs/body/file-missing
+  namespace: body
+  description: The server expected a file to be included in the request but did not find any. The `detail` property in the response should include more info like how to include the file correctly.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/errors/docs/type-body.md
+- status: 400
+  title: Invalid file type
+  type: https://api.publiq.be/probs/body/file-invalid-type
+  namespace: body
+  description: The included file has a type that is not accepted by the server. The `detail` property in the response should include more info like what file types are valid.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/errors/docs/type-body.md
+- status: 400
+  title: Invalid file size
+  type: https://api.publiq.be/probs/body/file-invalid-size
+  namespace: body
+  description: The included file has a size that is not accepted by the server. Typically it is too big. The `detail` property in the response should include more info like the maximum (and/or minimum)
+    file size.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/errors/docs/type-body.md
+- status: 400
+  title: Header missing
+  type: https://api.publiq.be/probs/header/missing
+  namespace: header
+  description: A required header is missing. More info on what header specifically can be found in the `detail` property of the response.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/errors/docs/type-header.md
+- status: 400
+  title: Header invalid
+  type: https://api.publiq.be/probs/header/invalid
+  namespace: header
+  description: The value of a given header is invalid. More info on what header specifically can be found in the `detail` property of the response.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/errors/docs/type-header.md
+- status: 406
+  title: Not Acceptable
+  type: https://api.publiq.be/probs/header/not-acceptable
+  namespace: header
+  description: This error is returned if the request to the API included an `Accept` header with a content-type that the API does not support, and the API is unwilling or unable to return a default content-type
+    instead.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/errors/docs/type-header.md
+- status: 415
+  title: Unsupported Media Type
+  type: https://api.publiq.be/probs/header/unsupported-media-type
+  namespace: header
+  description: This error is returned if the request to the API included a `Content-Type` header with a value that the API does not support.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/errors/docs/type-header.md
+- status: 405
+  title: Method not allowed
+  type: https://api.publiq.be/probs/method/not-allowed
+  namespace: method
+  description: The resource you requested exists, but the HTTP method you are trying to use is not supported. For example the resource may support `GET` but not `PUT`. The `detail` should contain the supported
+    methods on the requested URL.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/errors/docs/type-method.md
+- status: 404
+  title: Not Found
+  type: https://api.publiq.be/probs/url/not-found
+  namespace: url
+  description: 'The URL you requested is not available. Possible causes include:'
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/errors/docs/type-url.md
+- status: 401
+  title: Unauthorized
+  type: https://api.publiq.be/probs/auth/unauthorized
+  namespace: auth
+  description: Your API request is missing the required credentials to authenticate.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/authentication/docs/errors.md
+- status: 403
+  title: Forbidden
+  type: https://api.publiq.be/probs/auth/forbidden
+  namespace: auth
+  description: Your API request was successfully authenticated but you do not have permission to perform this particular request.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/authentication/docs/errors.md
+- status: 400
+  title: Calendar type not supported
+  type: https://api.publiq.be/probs/uitdatabank/calendar-type-not-supported
+  namespace: uitdatabank
+  description: The request you are trying to perform is not supported on the calendar type of the given [event](/models/event-calendarType.json) or [place](/models/place-calendarType.json). For example,
+    you cannot add or update subEvents to offers that use calendar type `periodic` or `permanent`.
+  remediation: Try using an event or place id with a calendar type that is supported by the operation that you are trying to perform.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitdatabank/docs/errors.md
+- status: 400
+  title: Incompatible audience type
+  type: https://api.publiq.be/probs/uitdatabank/incompatible-audience-type
+  namespace: uitdatabank
+  description: The provided audience type is incompatible. Check the `detail` of the error for more information.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitdatabank/docs/errors.md
+- status: 400
+  title: Resource id already in use
+  type: https://api.publiq.be/probs/uitdatabank/resource-id-already-in-use
+  namespace: uitdatabank
+  description: The given id to create a new resource is already in use by an existing resource of another type.
+  remediation: Try creating the new resource with another unique resource id.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitdatabank/docs/errors.md
+- status: 400
+  title: Duplicate URL
+  type: https://api.publiq.be/probs/uitdatabank/duplicate-url
+  namespace: uitdatabank
+  description: To avoid having duplicate organizers in UiTdatabank, every organizer needs to have a unique URL as website. This uniqueness is enforced on the URL of the organizer's website because it is
+    the most likely part of the organizer's data that is unique. Some organizers actually have the same name or are located on the same address, so we cannot enforce uniqueness on those properties.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitdatabank/docs/errors.md
+- status: 403
+  title: Label not allowed
+  type: https://api.publiq.be/probs/uitdatabank/label-not-allowed
+  namespace: uitdatabank
+  description: Some labels are reserved and can only be used by users or API clients with sufficient permissions.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitdatabank/docs/errors.md
+- status: 400
+  title: Invalid workflowStatus transition
+  type: https://api.publiq.be/probs/uitdatabank/invalid-workflow-status-transition
+  namespace: uitdatabank
+  description: The `workflowStatus` of an event can only transition from `DRAFT` to `READY_FOR_VALIDATION`, from `READY_FOR_VALIDATION` to either `APPROVED` or `REJECTED`, or from any workflowStatus to
+    `DELETED`. Other transitions are not possible, for example back from `REJECTED` to `READY_FOR_VALIDATION`.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitdatabank/docs/errors.md
+- status: 400
+  title: Attendance mode not supported
+  type: https://api.publiq.be/probs/uitdatabank/attendance-mode-not-supported
+  namespace: uitdatabank
+  description: The action you are trying to perform on an event cannot be done because its `attendanceMode` does not support this action.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitdatabank/docs/errors.md
+- status: 400
+  title: Event has UiTPAS ticket sales
+  type: https://api.publiq.be/probs/uitdatabank/event-has-uitpas-ticket-sales
+  namespace: uitdatabank
+  description: The action you are trying to perform on an event cannot be done because the event has UiTPAS ticket sales. When an event has UiTPAS ticket sales its organizer, UiTPAS card system(s) and UiTPAS
+    distribution key(s) cannot be updated because it would invalidate the existing ticket sales in UiTPAS.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitdatabank/docs/errors.md
+- status: 400
+  title: Image must be linked to resource
+  type: https://api.publiq.be/probs/uitdatabank/image-must-be-linked-to-resource
+  namespace: uitdatabank
+  description: When handling an image on an event / place / organizer, for example when making it the main image or when updating its `description` and/or `copyrightHolder`, the image id must be one of
+    the images that are already linked to the event / place / organizer. Add the image first, so you can then perform the action on it.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitdatabank/docs/errors.md
+- status: 409
+  title: Duplicate place
+  type: https://api.publiq.be/probs/uitdatabank/duplicate-place
+  namespace: uitdatabank
+  description: To ensure data integrity and avoid duplication within the system, each place must have a unique combination of the main language, title and address. You get this error when (multiple) matches
+    already exist in the system.
+  remediation: You can use the attached query to get existing place(s).
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitdatabank/docs/errors.md
+- status: 400
+  title: Card blocked
+  type: https://api.publiq.be/probs/uitpas/card-blocked
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the provided card is blocked.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Card system not found
+  type: https://api.publiq.be/probs/uitpas/cardsystem-not-found
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the provided card system cannot be found.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Check-in code expired
+  type: https://api.publiq.be/probs/uitpas/checkin-code-expired
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the checkin code is expired.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Check-in code invalid
+  type: https://api.publiq.be/probs/uitpas/checkin-code-invalid
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the checkin code is invalid.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Check-in not allowed
+  type: https://api.publiq.be/probs/uitpas/checkin-not-allowed
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the checkin is currently not allowed.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Distribution key not found
+  type: https://api.publiq.be/probs/uitpas/disributionkey-not-found
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the provided distribution key cannot be found.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Event already has ticket sales
+  type: https://api.publiq.be/probs/uitpas/event-already-has-ticketsales
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the event already has ticket sales.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 404
+  title: Event not found
+  type: https://api.publiq.be/probs/uitpas/event-not-found
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the provided event cannot be found.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Forbidden Underaged
+  type: https://api.publiq.be/probs/uitpas/family-member-already-added
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the family member was already added to the family of the current passholder.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Forbidden Underaged
+  type: https://api.publiq.be/probs/uitpas/forbidden-underaged
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because it is not allowed for underaged users.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Group not found
+  type: https://api.publiq.be/probs/uitpas/group-not-found
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the provided group cannot be found.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: INSZ already used
+  type: https://api.publiq.be/probs/uitpas/insz-already-used
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the insz number is already in use.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: INSZ in token required
+  type: https://api.publiq.be/probs/uitpas/insz-in-token-required
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because this request needs a token including an `https://publiq.be/rrn` claim.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Invalid card
+  type: https://api.publiq.be/probs/uitpas/invalid-card
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the given card is not applicable in this context.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Invalid card status
+  type: https://api.publiq.be/probs/uitpas/invalid-card-status
+  namespace: uitpas
+  description: When applicable, the actual card status and even passholderId and groupPass boolean may be returned as an indication for the client.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Invalid card system
+  type: https://api.publiq.be/probs/uitpas/invalid-card-system
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the provided card system is not applicable in this context.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Invalid city
+  type: https://api.publiq.be/probs/uitpas/invalid-city
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the provided city is invalid.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Invalid coupon
+  type: https://api.publiq.be/probs/uitpas/invalid-coupon
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the given coupon is not valid.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Invalid distribution key
+  type: https://api.publiq.be/probs/uitpas/invalid-distributionkey
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because no valid distribution key can be found.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Invalid insz number
+  type: https://api.publiq.be/probs/uitpas/invalid-insz-number
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the provided insz number is invalid.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Invalid postal code
+  type: https://api.publiq.be/probs/uitpas/invalid-postal-code
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the provided postal code is invalid.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Invalid uitpas number
+  type: https://api.publiq.be/probs/uitpas/invalid-uitpas-number
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the provided uitpas number is invalid.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Maximum reached
+  type: https://api.publiq.be/probs/uitpas/maximum-reached
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the maximum number of operations of this kind have been reached.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 404
+  title: Organizer not found
+  type: https://api.publiq.be/probs/uitpas/organizer-not-found
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the provided organizer cannot be found.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 404
+  title: Pass not found
+  type: https://api.publiq.be/probs/uitpas/pass-not-found
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the provided pass cannot be found.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Passholder already registered
+  type: https://api.publiq.be/probs/uitpas/passholder-already-registered
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the passholder is already registered.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Passholder has no active cardsystem memberships
+  type: https://api.publiq.be/probs/uitpas/passholder-no-active-cardsystems
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the passholder has no active card system memberships.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 404
+  title: Passholder not found
+  type: https://api.publiq.be/probs/uitpas/passholder-not-found
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the provided passholder cannot be found.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 429
+  title: Rate limited
+  type: https://api.publiq.be/probs/uitpas/rate-limited
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because it was performed too many times in a given period.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 404
+  title: Report not found
+  type: https://api.publiq.be/probs/uitpas/report-not-found
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the provided report cannot be found.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Invalid report status
+  type: https://api.publiq.be/probs/uitpas/report-invalid-status
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the provided report is not in the correct state.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Reward Invalid Redeem Type
+  type: https://api.publiq.be/probs/uitpas/reward-invalid-redeem-type
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the reward cannot be redeemed online.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Reward not editable
+  type: https://api.publiq.be/probs/uitpas/reward-not-editable
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the reward cannot be edited.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 404
+  title: Reward not found
+  type: https://api.publiq.be/probs/uitpas/reward-not-found
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the reward cannot be found.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Reward Passholder Volume Constraint
+  type: https://api.publiq.be/probs/uitpas/reward-passholder-volume-constraint
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the reward cannot be redeemed by this passholder anymore.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Reward Passholder Points Constraint
+  type: https://api.publiq.be/probs/uitpas/reward-passholder-points-constraint
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the passholder does not have sufficient points to redeem this reward.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Reward Passholder No Applicable Cardsystems
+  type: https://api.publiq.be/probs/uitpas/reward-passholder-no-applicable-cardsystems
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the passholder does not have a card system membership in an applicable card system.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Reward Period Constraint
+  type: https://api.publiq.be/probs/uitpas/reward-period-constraint
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the reward is not valid any more.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Reward Volume Constraint
+  type: https://api.publiq.be/probs/uitpas/reward-volume-constraint
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the reward is sold out.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 404
+  title: School not found
+  type: https://api.publiq.be/probs/uitpas/school-not-found
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the provided school cannot be found.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Social tariff expired
+  type: https://api.publiq.be/probs/uitpas/social-tariff-expired
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the passholder has an expired social tariff.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 404
+  title: Ticket sale not found
+  type: https://api.publiq.be/probs/uitpas/ticket-sale-not-found
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the given ticket sale cannot be found.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Forbidden Underaged
+  type: https://api.publiq.be/probs/uitpas/too-many-adults-in-family
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the family of the current passholder already contains the maximum allowed number of adults.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: Forbidden Underaged
+  type: https://api.publiq.be/probs/uitpas/too-many-family-members
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the family of the current passholder already contains the maximum allowed number of members.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
+- status: 400
+  title: UiTID already registered
+  type: https://api.publiq.be/probs/uitpas/uitid-already-registered
+  namespace: uitpas
+  description: The request you are trying to perform cannot complete because the given uitid is already used to register another passholder.
+  source: https://github.com/cultuurnet/apidocs/blob/main/projects/uitpas/docs/errors.md
