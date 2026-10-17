@@ -1,14 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Publiq Productions API
+  title: Entry Productions API
   version: '3.0'
+  description: With UiTdatabank's Entry API you can create new events, places and organizers, and add extra info to them with specific requests to add/update properties. For example there are operations to add a label, remove a label, add an image, and so on.
   contact:
     name: publiq helpdesk
     email: technical-support@publiq.be
     url: https://docs.publiq.be
-  x-refined-note:
-  - x-source differs across the merged source definitions and was not carried
-  description: 'Operations tagged Productions across 2 of this provider''s published API definitions: uitdatabank-entry.json, publiq-uitdatabank-entry-openapi.yml. Each path carries the servers of the definition it was published in.'
+  x-source: https://raw.githubusercontent.com/cultuurnet/apidocs/main/../../../private/tmp/publiq-src/apidocs-main/projects/uitdatabank/reference/entry.json
 servers:
 - url: https://io-test.uitdatabank.be
   description: Testing
@@ -40,11 +39,6 @@ paths:
       - CLIENT_ACCESS_TOKEN: []
       x-internal: true
       description: Merges to productions into one. If the request is successful a `204 No Content` will be returned.
-    servers:
-    - url: https://io-test.uitdatabank.be
-      description: Testing
-    - url: https://io.uitdatabank.be
-      description: Production
   /productions/{productionId}/events/{eventId}:
     parameters:
     - $ref: '#/components/parameters/productionId'
@@ -68,11 +62,6 @@ paths:
       - CLIENT_ACCESS_TOKEN: []
       x-internal: true
       description: Add a single event to an existing production. If the request is successful a `204 No Content` will be returned.
-    servers:
-    - url: https://io-test.uitdatabank.be
-      description: Testing
-    - url: https://io.uitdatabank.be
-      description: Production
   /productions/skip:
     post:
       summary: productions - skip
@@ -83,7 +72,25 @@ paths:
           content:
             application/ld+json:
               schema:
-                $ref: ../models/productions-skip.json
+                title: production.skip
+                x-stoplight:
+                  id: f00f510de9fe7
+                type: object
+                x-internal: true
+                examples:
+                - eventIds:
+                  - e1881d57-569a-49f9-a238-cfdafae8d46b
+                  - f8c8e192-be53-4c54-a59d-28e5525a29f5
+                properties:
+                  eventIds:
+                    title: production.eventIds
+                    type: string
+                    format: uuid
+                    description: The event id's that are part of the production
+                    examples:
+                    - 46e9ea9f-fc42-4759-a81b-4308467b7c35
+                required:
+                - eventIds
         '400':
           description: 'Bad Request. Possible error types:
 
@@ -118,12 +125,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: ../models/productions-skip.json
-    servers:
-    - url: https://io-test.uitdatabank.be
-      description: Testing
-    - url: https://io.uitdatabank.be
-      description: Production
+              title: production.skip
+              x-stoplight:
+                id: f00f510de9fe7
+              type: object
+              x-internal: true
+              examples:
+              - eventIds:
+                - e1881d57-569a-49f9-a238-cfdafae8d46b
+                - f8c8e192-be53-4c54-a59d-28e5525a29f5
+              properties:
+                eventIds:
+                  title: production.eventIds
+                  type: string
+                  format: uuid
+                  description: The event id's that are part of the production
+                  examples:
+                  - 46e9ea9f-fc42-4759-a81b-4308467b7c35
+              required:
+              - eventIds
   /productions:
     post:
       summary: productions - create
@@ -134,10 +154,74 @@ paths:
           content:
             application/ld+json:
               schema:
-                $ref: ../models/production-post.json
+                title: production.post
+                type: object
+                x-internal: true
+                examples:
+                - name: Don Vitalski - Gewoon Blijven Ademen
+                  eventIds:
+                  - 17c84549-15c5-4dd4-974f-3becdcd952c8
+                  - 7ee2e70d-78ee-4436-bbcf-1b2ecdd945af
+                - name: Kommil Foo - GRIND
+                  eventIds:
+                  - 04923b0e-aefc-480b-a1b6-8e5f7ed1d3d6
+                  - 04e2e6f8-dda1-4531-b4f8-736eecc46f18
+                  - 0618c6a0-ab16-4c7d-a291-89b495120a39
+                  - 07fb8c75-5f34-44bc-9e67-ffe20de6cf2b
+                  - 08d88c9a-2523-4b8f-b774-6f39ed4dcf0e
+                  - 0dfc2b41-74a6-4cff-ae9b-51300ac611e6
+                  - 0fd38824-3dac-4b9d-ae15-f5a3951dc282
+                  - 1492676c-0bce-4245-844e-9bf1643d1a2f
+                properties:
+                  name:
+                    type: string
+                    description: The name of the production. The name includes the performer and the title of the played piece or event.
+                    example: Kommil Foo - GRIND
+                  eventIds:
+                    title: production.eventIds
+                    type: string
+                    format: uuid
+                    description: The event id's that are part of the production
+                    examples:
+                    - 46e9ea9f-fc42-4759-a81b-4308467b7c35
+                required:
+                - name
+                - eventIds
             application/json:
               schema:
-                $ref: ../models/production-post.json
+                title: production.post
+                type: object
+                x-internal: true
+                examples:
+                - name: Don Vitalski - Gewoon Blijven Ademen
+                  eventIds:
+                  - 17c84549-15c5-4dd4-974f-3becdcd952c8
+                  - 7ee2e70d-78ee-4436-bbcf-1b2ecdd945af
+                - name: Kommil Foo - GRIND
+                  eventIds:
+                  - 04923b0e-aefc-480b-a1b6-8e5f7ed1d3d6
+                  - 04e2e6f8-dda1-4531-b4f8-736eecc46f18
+                  - 0618c6a0-ab16-4c7d-a291-89b495120a39
+                  - 07fb8c75-5f34-44bc-9e67-ffe20de6cf2b
+                  - 08d88c9a-2523-4b8f-b774-6f39ed4dcf0e
+                  - 0dfc2b41-74a6-4cff-ae9b-51300ac611e6
+                  - 0fd38824-3dac-4b9d-ae15-f5a3951dc282
+                  - 1492676c-0bce-4245-844e-9bf1643d1a2f
+                properties:
+                  name:
+                    type: string
+                    description: The name of the production. The name includes the performer and the title of the played piece or event.
+                    example: Kommil Foo - GRIND
+                  eventIds:
+                    title: production.eventIds
+                    type: string
+                    format: uuid
+                    description: The event id's that are part of the production
+                    examples:
+                    - 46e9ea9f-fc42-4759-a81b-4308467b7c35
+                required:
+                - name
+                - eventIds
         '400':
           description: 'Bad Request. Possible error types:
 
@@ -167,7 +251,39 @@ paths:
         content:
           application/json:
             schema:
-              $ref: ../models/production-post.json
+              title: production.post
+              type: object
+              x-internal: true
+              examples:
+              - name: Don Vitalski - Gewoon Blijven Ademen
+                eventIds:
+                - 17c84549-15c5-4dd4-974f-3becdcd952c8
+                - 7ee2e70d-78ee-4436-bbcf-1b2ecdd945af
+              - name: Kommil Foo - GRIND
+                eventIds:
+                - 04923b0e-aefc-480b-a1b6-8e5f7ed1d3d6
+                - 04e2e6f8-dda1-4531-b4f8-736eecc46f18
+                - 0618c6a0-ab16-4c7d-a291-89b495120a39
+                - 07fb8c75-5f34-44bc-9e67-ffe20de6cf2b
+                - 08d88c9a-2523-4b8f-b774-6f39ed4dcf0e
+                - 0dfc2b41-74a6-4cff-ae9b-51300ac611e6
+                - 0fd38824-3dac-4b9d-ae15-f5a3951dc282
+                - 1492676c-0bce-4245-844e-9bf1643d1a2f
+              properties:
+                name:
+                  type: string
+                  description: The name of the production. The name includes the performer and the title of the played piece or event.
+                  example: Kommil Foo - GRIND
+                eventIds:
+                  title: production.eventIds
+                  type: string
+                  format: uuid
+                  description: The event id's that are part of the production
+                  examples:
+                  - 46e9ea9f-fc42-4759-a81b-4308467b7c35
+              required:
+              - name
+              - eventIds
       tags:
       - Productions
     get:
@@ -186,7 +302,38 @@ paths:
                     type: array
                     description: Production results for the requested page.
                     items:
-                      $ref: ../models/production.json
+                      x-internal: true
+                      title: production
+                      type: object
+                      description: A production that 2 or more events are part of
+                      examples:
+                      - productionId: c356dac7-133b-4847-805f-91a8c3c09da6
+                        name: Alex Agnew speelt 'Wake Me Up When It's Over'
+                        events:
+                        - 4f37a230-8d8d-4dab-a527-62e879629bae
+                        - 7f32b131-deb9-483f-ab32-98541d3c3b77
+                        - c41effec-0e04-4e01-8804-9ea9b4c6b528
+                      properties:
+                        productionId:
+                          title: uuid
+                          type: string
+                          format: uuid
+                          description: The uuid of the production
+                          examples:
+                          - 46e9ea9f-fc42-4759-a81b-4308467b7c35
+                        name:
+                          type: string
+                          description: The title of the production
+                          example: Alex Agnew speelt 'Wake Me Up When It's Over'
+                        events:
+                          type: array
+                          description: List of events that are part of the production
+                          items:
+                            type: string
+                      required:
+                      - productionId
+                      - name
+                      - events
               examples:
                 Example:
                   value:
@@ -201,7 +348,38 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: ../models/production.json
+                  x-internal: true
+                  title: production
+                  type: object
+                  description: A production that 2 or more events are part of
+                  examples:
+                  - productionId: c356dac7-133b-4847-805f-91a8c3c09da6
+                    name: Alex Agnew speelt 'Wake Me Up When It's Over'
+                    events:
+                    - 4f37a230-8d8d-4dab-a527-62e879629bae
+                    - 7f32b131-deb9-483f-ab32-98541d3c3b77
+                    - c41effec-0e04-4e01-8804-9ea9b4c6b528
+                  properties:
+                    productionId:
+                      title: uuid
+                      type: string
+                      format: uuid
+                      description: The uuid of the production
+                      examples:
+                      - 46e9ea9f-fc42-4759-a81b-4308467b7c35
+                    name:
+                      type: string
+                      description: The title of the production
+                      example: Alex Agnew speelt 'Wake Me Up When It's Over'
+                    events:
+                      type: array
+                      description: List of events that are part of the production
+                      items:
+                        type: string
+                  required:
+                  - productionId
+                  - name
+                  - events
               examples:
                 Example 1:
                   value:
@@ -231,31 +409,8 @@ paths:
         description: The limit of productions included in the result set. When omitted it defaults to 30 items.
       tags:
       - Productions
-    servers:
-    - url: https://io-test.uitdatabank.be
-      description: Testing
-    - url: https://io.uitdatabank.be
-      description: Production
 components:
   parameters:
-    eventId:
-      name: eventId
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-        example: F2D5D20C-CC98-4979-9CD2-453ABAD979B5
-      description: Unique id of an event, in the format of a UUID
-    productionId2:
-      name: productionId2
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-        example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
-      description: Unique id of a production that is merged into another production, in the format of a UUID
     productionId1:
       name: productionId1
       in: path
@@ -274,76 +429,26 @@ components:
         format: uuid
         example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
       description: Unique id of a production
-  responses:
-    Unauthorized:
-      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
-
-
-        * type: https://api.publiq.be/probs/auth/unauthorized
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            Example:
-              value:
-                type: https://api.publiq.be/probs/auth/unauthorized
-                title: Unauthorized
-                status: 401
-    Forbidden:
-      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
-
-
-        * type: https://api.publiq.be/probs/auth/forbidden
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            Example:
-              value:
-                type: https://api.publiq.be/probs/auth/forbidden
-                title: Forbidden
-                status: 403
-                detail: user must be admin of organizer abcd1234
-    NotFound:
-      description: 'The requested resource (URL) could not be found.
-
-        This can be due to one of multiple reasons:
-
-
-        * The endpoint has a typo and/or does not exist on the API
-
-        * One of the path parameters contains a value that is invalid or does not exist
-
-        * One of the required query parameters is missing
-
-        * One of the query parameters has an invalid value
-
-
-        The `detail` property of the response should contain more specific information.
-
-
-        The `type` will always be `https://api.publiq.be/probs/url/not-found`.'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            Example:
-              value:
-                type: https://api.publiq.be/probs/url/not-found
-                title: URL not found
-                status: 404
-                detail: The resource with id "76C6AC08-763C-492E-A68C-CBC43A857229" was not found.
+    eventId:
+      name: eventId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: F2D5D20C-CC98-4979-9CD2-453ABAD979B5
+      description: Unique id of an event, in the format of a UUID
+    productionId2:
+      name: productionId2
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+      description: Unique id of a production that is merged into another production, in the format of a UUID
   schemas:
     Error:
-      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
-    Error_2:
       title: Error
       type: object
       description: RFC7807 error model for all publiq APIs.
@@ -399,6 +504,72 @@ components:
       - title
       - status
       x-internal: false
+  responses:
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organizer abcd1234
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    NotFound:
+      description: 'The requested resource (URL) could not be found.
+
+        This can be due to one of multiple reasons:
+
+
+        * The endpoint has a typo and/or does not exist on the API
+
+        * One of the path parameters contains a value that is invalid or does not exist
+
+        * One of the required query parameters is missing
+
+        * One of the query parameters has an invalid value
+
+
+        The `detail` property of the response should contain more specific information.
+
+
+        The `type` will always be `https://api.publiq.be/probs/url/not-found`.'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/url/not-found
+                title: URL not found
+                status: 404
+                detail: The resource with id "76C6AC08-763C-492E-A68C-CBC43A857229" was not found.
   securitySchemes:
     USER_ACCESS_TOKEN:
       type: oauth2
@@ -408,6 +579,3 @@ components:
       type: oauth2
       flows: {}
       description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
-x-refined-from:
-- uitdatabank-entry.json
-- publiq-uitdatabank-entry-openapi.yml

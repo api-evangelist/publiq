@@ -1,14 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Publiq Terms API
+  title: Taxonomy Terms API
   version: '3.0'
+  description: With UiTdatabank's taxonomy API you can retrieve lists of taxonomy terms like event types, place types, themes and facilities.
   contact:
     name: publiq helpdesk
     email: technical-support@publiq.be
     url: https://docs.publiq.be
-  x-refined-note:
-  - x-source differs across the merged source definitions and was not carried
-  description: 'Operations tagged Terms across 2 of this provider''s published API definitions: uitdatabank-taxonomy.json, publiq-uitdatabank-taxonomy-openapi.yml. Each path carries the servers of the definition it was published in.'
+  x-source: https://raw.githubusercontent.com/cultuurnet/apidocs/main/../../../private/tmp/publiq-src/apidocs-main/projects/uitdatabank/reference/taxonomy.json
 servers:
 - description: Production
   url: https://taxonomy.uitdatabank.be
@@ -276,9 +275,3 @@ paths:
 
         | `facility` | An accessibility feature that the **event** or **place** provides, for example wheelchair access. The list of facilities was made in consultation wit h INTER. Only users / clients with a specific permission can add `facility` terms to events or places. |'
       parameters: []
-    servers:
-    - description: Production
-      url: https://taxonomy.uitdatabank.be
-x-refined-from:
-- uitdatabank-taxonomy.json
-- publiq-uitdatabank-taxonomy-openapi.yml

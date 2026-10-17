@@ -1,14 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Publiq Financial reports API
+  title: UiTPAS Financial reports API
   version: '4.0'
   contact:
     name: publiq helpdesk
     email: technical-support@publiq.be
     url: https://docs.publiq.be
-  x-refined-note:
-  - x-source differs across the merged source definitions and was not carried
-  description: 'Operations tagged Financial reports across 2 of this provider''s published API definitions: uitpas-uitpas.json, publiq-uitpas-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: With UiTPAS API 4.0 you can retrieve ticket prices and register ticket sales for passholders. You can also save UiTPAS points and exchange them for rewards for a passholder, and much more.
+  x-source: https://raw.githubusercontent.com/cultuurnet/apidocs/main/../../../private/tmp/publiq-src/apidocs-main/projects/uitpas/reference/uitpas.json
 servers:
 - url: https://api-test.uitpas.be
   description: Testing
@@ -66,11 +65,6 @@ paths:
 
 
         The caller of this request must have `ORGANIZERS_REPORTS` permission for the given organizer.'
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /organizers/{organizerId}/financial-reports:
     parameters:
     - $ref: '#/components/parameters/organizerId'
@@ -204,11 +198,6 @@ paths:
         - https://api.publiq.be/auth/uitpas
       tags:
       - Financial reports
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /organizers/{organizerId}/financial-reports/{reportId}:
     parameters:
     - $ref: '#/components/parameters/organizerId'
@@ -265,11 +254,6 @@ paths:
         - https://api.publiq.be/auth/uitpas
       - CLIENT_ACCESS_TOKEN:
         - https://api.publiq.be/auth/uitpas
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /organizers/{organizerId}/financial-reports/{reportId}/download-link:
     parameters:
     - schema:
@@ -338,11 +322,6 @@ paths:
         - https://api.publiq.be/auth/uitpas
       - CLIENT_ACCESS_TOKEN:
         - https://api.publiq.be/auth/uitpas
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /organizers/{organizerId}/financial-reports/{reportId}.zip:
     parameters:
     - $ref: '#/components/parameters/organizerId'
@@ -400,64 +379,9 @@ paths:
         - https://api.publiq.be/auth/uitpas
       - CLIENT_ACCESS_TOKEN:
         - https://api.publiq.be/auth/uitpas
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
 components:
   schemas:
-    Report:
-      type: object
-      title: Report
-      description: The status of a report export.
-      x-tags:
-      - Models
-      properties:
-        status:
-          type: string
-          enum:
-          - STARTED
-          - AVAILABLE
-          - FAILED
-          description: Whether the report has started (but not ready yet), is available for download, or failed to be created.
-        id:
-          type: integer
-          description: Unique ID of the report export. Can be used to retrieve the status of the export.
-        message:
-          type: string
-          description: Included if `status` is `FAILED`. Describes why it was not possible to export the report.
-        period:
-          $ref: '#/components/schemas/ReportPeriod'
-        creationDate:
-          type: string
-          format: date-time
-          description: Date that the report export was initially requested.
-      required:
-      - status
-      - id
-      - creationDate
     Error:
-      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
-    ReportPeriod:
-      title: ReportPeriod
-      type: object
-      description: Date range for which to export a list of financial transactions.
-      properties:
-        startDate:
-          type: string
-          format: date
-          description: Minimum date of all transactions to include in the report. (Inclusive)
-        endDate:
-          type: string
-          format: date
-          description: Maximum date of all transactions to include in the report. (Inclusive)
-      required:
-      - startDate
-      - endDate
-      x-tags:
-      - Models
-    Error_2:
       title: Error
       type: object
       description: RFC7807 error model for all publiq APIs.
@@ -513,24 +437,70 @@ components:
       - title
       - status
       x-internal: false
+    Report:
+      type: object
+      title: Report
+      description: The status of a report export.
+      x-tags:
+      - Models
+      properties:
+        status:
+          type: string
+          enum:
+          - STARTED
+          - AVAILABLE
+          - FAILED
+          description: Whether the report has started (but not ready yet), is available for download, or failed to be created.
+        id:
+          type: integer
+          description: Unique ID of the report export. Can be used to retrieve the status of the export.
+        message:
+          type: string
+          description: Included if `status` is `FAILED`. Describes why it was not possible to export the report.
+        period:
+          $ref: '#/components/schemas/ReportPeriod'
+        creationDate:
+          type: string
+          format: date-time
+          description: Date that the report export was initially requested.
+      required:
+      - status
+      - id
+      - creationDate
+    ReportPeriod:
+      title: ReportPeriod
+      type: object
+      description: Date range for which to export a list of financial transactions.
+      properties:
+        startDate:
+          type: string
+          format: date
+          description: Minimum date of all transactions to include in the report. (Inclusive)
+        endDate:
+          type: string
+          format: date
+          description: Maximum date of all transactions to include in the report. (Inclusive)
+      required:
+      - startDate
+      - endDate
+      x-tags:
+      - Models
+  parameters:
+    reportId:
+      schema:
+        type: integer
+      name: reportId
+      in: path
+      required: true
+      description: Unique ID of the generated financial report.
+    organizerId:
+      schema:
+        type: string
+      name: organizerId
+      in: path
+      required: true
+      description: Unique ID of an UiTPAS organizer. (Same as its ID in UiTdatabank)
   responses:
-    Unauthorized:
-      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
-
-
-        * type: https://api.publiq.be/probs/auth/unauthorized
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          x-examples:
-            Unauthorized:
-              value:
-                type: https://api.publiq.be/probs/auth/unauthorized
-                title: Unauthorized
-                status: 401
     Forbidden:
       description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
 
@@ -549,21 +519,23 @@ components:
                 title: Forbidden
                 status: 403
                 detail: user must be admin of organiser abcd1234
-  parameters:
-    organizerId:
-      schema:
-        type: string
-      name: organizerId
-      in: path
-      required: true
-      description: Unique ID of an UiTPAS organizer. (Same as its ID in UiTdatabank)
-    reportId:
-      schema:
-        type: integer
-      name: reportId
-      in: path
-      required: true
-      description: Unique ID of the generated financial report.
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
   securitySchemes:
     USER_ACCESS_TOKEN:
       type: oauth2
@@ -581,6 +553,3 @@ components:
       name: x-custom-token
       type: apiKey
       in: header
-x-refined-from:
-- uitpas-uitpas.json
-- publiq-uitpas-openapi.yml

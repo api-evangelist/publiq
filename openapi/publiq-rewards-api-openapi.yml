@@ -1,14 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Publiq Rewards API
+  title: UiTPAS Rewards API
   version: '4.0'
   contact:
     name: publiq helpdesk
     email: technical-support@publiq.be
     url: https://docs.publiq.be
-  x-refined-note:
-  - x-source differs across the merged source definitions and was not carried
-  description: 'Operations tagged Rewards across 2 of this provider''s published API definitions: uitpas-uitpas.json, publiq-uitpas-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: With UiTPAS API 4.0 you can retrieve ticket prices and register ticket sales for passholders. You can also save UiTPAS points and exchange them for rewards for a passholder, and much more.
+  x-source: https://raw.githubusercontent.com/cultuurnet/apidocs/main/../../../private/tmp/publiq-src/apidocs-main/projects/uitpas/reference/uitpas.json
 servers:
 - url: https://api-test.uitpas.be
   description: Testing
@@ -482,11 +481,6 @@ paths:
                   promotionalDescription: this is the mandatory description
                   publicationPeriod:
                     begin: '2021-08-24T14:15:22+00:00'
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /rewards/{rewardId}:
     parameters:
     - schema:
@@ -696,11 +690,6 @@ paths:
 
 
         The caller of this request must have `REWARDS_WRITE` permission for the given organizer.'
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /rewards/{rewardId}/redeem-status:
     parameters:
     - schema:
@@ -809,11 +798,6 @@ paths:
         required: true
         name: uitpasNumber
         description: UiTPAS number identifying the passholder who wants to redeem this reward.
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /rewards/redeemed:
     parameters: []
     post:
@@ -1071,11 +1055,6 @@ paths:
         in: query
         name: rewardTitle
         description: Filter redeemed rewards with this (partial) reward title.
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /rewards/redeemed/{redeemedRewardId}:
     parameters:
     - schema:
@@ -1109,66 +1088,100 @@ paths:
       security:
       - USER_ACCESS_TOKEN: []
       - CLIENT_ACCESS_TOKEN: []
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
 components:
-  responses:
-    Unauthorized:
-      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
-
-
-        * type: https://api.publiq.be/probs/auth/unauthorized
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          x-examples:
-            Unauthorized:
-              value:
-                type: https://api.publiq.be/probs/auth/unauthorized
-                title: Unauthorized
-                status: 401
-    Forbidden:
-      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
-
-
-        * type: https://api.publiq.be/probs/auth/forbidden
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          x-examples:
-            Forbidden:
-              value:
-                type: https://api.publiq.be/probs/auth/forbidden
-                title: Forbidden
-                status: 403
-                detail: user must be admin of organiser abcd1234
   schemas:
-    RedeemedRewardsPaginatedResponse:
-      title: RewardsPaginatedResponse
+    Error:
+      title: Error
       type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+    RedeemedReward:
+      type: object
+      title: RedeemedReward
       x-tags:
       - Models
-      description: Paginated response object for rewards
       properties:
-        totalItems:
-          type: integer
-          description: Total number of redeemed reward results (can be more than the amount of results in the response).
-        member:
-          type: array
-          description: List of redeemed reward results for this specific (paginated) request.
-          items:
-            $ref: '#/components/schemas/RedeemedReward'
-    Error:
-      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
+        id:
+          type: string
+          description: ID of the redeemed reward.
+        reward:
+          $ref: '#/components/schemas/Reward'
+        redeemDate:
+          type: string
+          format: date-time
+          description: Date of the redeem action.
+        redeemInfo:
+          type: object
+          description: Information about the redeem action.
+          properties:
+            text:
+              type: string
+              description: Text to show to the user who redeemed this reward.
+            link:
+              type: string
+              format: uri
+              description: Link for a call-to-action for the redeemed reward.
+            label:
+              type: string
+              description: Label for the call-to-action of the redeemed reward.
+        redeemCode:
+          type: string
+          description: Redeem code to show to the user who redeemed this reward. (Only applicable to certain rewards that are configured in the UiTPAS Card System admin)
+      required:
+      - id
+      - reward
+      - redeemDate
     CardSystem:
       title: CardSystem
       description: A region, usually one or multiple municipalities in Belgium, that uses UiTPAS and provides discounts and/or rewards. For example "Paspartoe" (Brussels), UiTPAS Leuven, UiTPAS Hasselt, UiTPAS Gent, and so on.
@@ -1241,39 +1254,6 @@ components:
           description: Optional information about social tariff entitlement in this card system.
       required:
       - id
-    RewardsPaginatedResponse:
-      title: RewardsPaginatedResponse
-      type: object
-      x-tags:
-      - Models
-      description: Paginated response object for rewards
-      properties:
-        totalItems:
-          type: integer
-          description: Total number of reward results (can be more than the amount of results in the response).
-        member:
-          type: array
-          description: List of reward results for this specific (paginated) request.
-          items:
-            $ref: '#/components/schemas/Reward'
-        facet:
-          type: object
-          description: Facet information for the requested facets.
-          properties:
-            categories:
-              $ref: '#/components/schemas/Facet'
-            owningCardSystemId:
-              $ref: '#/components/schemas/Facet'
-            type:
-              $ref: '#/components/schemas/Facet'
-            sport:
-              $ref: '#/components/schemas/Facet'
-            forKids:
-              $ref: '#/components/schemas/Facet'
-            online:
-              $ref: '#/components/schemas/Facet'
-            lastChance:
-              $ref: '#/components/schemas/Facet'
     Facet:
       title: Facet
       type: object
@@ -1315,6 +1295,41 @@ components:
             name:
               nl: Human-readable name for option2
             count: 4
+    Period:
+      title: Period
+      type: object
+      example:
+        begin: '2019-08-24T14:15:22+00:00'
+        end: '2019-08-24T14:15:22+00:00'
+      x-tags:
+      - Models
+      description: Period entity with a begin and optional end date.
+      properties:
+        begin:
+          type: string
+          format: date-time
+          description: Start date of the period (inclusive).
+        end:
+          type: string
+          format: date-time
+          description: End date of the period (inclusive).
+      required:
+      - begin
+    RedeemedRewardsPaginatedResponse:
+      title: RewardsPaginatedResponse
+      type: object
+      x-tags:
+      - Models
+      description: Paginated response object for rewards
+      properties:
+        totalItems:
+          type: integer
+          description: Total number of redeemed reward results (can be more than the amount of results in the response).
+        member:
+          type: array
+          description: List of redeemed reward results for this specific (paginated) request.
+          items:
+            $ref: '#/components/schemas/RedeemedReward'
     Reward:
       type: object
       title: Reward
@@ -1454,80 +1469,6 @@ components:
       - type
       - promotionalDescription
       - publicationPeriod
-    RedeemedReward:
-      type: object
-      title: RedeemedReward
-      x-tags:
-      - Models
-      properties:
-        id:
-          type: string
-          description: ID of the redeemed reward.
-        reward:
-          $ref: '#/components/schemas/Reward'
-        redeemDate:
-          type: string
-          format: date-time
-          description: Date of the redeem action.
-        redeemInfo:
-          type: object
-          description: Information about the redeem action.
-          properties:
-            text:
-              type: string
-              description: Text to show to the user who redeemed this reward.
-            link:
-              type: string
-              format: uri
-              description: Link for a call-to-action for the redeemed reward.
-            label:
-              type: string
-              description: Label for the call-to-action of the redeemed reward.
-        redeemCode:
-          type: string
-          description: Redeem code to show to the user who redeemed this reward. (Only applicable to certain rewards that are configured in the UiTPAS Card System admin)
-      required:
-      - id
-      - reward
-      - redeemDate
-    City:
-      title: City
-      type: object
-      x-tags:
-      - Models
-      example:
-        postalCode: '9300'
-        name: Aalst
-      properties:
-        postalCode:
-          type: string
-          description: Postalcode of the city
-        name:
-          type: string
-          description: Name of the city
-      required:
-      - postalCode
-      - name
-    Period:
-      title: Period
-      type: object
-      example:
-        begin: '2019-08-24T14:15:22+00:00'
-        end: '2019-08-24T14:15:22+00:00'
-      x-tags:
-      - Models
-      description: Period entity with a begin and optional end date.
-      properties:
-        begin:
-          type: string
-          format: date-time
-          description: Start date of the period (inclusive).
-        end:
-          type: string
-          format: date-time
-          description: End date of the period (inclusive).
-      required:
-      - begin
     Organizer:
       title: Organizer
       type: object
@@ -1568,71 +1509,58 @@ components:
           readOnly: true
       required:
       - id
-    Error_2:
-      title: Error
+    City:
+      title: City
       type: object
-      description: RFC7807 error model for all publiq APIs.
+      x-tags:
+      - Models
+      example:
+        postalCode: '9300'
+        name: Aalst
       properties:
-        type:
+        postalCode:
           type: string
-          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
-        title:
+          description: Postalcode of the city
+        name:
           type: string
-          description: A short, human-readable summary of the problem type (for developers).
-        status:
-          type: integer
-          description: The HTTP status code.
-        detail:
-          type: string
-          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
-        endUserMessage:
-          type: object
-          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
-          properties:
-            nl:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
-            fr:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
-            de:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
-            en:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
-          required:
-          - nl
-        schemaErrors:
-          type: array
-          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
-          items:
-            type: object
-            properties:
-              jsonPointer:
-                type: string
-                format: json-pointer
-                description: RFC6901 compliant pointer that indicates what property/value was invalid.
-              error:
-                type: string
-                description: A human-readable (but often technical) reason why the property was invalid.
-            required:
-            - jsonPointer
-            - error
+          description: Name of the city
       required:
-      - type
-      - title
-      - status
-      x-internal: false
+      - postalCode
+      - name
+    RewardsPaginatedResponse:
+      title: RewardsPaginatedResponse
+      type: object
+      x-tags:
+      - Models
+      description: Paginated response object for rewards
+      properties:
+        totalItems:
+          type: integer
+          description: Total number of reward results (can be more than the amount of results in the response).
+        member:
+          type: array
+          description: List of reward results for this specific (paginated) request.
+          items:
+            $ref: '#/components/schemas/Reward'
+        facet:
+          type: object
+          description: Facet information for the requested facets.
+          properties:
+            categories:
+              $ref: '#/components/schemas/Facet'
+            owningCardSystemId:
+              $ref: '#/components/schemas/Facet'
+            type:
+              $ref: '#/components/schemas/Facet'
+            sport:
+              $ref: '#/components/schemas/Facet'
+            forKids:
+              $ref: '#/components/schemas/Facet'
+            online:
+              $ref: '#/components/schemas/Facet'
+            lastChance:
+              $ref: '#/components/schemas/Facet'
   parameters:
-    start:
-      schema:
-        type: integer
-        minimum: 0
-        default: 0
-      in: query
-      name: start
-      description: Position to start returning results from. When set to `0` the results starting from the very first position will be returned. When set to for example `10` the results 0-9 will be skipped and the ones starting from position 10 will be returned. Can be used in combination with `limit` for pagination.
     limit:
       schema:
         type: integer
@@ -1641,6 +1569,50 @@ components:
       in: query
       name: limit
       description: 'Maximum amount of results to return. Can be used in combination with `start` for pagination. **Important**: the maximum value for `limit` is `500`. Exceeding this value will result in an error.'
+    start:
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      in: query
+      name: start
+      description: Position to start returning results from. When set to `0` the results starting from the very first position will be returned. When set to for example `10` the results 0-9 will be skipped and the ones starting from position 10 will be returned. Can be used in combination with `limit` for pagination.
+  responses:
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
   securitySchemes:
     USER_ACCESS_TOKEN:
       type: oauth2
@@ -1658,6 +1630,3 @@ components:
       name: x-custom-token
       type: apiKey
       in: header
-x-refined-from:
-- uitpas-uitpas.json
-- publiq-uitpas-openapi.yml

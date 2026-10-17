@@ -1,14 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Publiq Kiosk devices API
+  title: UiTPAS Kiosk devices API
   version: '4.0'
   contact:
     name: publiq helpdesk
     email: technical-support@publiq.be
     url: https://docs.publiq.be
-  x-refined-note:
-  - x-source differs across the merged source definitions and was not carried
-  description: 'Operations tagged Kiosk devices across 2 of this provider''s published API definitions: uitpas-uitpas.json, publiq-uitpas-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: With UiTPAS API 4.0 you can retrieve ticket prices and register ticket sales for passholders. You can also save UiTPAS points and exchange them for rewards for a passholder, and much more.
+  x-source: https://raw.githubusercontent.com/cultuurnet/apidocs/main/../../../private/tmp/publiq-src/apidocs-main/projects/uitpas/reference/uitpas.json
 servers:
 - url: https://api-test.uitpas.be
   description: Testing
@@ -107,11 +106,6 @@ paths:
         description: Kiosk Setup
       tags:
       - Kiosk devices
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /kiosk-devices:
     parameters: []
     get:
@@ -164,11 +158,6 @@ paths:
         > **This endpoint is exclusively for use by Kiosk devices themselves**. It cannot be used by other applications to manage the device.'
       security:
       - CUSTOM_TOKEN: []
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /kiosk-devices/events:
     parameters: []
     get:
@@ -282,11 +271,6 @@ paths:
       - Kiosk devices
       security:
       - CUSTOM_TOKEN: []
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /kiosk-devices/checkins:
     parameters: []
     post:
@@ -390,11 +374,6 @@ paths:
       - Kiosk devices
       security:
       - CUSTOM_TOKEN: []
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /kiosk-devices/chip-numbers/{chipNumber}:
     parameters:
     - schema:
@@ -449,49 +428,328 @@ paths:
       - Kiosk devices
       security:
       - CUSTOM_TOKEN: []
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
 components:
-  responses:
-    Unauthorized:
-      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
-
-
-        * type: https://api.publiq.be/probs/auth/unauthorized
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          x-examples:
-            Unauthorized:
-              value:
-                type: https://api.publiq.be/probs/auth/unauthorized
-                title: Unauthorized
-                status: 401
-    Forbidden:
-      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
-
-
-        * type: https://api.publiq.be/probs/auth/forbidden
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          x-examples:
-            Forbidden:
-              value:
-                type: https://api.publiq.be/probs/auth/forbidden
-                title: Forbidden
-                status: 403
-                detail: user must be admin of organiser abcd1234
   schemas:
+    KioskDeviceCheckinResponse:
+      title: KioskDeviceCheckinResponse
+      x-stoplight:
+        id: a0b3354689f18
+      type: object
+      description: Checkin via kiosk response
+      properties:
+        newPoints:
+          type: integer
+          description: New points as a result of this checkin
+          x-stoplight:
+            id: 9xh8ib4eacnsd
+        totalPoints:
+          type: integer
+          description: Total points of the passholder after this checkin
+      required:
+      - newPoints
+      - totalPoints
+    Error:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+    CardSystem:
+      title: CardSystem
+      description: A region, usually one or multiple municipalities in Belgium, that uses UiTPAS and provides discounts and/or rewards. For example "Paspartoe" (Brussels), UiTPAS Leuven, UiTPAS Hasselt, UiTPAS Gent, and so on.
+      type: object
+      x-tags:
+      - Models
+      example:
+        id: 1
+        name: UiTPAS Dender
+        branding:
+          logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+          primaryColor: rgba(0,0,0,1.0)
+          secondaryColor: rgba(97,166,14,1.0)
+        links:
+          website: https://www.uitpas.be
+        cities:
+        - postalCode: '9300'
+          name: Aalst
+        - postalCode: '9400'
+          name: Ninove
+        permanent: true
+      properties:
+        id:
+          type: integer
+          description: ID of the card system
+        name:
+          type: string
+          description: Name of the card system. This field is always available in responses.
+        branding:
+          type: object
+          description: Branding information of the card system
+          properties:
+            logo:
+              type: string
+              description: URL to the logo of the card system
+            primaryColor:
+              type: string
+              description: Color code of the primary branding color.
+            secondaryColor:
+              type: string
+              description: Color code of the secondary branding color.
+        links:
+          type: object
+          description: Links of the card system
+          properties:
+            website:
+              type: string
+              description: URL of the website of the card system
+        cities:
+          type: array
+          description: List of cities that are part of this card system
+          items:
+            $ref: '#/components/schemas/City'
+        permanent:
+          type: boolean
+          description: Indicates whether this is a permanent card system
+        allowsCardlessRegistration:
+          type: boolean
+          description: Indicates if cardless registration is enabled
+        cardlessRegistrationType:
+          type: string
+          description: Indicates the types of online cardless registrations this cardsystem supports.
+          enum:
+          - ALL
+          - REGULAR
+          - SOCIALTARIFF
+          - NONE
+        socialTariffInfo:
+          type: string
+          description: Optional information about social tariff entitlement in this card system.
+      required:
+      - id
+    KioskDeviceEventRequest:
+      title: KioskDeviceEventRequest
+      x-stoplight:
+        id: 2bfdjhsqwwxj1
+      type: object
+      description: Model to configure the kiosk event
+      properties:
+        id:
+          type: string
+          description: ID of the event
+      required:
+      - id
+    Location:
+      title: Location
+      x-stoplight:
+        id: jsek0i5fkc5ai
+      type: object
+      description: Location model
+      properties:
+        id:
+          type: string
+          description: ID of the location
+        name:
+          type: string
+          x-stoplight:
+            id: xqbdyntqozql8
+          description: Name of the location
+      required:
+      - id
+      - name
+    KioskDeviceEvent:
+      title: KioskDeviceEvent
+      x-stoplight:
+        id: y5atjfuzrvep1
+      type: object
+      description: Event model used in Kiosk APIs
+      properties:
+        checkinPoints:
+          type: integer
+          x-stoplight:
+            id: b416vifd5i684
+          description: Points earned when passholds checks in
+        event:
+          type: object
+          x-stoplight:
+            id: 345z9zuzxe547
+          description: Current event of the kiosk.
+          required:
+          - id
+          - title
+          properties:
+            id:
+              type: string
+              x-stoplight:
+                id: 6b10ruuepsrjo
+              description: ID of the event
+            title:
+              type: string
+              x-stoplight:
+                id: dxavbqgc8aysl
+              description: Title of the event
+        checkinCode:
+          type: string
+          x-stoplight:
+            id: orc9gdhisu1ya
+          description: Checkin code for the event
+      required:
+      - checkinPoints
+      - event
+      - checkinCode
+    Organizer:
+      title: Organizer
+      type: object
+      description: An organisation that partners with UiTPAS to provide discounts and/or rewards, and/or allows points to be collected at their events.
+      x-tags:
+      - Models
+      properties:
+        id:
+          type: string
+          description: Unique ID of an UiTPAS organizer. (Same as its ID in UiTdatabank)
+        name:
+          type: string
+          description: Human-readable name of an UiTPAS organizer.
+        cardSystems:
+          type: array
+          description: Card systems linked to this organizer
+          items:
+            $ref: '#/components/schemas/CardSystem'
+        linkedLocationId:
+          type: string
+          description: ID of the location linked to this organizer.
+          readOnly: true
+        address:
+          type: object
+          description: Address of this organizer. This property is alway available in responses.
+          required:
+          - city
+          properties:
+            street:
+              type: string
+              description: Street address of this organizer
+            postalCode:
+              type: string
+              description: Postal code of this organizer
+            city:
+              type: string
+              description: City of this organizer
+          readOnly: true
+      required:
+      - id
+    KioskPass:
+      title: KioskPass
+      x-stoplight:
+        id: pia2mamgrb6kc
+      type: object
+      description: Pass information
+      properties:
+        totalPoints:
+          type: integer
+          x-stoplight:
+            id: g914t3kiofl8f
+          description: Total points of the passholder
+      required:
+      - totalPoints
+    KioskDeviceCheckinRequest:
+      title: KioskDeviceCheckinRequest
+      x-stoplight:
+        id: p017ejlluigiv
+      type: object
+      properties:
+        chipNumber:
+          type: string
+          x-stoplight:
+            id: upndvphy3uppq
+          description: Chipnumber of the passholder to checkin
+      required:
+      - chipNumber
+    KioskDeviceSetup:
+      title: KioskDeviceSetup
+      x-stoplight:
+        id: ylj4q1p2eeisl
+      type: object
+      properties:
+        name:
+          type: string
+          x-stoplight:
+            id: xs87oo7o9eqfy
+          description: Name of the KIOSK
+        deviceId:
+          type: string
+          x-stoplight:
+            id: phadvfcafaeuc
+          description: Device ID of the kiosk
+      required:
+      - name
+      - deviceId
+    City:
+      title: City
+      type: object
+      x-tags:
+      - Models
+      example:
+        postalCode: '9300'
+        name: Aalst
+      properties:
+        postalCode:
+          type: string
+          description: Postalcode of the city
+        name:
+          type: string
+          description: Name of the city
+      required:
+      - postalCode
+      - name
     KioskDevice:
       title: KioskDevice
       x-stoplight:
@@ -566,328 +824,42 @@ components:
       - deviceId
       - cardSystem
       - releaseTrack
-    Error:
-      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
-    KioskDeviceEventRequest:
-      title: KioskDeviceEventRequest
-      x-stoplight:
-        id: 2bfdjhsqwwxj1
-      type: object
-      description: Model to configure the kiosk event
-      properties:
-        id:
-          type: string
-          description: ID of the event
-      required:
-      - id
-    KioskDeviceSetup:
-      title: KioskDeviceSetup
-      x-stoplight:
-        id: ylj4q1p2eeisl
-      type: object
-      properties:
-        name:
-          type: string
-          x-stoplight:
-            id: xs87oo7o9eqfy
-          description: Name of the KIOSK
-        deviceId:
-          type: string
-          x-stoplight:
-            id: phadvfcafaeuc
-          description: Device ID of the kiosk
-      required:
-      - name
-      - deviceId
-    KioskDeviceCheckinResponse:
-      title: KioskDeviceCheckinResponse
-      x-stoplight:
-        id: a0b3354689f18
-      type: object
-      description: Checkin via kiosk response
-      properties:
-        newPoints:
-          type: integer
-          description: New points as a result of this checkin
-          x-stoplight:
-            id: 9xh8ib4eacnsd
-        totalPoints:
-          type: integer
-          description: Total points of the passholder after this checkin
-      required:
-      - newPoints
-      - totalPoints
-    KioskDeviceCheckinRequest:
-      title: KioskDeviceCheckinRequest
-      x-stoplight:
-        id: p017ejlluigiv
-      type: object
-      properties:
-        chipNumber:
-          type: string
-          x-stoplight:
-            id: upndvphy3uppq
-          description: Chipnumber of the passholder to checkin
-      required:
-      - chipNumber
-    Organizer:
-      title: Organizer
-      type: object
-      description: An organisation that partners with UiTPAS to provide discounts and/or rewards, and/or allows points to be collected at their events.
-      x-tags:
-      - Models
-      properties:
-        id:
-          type: string
-          description: Unique ID of an UiTPAS organizer. (Same as its ID in UiTdatabank)
-        name:
-          type: string
-          description: Human-readable name of an UiTPAS organizer.
-        cardSystems:
-          type: array
-          description: Card systems linked to this organizer
-          items:
-            $ref: '#/components/schemas/CardSystem'
-        linkedLocationId:
-          type: string
-          description: ID of the location linked to this organizer.
-          readOnly: true
-        address:
-          type: object
-          description: Address of this organizer. This property is alway available in responses.
-          required:
-          - city
-          properties:
-            street:
-              type: string
-              description: Street address of this organizer
-            postalCode:
-              type: string
-              description: Postal code of this organizer
-            city:
-              type: string
-              description: City of this organizer
-          readOnly: true
-      required:
-      - id
-    KioskPass:
-      title: KioskPass
-      x-stoplight:
-        id: pia2mamgrb6kc
-      type: object
-      description: Pass information
-      properties:
-        totalPoints:
-          type: integer
-          x-stoplight:
-            id: g914t3kiofl8f
-          description: Total points of the passholder
-      required:
-      - totalPoints
-    City:
-      title: City
-      type: object
-      x-tags:
-      - Models
-      example:
-        postalCode: '9300'
-        name: Aalst
-      properties:
-        postalCode:
-          type: string
-          description: Postalcode of the city
-        name:
-          type: string
-          description: Name of the city
-      required:
-      - postalCode
-      - name
-    CardSystem:
-      title: CardSystem
-      description: A region, usually one or multiple municipalities in Belgium, that uses UiTPAS and provides discounts and/or rewards. For example "Paspartoe" (Brussels), UiTPAS Leuven, UiTPAS Hasselt, UiTPAS Gent, and so on.
-      type: object
-      x-tags:
-      - Models
-      example:
-        id: 1
-        name: UiTPAS Dender
-        branding:
-          logo: https://www.uitpas.be/_nuxt/img/1351557.svg
-          primaryColor: rgba(0,0,0,1.0)
-          secondaryColor: rgba(97,166,14,1.0)
-        links:
-          website: https://www.uitpas.be
-        cities:
-        - postalCode: '9300'
-          name: Aalst
-        - postalCode: '9400'
-          name: Ninove
-        permanent: true
-      properties:
-        id:
-          type: integer
-          description: ID of the card system
-        name:
-          type: string
-          description: Name of the card system. This field is always available in responses.
-        branding:
-          type: object
-          description: Branding information of the card system
-          properties:
-            logo:
-              type: string
-              description: URL to the logo of the card system
-            primaryColor:
-              type: string
-              description: Color code of the primary branding color.
-            secondaryColor:
-              type: string
-              description: Color code of the secondary branding color.
-        links:
-          type: object
-          description: Links of the card system
-          properties:
-            website:
-              type: string
-              description: URL of the website of the card system
-        cities:
-          type: array
-          description: List of cities that are part of this card system
-          items:
-            $ref: '#/components/schemas/City'
-        permanent:
-          type: boolean
-          description: Indicates whether this is a permanent card system
-        allowsCardlessRegistration:
-          type: boolean
-          description: Indicates if cardless registration is enabled
-        cardlessRegistrationType:
-          type: string
-          description: Indicates the types of online cardless registrations this cardsystem supports.
-          enum:
-          - ALL
-          - REGULAR
-          - SOCIALTARIFF
-          - NONE
-        socialTariffInfo:
-          type: string
-          description: Optional information about social tariff entitlement in this card system.
-      required:
-      - id
-    Location:
-      title: Location
-      x-stoplight:
-        id: jsek0i5fkc5ai
-      type: object
-      description: Location model
-      properties:
-        id:
-          type: string
-          description: ID of the location
-        name:
-          type: string
-          x-stoplight:
-            id: xqbdyntqozql8
-          description: Name of the location
-      required:
-      - id
-      - name
-    KioskDeviceEvent:
-      title: KioskDeviceEvent
-      x-stoplight:
-        id: y5atjfuzrvep1
-      type: object
-      description: Event model used in Kiosk APIs
-      properties:
-        checkinPoints:
-          type: integer
-          x-stoplight:
-            id: b416vifd5i684
-          description: Points earned when passholds checks in
-        event:
-          type: object
-          x-stoplight:
-            id: 345z9zuzxe547
-          description: Current event of the kiosk.
-          required:
-          - id
-          - title
-          properties:
-            id:
-              type: string
-              x-stoplight:
-                id: 6b10ruuepsrjo
-              description: ID of the event
-            title:
-              type: string
-              x-stoplight:
-                id: dxavbqgc8aysl
-              description: Title of the event
-        checkinCode:
-          type: string
-          x-stoplight:
-            id: orc9gdhisu1ya
-          description: Checkin code for the event
-      required:
-      - checkinPoints
-      - event
-      - checkinCode
-    Error_2:
-      title: Error
-      type: object
-      description: RFC7807 error model for all publiq APIs.
-      properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type (for developers).
-        status:
-          type: integer
-          description: The HTTP status code.
-        detail:
-          type: string
-          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
-        endUserMessage:
-          type: object
-          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
-          properties:
-            nl:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
-            fr:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
-            de:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
-            en:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
-          required:
-          - nl
-        schemaErrors:
-          type: array
-          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
-          items:
-            type: object
-            properties:
-              jsonPointer:
-                type: string
-                format: json-pointer
-                description: RFC6901 compliant pointer that indicates what property/value was invalid.
-              error:
-                type: string
-                description: A human-readable (but often technical) reason why the property was invalid.
-            required:
-            - jsonPointer
-            - error
-      required:
-      - type
-      - title
-      - status
-      x-internal: false
+  responses:
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
   securitySchemes:
     USER_ACCESS_TOKEN:
       type: oauth2
@@ -905,6 +877,3 @@ components:
       name: x-custom-token
       type: apiKey
       in: header
-x-refined-from:
-- uitpas-uitpas.json
-- publiq-uitpas-openapi.yml

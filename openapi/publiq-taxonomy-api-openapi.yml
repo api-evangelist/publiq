@@ -1,14 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Publiq Taxonomy API
+  title: Entry Taxonomy API
   version: '3.0'
+  description: With UiTdatabank's Entry API you can create new events, places and organizers, and add extra info to them with specific requests to add/update properties. For example there are operations to add a label, remove a label, add an image, and so on.
   contact:
     name: publiq helpdesk
     email: technical-support@publiq.be
     url: https://docs.publiq.be
-  x-refined-note:
-  - x-source differs across the merged source definitions and was not carried
-  description: 'Operations tagged Taxonomy across 2 of this provider''s published API definitions: uitdatabank-entry.json, publiq-uitdatabank-entry-openapi.yml. Each path carries the servers of the definition it was published in.'
+  x-source: https://raw.githubusercontent.com/cultuurnet/apidocs/main/../../../private/tmp/publiq-src/apidocs-main/projects/uitdatabank/reference/entry.json
 servers:
 - url: https://io-test.uitdatabank.be
   description: Testing
@@ -4147,11 +4146,6 @@ paths:
       x-internal: true
       parameters: []
       description: Returns a hierarchical list of the regions in Flanders and Brussel. Each level includes a label, value with the NIS-code, and optional nested children, allowing integrators to display lists of all regions and municipalities.
-    servers:
-    - url: https://io-test.uitdatabank.be
-      description: Testing
-    - url: https://io.uitdatabank.be
-      description: Production
   /cultuurkuur/education-levels:
     get:
       summary: educationLevels - GET
@@ -4490,11 +4484,6 @@ paths:
       x-internal: true
       parameters: []
       description: Returns a hierarchical list of education levels used on Cultuurkuur. Each level includes a label, value, and optional nested children, allowing integrators to display or process education structures ranging from early childhood to higher education.
-    servers:
-    - url: https://io-test.uitdatabank.be
-      description: Testing
-    - url: https://io.uitdatabank.be
-      description: Production
 components:
   securitySchemes:
     USER_ACCESS_TOKEN:
@@ -4505,6 +4494,3 @@ components:
       type: oauth2
       flows: {}
       description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
-x-refined-from:
-- uitdatabank-entry.json
-- publiq-uitdatabank-entry-openapi.yml

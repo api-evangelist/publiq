@@ -1,14 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Publiq Social Tariff Validation API
+  title: UiTPAS Social Tariff Validation API
   version: '4.0'
   contact:
     name: publiq helpdesk
     email: technical-support@publiq.be
     url: https://docs.publiq.be
-  x-refined-note:
-  - x-source differs across the merged source definitions and was not carried
-  description: 'Operations tagged SocialTariffValidation across 2 of this provider''s published API definitions: uitpas-uitpas.json, publiq-uitpas-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: With UiTPAS API 4.0 you can retrieve ticket prices and register ticket sales for passholders. You can also save UiTPAS points and exchange them for rewards for a passholder, and much more.
+  x-source: https://raw.githubusercontent.com/cultuurnet/apidocs/main/../../../private/tmp/publiq-src/apidocs-main/projects/uitpas/reference/uitpas.json
 servers:
 - url: https://api-test.uitpas.be
   description: Testing
@@ -105,11 +104,6 @@ paths:
         name: redirect_uri
         required: true
         description: The URL where the client can receive the redirect back. This URL must be explicitly allowed by the UiTPAS backend.
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /social-tariff-validation/token:
     parameters: []
     post:
@@ -168,11 +162,6 @@ paths:
         description: Form
       tags:
       - SocialTariffValidation
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /social-tariff-validation:
     parameters: []
     get:
@@ -227,145 +216,9 @@ paths:
         description: Optional ID of the CardSystem for which the passholder is retrieving social tariff validation. This is used to determine the correct government service for the first request.
       security:
       - CUSTOM_TOKEN: []
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
 components:
-  responses:
-    Unauthorized:
-      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
-
-
-        * type: https://api.publiq.be/probs/auth/unauthorized
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          x-examples:
-            Unauthorized:
-              value:
-                type: https://api.publiq.be/probs/auth/unauthorized
-                title: Unauthorized
-                status: 401
-    Forbidden:
-      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
-
-
-        * type: https://api.publiq.be/probs/auth/forbidden
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          x-examples:
-            Forbidden:
-              value:
-                type: https://api.publiq.be/probs/auth/forbidden
-                title: Forbidden
-                status: 403
-                detail: user must be admin of organiser abcd1234
   schemas:
     Error:
-      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
-    SocialTariffValidationTokenRequest:
-      title: SocialTariffValidationTokenRequest
-      x-stoplight:
-        id: h9f7buv9bbqp3
-      type: object
-      description: SocialTariffValidationTokenRequest
-      properties:
-        code:
-          type: string
-          x-stoplight:
-            id: aj11gec4d2o3p
-          description: code from step 2 in the authentication process
-        codeVerifier:
-          type: string
-          x-stoplight:
-            id: 9ov8etk9jcnq4
-          description: code_verifier from step 1 in the authentication process
-      required:
-      - code
-      - codeVerifier
-    SocialTariffValidation:
-      title: SocialTariffValidation
-      x-stoplight:
-        id: gryzsngewgyjv
-      type: object
-      description: SocialTariffValidation information
-      properties:
-        user:
-          $ref: '#/components/schemas/SocialTariffValidationPerson'
-        children:
-          type: array
-          x-stoplight:
-            id: f6pyicmviravx
-          description: Optional list of children of the identified persion.
-          items:
-            $ref: '#/components/schemas/SocialTariffValidationPerson'
-      required:
-      - user
-    SocialTariffValidationTokenResponse:
-      title: SocialTariffValidationTokenResponse
-      type: object
-      description: SocialTariffValidationTokenRequest
-      properties:
-        token:
-          type: string
-          x-stoplight:
-            id: aj11gec4d2o3p
-          description: code from step 2 in the authentication process
-      required:
-      - token
-    SocialTariffValidationPerson:
-      type: object
-      description: SocialTariffValidationPerson
-      properties:
-        inszNumber:
-          type: string
-          description: INSZ number of the identified person
-        familyName:
-          type: string
-          description: Family name of the identified person
-        givenName:
-          type: string
-          description: Given name of the identified person
-        hasSocialTariff:
-          type: boolean
-          description: True if the person is entitled to social tariff
-        uitpasNumber:
-          type: string
-          description: Optional `uitpasNumber` if the person with the given `inszNumber` already has an UiTPAS. If this property is not null, the user cannot proceed registration of a new passholder.
-        street:
-          type: string
-          description: Street and house number of the user if known.
-        postalCode:
-          type: string
-          description: Postal code of the user if known.
-        city:
-          type: string
-          description: City of the user if known.
-        idToken:
-          type: string
-          description: Social Tariff Validation ID token of the user used in /`POST orders` request.
-        idTokenExpiresAt:
-          type: string
-          format: date-time
-          description: Date and time until the ID token is valid. If the ID token is expired it can't be used in `POST /orders`. The client must repeat the social tariff validation flow to obtain a new ID token.
-      required:
-      - inszNumber
-      - familyName
-      - givenName
-      - hasSocialTariff
-      - idToken
-      - idTokenExpiresAt
-      title: SocialTariffValidationPerson
-    Error_2:
       title: Error
       type: object
       description: RFC7807 error model for all publiq APIs.
@@ -421,6 +274,135 @@ components:
       - title
       - status
       x-internal: false
+    SocialTariffValidation:
+      title: SocialTariffValidation
+      x-stoplight:
+        id: gryzsngewgyjv
+      type: object
+      description: SocialTariffValidation information
+      properties:
+        user:
+          $ref: '#/components/schemas/SocialTariffValidationPerson'
+        children:
+          type: array
+          x-stoplight:
+            id: f6pyicmviravx
+          description: Optional list of children of the identified persion.
+          items:
+            $ref: '#/components/schemas/SocialTariffValidationPerson'
+      required:
+      - user
+    SocialTariffValidationTokenResponse:
+      title: SocialTariffValidationTokenResponse
+      type: object
+      description: SocialTariffValidationTokenRequest
+      properties:
+        token:
+          type: string
+          x-stoplight:
+            id: aj11gec4d2o3p
+          description: code from step 2 in the authentication process
+      required:
+      - token
+    SocialTariffValidationTokenRequest:
+      title: SocialTariffValidationTokenRequest
+      x-stoplight:
+        id: h9f7buv9bbqp3
+      type: object
+      description: SocialTariffValidationTokenRequest
+      properties:
+        code:
+          type: string
+          x-stoplight:
+            id: aj11gec4d2o3p
+          description: code from step 2 in the authentication process
+        codeVerifier:
+          type: string
+          x-stoplight:
+            id: 9ov8etk9jcnq4
+          description: code_verifier from step 1 in the authentication process
+      required:
+      - code
+      - codeVerifier
+    SocialTariffValidationPerson:
+      type: object
+      description: SocialTariffValidationPerson
+      properties:
+        inszNumber:
+          type: string
+          description: INSZ number of the identified person
+        familyName:
+          type: string
+          description: Family name of the identified person
+        givenName:
+          type: string
+          description: Given name of the identified person
+        hasSocialTariff:
+          type: boolean
+          description: True if the person is entitled to social tariff
+        uitpasNumber:
+          type: string
+          description: Optional `uitpasNumber` if the person with the given `inszNumber` already has an UiTPAS. If this property is not null, the user cannot proceed registration of a new passholder.
+        street:
+          type: string
+          description: Street and house number of the user if known.
+        postalCode:
+          type: string
+          description: Postal code of the user if known.
+        city:
+          type: string
+          description: City of the user if known.
+        idToken:
+          type: string
+          description: Social Tariff Validation ID token of the user used in /`POST orders` request.
+        idTokenExpiresAt:
+          type: string
+          format: date-time
+          description: Date and time until the ID token is valid. If the ID token is expired it can't be used in `POST /orders`. The client must repeat the social tariff validation flow to obtain a new ID token.
+      required:
+      - inszNumber
+      - familyName
+      - givenName
+      - hasSocialTariff
+      - idToken
+      - idTokenExpiresAt
+      title: SocialTariffValidationPerson
+  responses:
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
   securitySchemes:
     USER_ACCESS_TOKEN:
       type: oauth2
@@ -438,6 +420,3 @@ components:
       name: x-custom-token
       type: apiKey
       in: header
-x-refined-from:
-- uitpas-uitpas.json
-- publiq-uitpas-openapi.yml

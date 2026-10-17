@@ -1,14 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Publiq News articles API
+  title: Entry News articles API
   version: '3.0'
+  description: With UiTdatabank's Entry API you can create new events, places and organizers, and add extra info to them with specific requests to add/update properties. For example there are operations to add a label, remove a label, add an image, and so on.
   contact:
     name: publiq helpdesk
     email: technical-support@publiq.be
     url: https://docs.publiq.be
-  x-refined-note:
-  - x-source differs across the merged source definitions and was not carried
-  description: 'Operations tagged News articles across 2 of this provider''s published API definitions: uitdatabank-entry.json, publiq-uitdatabank-entry-openapi.yml. Each path carries the servers of the definition it was published in.'
+  x-source: https://raw.githubusercontent.com/cultuurnet/apidocs/main/../../../private/tmp/publiq-src/apidocs-main/projects/uitdatabank/reference/entry.json
 servers:
 - url: https://io-test.uitdatabank.be
   description: Testing
@@ -27,10 +26,230 @@ paths:
           content:
             application/ld+json:
               schema:
-                $ref: ../models/newsArticle.json
+                x-internal: true
+                title: newsArticle
+                type: object
+                description: A news article that is linked to an event.
+                examples:
+                - id: 7ef7075c-e2da-4837-af92-a5176e3a348f
+                  headline: The headline of the news article.
+                  inLanguage: en
+                  text: This year publiq won an API reward for it's innovative RESTful API
+                  about: 17284745-7bcf-461a-aad0-d3ad54880e75
+                  publisher: BILL
+                  publisherLogo: https://www.bill.be/img/favicon.png
+                  url: https://www.bill.be/blog/publiq-award
+                - id: 5796bacc-1134-4711-9586-38722f78d2e5
+                  headline: The headline of the news article.
+                  inLanguage: en
+                  text: These are some exhibitions worth visiting.
+                  about: cfa29b53-0eb6-4bf1-8c7a-6394af5c8731
+                  publisher: UiTinVlaanderen
+                  publisherLogo: https://www.uitinvlaanderen.be/img/favicon.png
+                  url: https://www.uitinvlaanderen.be/tip/article
+                  image:
+                    url: https://www.uitinvlaanderen.be/public/image.jpeg
+                    copyrightHolder: publiq vzw
+                properties:
+                  id:
+                    title: uuid
+                    type: string
+                    format: uuid
+                    description: The uuid of the news article.
+                    examples:
+                    - 46e9ea9f-fc42-4759-a81b-4308467b7c35
+                  headline:
+                    type: string
+                    description: The headline of the news article.
+                    example: API reward for publiq
+                  inLanguage:
+                    title: language
+                    description: The language of the news article
+                    type: string
+                    example: nl
+                    enum:
+                    - nl
+                    - fr
+                    - de
+                    - en
+                  text:
+                    type: string
+                    example: This year publiq won an API reward for it's innovative RESTful API
+                    description: The text of the news article.
+                  about:
+                    type: string
+                    example: 17284745-7bcf-461a-aad0-d3ad54880e75
+                    description: The id of the event linked to the news article.
+                  publisher:
+                    type: string
+                    example: BILL
+                    description: The publisher of the news article.
+                  publisherLogo:
+                    title: uri
+                    description: The url pointing to the logo of the publisher of the news article.
+                    type: string
+                    format: uri
+                    pattern: ^http[s]?:\/\/\w
+                    examples:
+                    - https://www.example.com
+                  url:
+                    title: uri
+                    description: The link pointing to the published news article itself.
+                    type: string
+                    format: uri
+                    pattern: ^http[s]?:\/\/\w
+                    examples:
+                    - https://www.example.com
+                  image:
+                    title: uri
+                    type: object
+                    format: uri
+                    examples:
+                    - image:
+                        url: https://example.com/sample.jpeg
+                        copyrightHolder: Publiq vzw
+                    description: A URI which links to a valid image.
+                    properties:
+                      url:
+                        title: uri
+                        type: string
+                        pattern: ^http(s?):([/|.|\w|%20|-])*\.(?:jpeg|jpg|gif|png)$
+                        examples:
+                        - https://www.example.com/sample.jpeg
+                        description: A URI which links to a valid image.
+                      copyrightHolder:
+                        title: copyrightHolder
+                        description: Name of the copyright holder of a specific media file.
+                        type: string
+                        example: publiq
+                        minLength: 2
+                        maxLength: 250
+                        pattern: \S
+                    required:
+                    - url
+                    - copyrightHolder
+                required:
+                - id
+                - headline
+                - inLanguage
+                - text
+                - about
+                - publisher
+                - publisherLogo
+                - url
             application/json:
               schema:
-                $ref: ../models/newsArticle.json
+                x-internal: true
+                title: newsArticle
+                type: object
+                description: A news article that is linked to an event.
+                examples:
+                - id: 7ef7075c-e2da-4837-af92-a5176e3a348f
+                  headline: The headline of the news article.
+                  inLanguage: en
+                  text: This year publiq won an API reward for it's innovative RESTful API
+                  about: 17284745-7bcf-461a-aad0-d3ad54880e75
+                  publisher: BILL
+                  publisherLogo: https://www.bill.be/img/favicon.png
+                  url: https://www.bill.be/blog/publiq-award
+                - id: 5796bacc-1134-4711-9586-38722f78d2e5
+                  headline: The headline of the news article.
+                  inLanguage: en
+                  text: These are some exhibitions worth visiting.
+                  about: cfa29b53-0eb6-4bf1-8c7a-6394af5c8731
+                  publisher: UiTinVlaanderen
+                  publisherLogo: https://www.uitinvlaanderen.be/img/favicon.png
+                  url: https://www.uitinvlaanderen.be/tip/article
+                  image:
+                    url: https://www.uitinvlaanderen.be/public/image.jpeg
+                    copyrightHolder: publiq vzw
+                properties:
+                  id:
+                    title: uuid
+                    type: string
+                    format: uuid
+                    description: The uuid of the news article.
+                    examples:
+                    - 46e9ea9f-fc42-4759-a81b-4308467b7c35
+                  headline:
+                    type: string
+                    description: The headline of the news article.
+                    example: API reward for publiq
+                  inLanguage:
+                    title: language
+                    description: The language of the news article
+                    type: string
+                    example: nl
+                    enum:
+                    - nl
+                    - fr
+                    - de
+                    - en
+                  text:
+                    type: string
+                    example: This year publiq won an API reward for it's innovative RESTful API
+                    description: The text of the news article.
+                  about:
+                    type: string
+                    example: 17284745-7bcf-461a-aad0-d3ad54880e75
+                    description: The id of the event linked to the news article.
+                  publisher:
+                    type: string
+                    example: BILL
+                    description: The publisher of the news article.
+                  publisherLogo:
+                    title: uri
+                    description: The url pointing to the logo of the publisher of the news article.
+                    type: string
+                    format: uri
+                    pattern: ^http[s]?:\/\/\w
+                    examples:
+                    - https://www.example.com
+                  url:
+                    title: uri
+                    description: The link pointing to the published news article itself.
+                    type: string
+                    format: uri
+                    pattern: ^http[s]?:\/\/\w
+                    examples:
+                    - https://www.example.com
+                  image:
+                    title: uri
+                    type: object
+                    format: uri
+                    examples:
+                    - image:
+                        url: https://example.com/sample.jpeg
+                        copyrightHolder: Publiq vzw
+                    description: A URI which links to a valid image.
+                    properties:
+                      url:
+                        title: uri
+                        type: string
+                        pattern: ^http(s?):([/|.|\w|%20|-])*\.(?:jpeg|jpg|gif|png)$
+                        examples:
+                        - https://www.example.com/sample.jpeg
+                        description: A URI which links to a valid image.
+                      copyrightHolder:
+                        title: copyrightHolder
+                        description: Name of the copyright holder of a specific media file.
+                        type: string
+                        example: publiq
+                        minLength: 2
+                        maxLength: 250
+                        pattern: \S
+                    required:
+                    - url
+                    - copyrightHolder
+                required:
+                - id
+                - headline
+                - inLanguage
+                - text
+                - about
+                - publisher
+                - publisherLogo
+                - url
         '400':
           description: 'Bad Request. Possible error types:
 
@@ -66,7 +285,103 @@ paths:
         content:
           application/json:
             schema:
-              $ref: ../models/newsArticle-post.json
+              title: newsArticle.post
+              type: object
+              x-internal: true
+              examples:
+              - headline: The headline of the news article.
+                inLanguage: en
+                text: This year publiq won an API reward for it's innovative RESTful API
+                about: 17284745-7bcf-461a-aad0-d3ad54880e75
+                publisher: BILL
+                publisherLogo: https://www.bill.be/img/favicon.png
+                url: https://www.bill.be/blog/publiq-award
+              - headline: The headline of the news article.
+                inLanguage: en
+                text: These are some exhibitions worth visiting.
+                about: cfa29b53-0eb6-4bf1-8c7a-6394af5c8731
+                publisher: UiTinVlaanderen
+                publisherLogo: https://www.uitinvlaanderen.be/img/favicon.png
+                url: https://www.uitinvlaanderen.be/tip/article
+                image:
+                  url: https://www.uitinvlaanderen.be/public/image.jpeg
+                  copyrightHolder: publiq vzw
+              properties:
+                headline:
+                  type: string
+                  description: The headline of the news article.
+                  example: API reward for publiq
+                inLanguage:
+                  title: language
+                  description: The language of the news article
+                  type: string
+                  example: nl
+                  enum:
+                  - nl
+                  - fr
+                  - de
+                  - en
+                text:
+                  type: string
+                  description: The text of the news article.
+                about:
+                  type: string
+                  description: The id of the event linked to the news article.
+                publisher:
+                  type: string
+                  description: The publisher of the news article.
+                publisherLogo:
+                  title: uri
+                  description: The url pointing to the logo of the publisher of the news article.
+                  type: string
+                  format: uri
+                  pattern: ^http[s]?:\/\/\w
+                  examples:
+                  - https://www.example.com
+                url:
+                  title: uri
+                  description: The link pointing to the published news article itself.
+                  type: string
+                  format: uri
+                  pattern: ^http[s]?:\/\/\w
+                  examples:
+                  - https://www.example.com
+                image:
+                  title: uri
+                  type: object
+                  format: uri
+                  examples:
+                  - image:
+                      url: https://example.com/sample.jpeg
+                      copyrightHolder: Publiq vzw
+                  description: A URI which links to a valid image.
+                  properties:
+                    url:
+                      title: uri
+                      type: string
+                      pattern: ^http(s?):([/|.|\w|%20|-])*\.(?:jpeg|jpg|gif|png)$
+                      examples:
+                      - https://www.example.com/sample.jpeg
+                      description: A URI which links to a valid image.
+                    copyrightHolder:
+                      title: copyrightHolder
+                      description: Name of the copyright holder of a specific media file.
+                      type: string
+                      example: publiq
+                      minLength: 2
+                      maxLength: 250
+                      pattern: \S
+                  required:
+                  - url
+                  - copyrightHolder
+              required:
+              - headline
+              - inLanguage
+              - text
+              - about
+              - publisher
+              - publisherLogo
+              - url
       tags:
       - News articles
     get:
@@ -100,7 +415,117 @@ paths:
                     type: array
                     description: News article results for the requested page.
                     items:
-                      $ref: ../models/newsArticle.json
+                      x-internal: true
+                      title: newsArticle
+                      type: object
+                      description: A news article that is linked to an event.
+                      examples:
+                      - id: 7ef7075c-e2da-4837-af92-a5176e3a348f
+                        headline: The headline of the news article.
+                        inLanguage: en
+                        text: This year publiq won an API reward for it's innovative RESTful API
+                        about: 17284745-7bcf-461a-aad0-d3ad54880e75
+                        publisher: BILL
+                        publisherLogo: https://www.bill.be/img/favicon.png
+                        url: https://www.bill.be/blog/publiq-award
+                      - id: 5796bacc-1134-4711-9586-38722f78d2e5
+                        headline: The headline of the news article.
+                        inLanguage: en
+                        text: These are some exhibitions worth visiting.
+                        about: cfa29b53-0eb6-4bf1-8c7a-6394af5c8731
+                        publisher: UiTinVlaanderen
+                        publisherLogo: https://www.uitinvlaanderen.be/img/favicon.png
+                        url: https://www.uitinvlaanderen.be/tip/article
+                        image:
+                          url: https://www.uitinvlaanderen.be/public/image.jpeg
+                          copyrightHolder: publiq vzw
+                      properties:
+                        id:
+                          title: uuid
+                          type: string
+                          format: uuid
+                          description: The uuid of the news article.
+                          examples:
+                          - 46e9ea9f-fc42-4759-a81b-4308467b7c35
+                        headline:
+                          type: string
+                          description: The headline of the news article.
+                          example: API reward for publiq
+                        inLanguage:
+                          title: language
+                          description: The language of the news article
+                          type: string
+                          example: nl
+                          enum:
+                          - nl
+                          - fr
+                          - de
+                          - en
+                        text:
+                          type: string
+                          example: This year publiq won an API reward for it's innovative RESTful API
+                          description: The text of the news article.
+                        about:
+                          type: string
+                          example: 17284745-7bcf-461a-aad0-d3ad54880e75
+                          description: The id of the event linked to the news article.
+                        publisher:
+                          type: string
+                          example: BILL
+                          description: The publisher of the news article.
+                        publisherLogo:
+                          title: uri
+                          description: The url pointing to the logo of the publisher of the news article.
+                          type: string
+                          format: uri
+                          pattern: ^http[s]?:\/\/\w
+                          examples:
+                          - https://www.example.com
+                        url:
+                          title: uri
+                          description: The link pointing to the published news article itself.
+                          type: string
+                          format: uri
+                          pattern: ^http[s]?:\/\/\w
+                          examples:
+                          - https://www.example.com
+                        image:
+                          title: uri
+                          type: object
+                          format: uri
+                          examples:
+                          - image:
+                              url: https://example.com/sample.jpeg
+                              copyrightHolder: Publiq vzw
+                          description: A URI which links to a valid image.
+                          properties:
+                            url:
+                              title: uri
+                              type: string
+                              pattern: ^http(s?):([/|.|\w|%20|-])*\.(?:jpeg|jpg|gif|png)$
+                              examples:
+                              - https://www.example.com/sample.jpeg
+                              description: A URI which links to a valid image.
+                            copyrightHolder:
+                              title: copyrightHolder
+                              description: Name of the copyright holder of a specific media file.
+                              type: string
+                              example: publiq
+                              minLength: 2
+                              maxLength: 250
+                              pattern: \S
+                          required:
+                          - url
+                          - copyrightHolder
+                      required:
+                      - id
+                      - headline
+                      - inLanguage
+                      - text
+                      - about
+                      - publisher
+                      - publisherLogo
+                      - url
               examples:
                 Example:
                   value:
@@ -125,7 +550,117 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: ../models/newsArticle.json
+                  x-internal: true
+                  title: newsArticle
+                  type: object
+                  description: A news article that is linked to an event.
+                  examples:
+                  - id: 7ef7075c-e2da-4837-af92-a5176e3a348f
+                    headline: The headline of the news article.
+                    inLanguage: en
+                    text: This year publiq won an API reward for it's innovative RESTful API
+                    about: 17284745-7bcf-461a-aad0-d3ad54880e75
+                    publisher: BILL
+                    publisherLogo: https://www.bill.be/img/favicon.png
+                    url: https://www.bill.be/blog/publiq-award
+                  - id: 5796bacc-1134-4711-9586-38722f78d2e5
+                    headline: The headline of the news article.
+                    inLanguage: en
+                    text: These are some exhibitions worth visiting.
+                    about: cfa29b53-0eb6-4bf1-8c7a-6394af5c8731
+                    publisher: UiTinVlaanderen
+                    publisherLogo: https://www.uitinvlaanderen.be/img/favicon.png
+                    url: https://www.uitinvlaanderen.be/tip/article
+                    image:
+                      url: https://www.uitinvlaanderen.be/public/image.jpeg
+                      copyrightHolder: publiq vzw
+                  properties:
+                    id:
+                      title: uuid
+                      type: string
+                      format: uuid
+                      description: The uuid of the news article.
+                      examples:
+                      - 46e9ea9f-fc42-4759-a81b-4308467b7c35
+                    headline:
+                      type: string
+                      description: The headline of the news article.
+                      example: API reward for publiq
+                    inLanguage:
+                      title: language
+                      description: The language of the news article
+                      type: string
+                      example: nl
+                      enum:
+                      - nl
+                      - fr
+                      - de
+                      - en
+                    text:
+                      type: string
+                      example: This year publiq won an API reward for it's innovative RESTful API
+                      description: The text of the news article.
+                    about:
+                      type: string
+                      example: 17284745-7bcf-461a-aad0-d3ad54880e75
+                      description: The id of the event linked to the news article.
+                    publisher:
+                      type: string
+                      example: BILL
+                      description: The publisher of the news article.
+                    publisherLogo:
+                      title: uri
+                      description: The url pointing to the logo of the publisher of the news article.
+                      type: string
+                      format: uri
+                      pattern: ^http[s]?:\/\/\w
+                      examples:
+                      - https://www.example.com
+                    url:
+                      title: uri
+                      description: The link pointing to the published news article itself.
+                      type: string
+                      format: uri
+                      pattern: ^http[s]?:\/\/\w
+                      examples:
+                      - https://www.example.com
+                    image:
+                      title: uri
+                      type: object
+                      format: uri
+                      examples:
+                      - image:
+                          url: https://example.com/sample.jpeg
+                          copyrightHolder: Publiq vzw
+                      description: A URI which links to a valid image.
+                      properties:
+                        url:
+                          title: uri
+                          type: string
+                          pattern: ^http(s?):([/|.|\w|%20|-])*\.(?:jpeg|jpg|gif|png)$
+                          examples:
+                          - https://www.example.com/sample.jpeg
+                          description: A URI which links to a valid image.
+                        copyrightHolder:
+                          title: copyrightHolder
+                          description: Name of the copyright holder of a specific media file.
+                          type: string
+                          example: publiq
+                          minLength: 2
+                          maxLength: 250
+                          pattern: \S
+                      required:
+                      - url
+                      - copyrightHolder
+                  required:
+                  - id
+                  - headline
+                  - inLanguage
+                  - text
+                  - about
+                  - publisher
+                  - publisherLogo
+                  - url
               examples:
                 Example:
                   value:
@@ -160,7 +695,13 @@ paths:
         name: about
         description: The id of the event this News Article is about
       - schema:
-          $ref: ../models/common-string-uri.json
+          title: uri
+          description: A URI with the HTTP or HTTPS protocol.
+          type: string
+          format: uri
+          pattern: ^http[s]?:\/\/\w
+          examples:
+          - https://www.example.com
         in: query
         name: url
         description: The url of the News Article
@@ -171,11 +712,6 @@ paths:
         description: The page the results should start from
       tags:
       - News articles
-    servers:
-    - url: https://io-test.uitdatabank.be
-      description: Testing
-    - url: https://io.uitdatabank.be
-      description: Production
   /news-articles/{articleId}:
     parameters:
     - $ref: '#/components/parameters/articleId'
@@ -192,7 +728,117 @@ paths:
           content:
             application/ld+json:
               schema:
-                $ref: ../models/newsArticle.json
+                x-internal: true
+                title: newsArticle
+                type: object
+                description: A news article that is linked to an event.
+                examples:
+                - id: 7ef7075c-e2da-4837-af92-a5176e3a348f
+                  headline: The headline of the news article.
+                  inLanguage: en
+                  text: This year publiq won an API reward for it's innovative RESTful API
+                  about: 17284745-7bcf-461a-aad0-d3ad54880e75
+                  publisher: BILL
+                  publisherLogo: https://www.bill.be/img/favicon.png
+                  url: https://www.bill.be/blog/publiq-award
+                - id: 5796bacc-1134-4711-9586-38722f78d2e5
+                  headline: The headline of the news article.
+                  inLanguage: en
+                  text: These are some exhibitions worth visiting.
+                  about: cfa29b53-0eb6-4bf1-8c7a-6394af5c8731
+                  publisher: UiTinVlaanderen
+                  publisherLogo: https://www.uitinvlaanderen.be/img/favicon.png
+                  url: https://www.uitinvlaanderen.be/tip/article
+                  image:
+                    url: https://www.uitinvlaanderen.be/public/image.jpeg
+                    copyrightHolder: publiq vzw
+                properties:
+                  id:
+                    title: uuid
+                    type: string
+                    format: uuid
+                    description: The uuid of the news article.
+                    examples:
+                    - 46e9ea9f-fc42-4759-a81b-4308467b7c35
+                  headline:
+                    type: string
+                    description: The headline of the news article.
+                    example: API reward for publiq
+                  inLanguage:
+                    title: language
+                    description: The language of the news article
+                    type: string
+                    example: nl
+                    enum:
+                    - nl
+                    - fr
+                    - de
+                    - en
+                  text:
+                    type: string
+                    example: This year publiq won an API reward for it's innovative RESTful API
+                    description: The text of the news article.
+                  about:
+                    type: string
+                    example: 17284745-7bcf-461a-aad0-d3ad54880e75
+                    description: The id of the event linked to the news article.
+                  publisher:
+                    type: string
+                    example: BILL
+                    description: The publisher of the news article.
+                  publisherLogo:
+                    title: uri
+                    description: The url pointing to the logo of the publisher of the news article.
+                    type: string
+                    format: uri
+                    pattern: ^http[s]?:\/\/\w
+                    examples:
+                    - https://www.example.com
+                  url:
+                    title: uri
+                    description: The link pointing to the published news article itself.
+                    type: string
+                    format: uri
+                    pattern: ^http[s]?:\/\/\w
+                    examples:
+                    - https://www.example.com
+                  image:
+                    title: uri
+                    type: object
+                    format: uri
+                    examples:
+                    - image:
+                        url: https://example.com/sample.jpeg
+                        copyrightHolder: Publiq vzw
+                    description: A URI which links to a valid image.
+                    properties:
+                      url:
+                        title: uri
+                        type: string
+                        pattern: ^http(s?):([/|.|\w|%20|-])*\.(?:jpeg|jpg|gif|png)$
+                        examples:
+                        - https://www.example.com/sample.jpeg
+                        description: A URI which links to a valid image.
+                      copyrightHolder:
+                        title: copyrightHolder
+                        description: Name of the copyright holder of a specific media file.
+                        type: string
+                        example: publiq
+                        minLength: 2
+                        maxLength: 250
+                        pattern: \S
+                    required:
+                    - url
+                    - copyrightHolder
+                required:
+                - id
+                - headline
+                - inLanguage
+                - text
+                - about
+                - publisher
+                - publisherLogo
+                - url
               examples:
                 Example:
                   value:
@@ -206,7 +852,117 @@ paths:
                     url: https://www.bill.be/blog/publiq-award
             application/json:
               schema:
-                $ref: ../models/newsArticle.json
+                x-internal: true
+                title: newsArticle
+                type: object
+                description: A news article that is linked to an event.
+                examples:
+                - id: 7ef7075c-e2da-4837-af92-a5176e3a348f
+                  headline: The headline of the news article.
+                  inLanguage: en
+                  text: This year publiq won an API reward for it's innovative RESTful API
+                  about: 17284745-7bcf-461a-aad0-d3ad54880e75
+                  publisher: BILL
+                  publisherLogo: https://www.bill.be/img/favicon.png
+                  url: https://www.bill.be/blog/publiq-award
+                - id: 5796bacc-1134-4711-9586-38722f78d2e5
+                  headline: The headline of the news article.
+                  inLanguage: en
+                  text: These are some exhibitions worth visiting.
+                  about: cfa29b53-0eb6-4bf1-8c7a-6394af5c8731
+                  publisher: UiTinVlaanderen
+                  publisherLogo: https://www.uitinvlaanderen.be/img/favicon.png
+                  url: https://www.uitinvlaanderen.be/tip/article
+                  image:
+                    url: https://www.uitinvlaanderen.be/public/image.jpeg
+                    copyrightHolder: publiq vzw
+                properties:
+                  id:
+                    title: uuid
+                    type: string
+                    format: uuid
+                    description: The uuid of the news article.
+                    examples:
+                    - 46e9ea9f-fc42-4759-a81b-4308467b7c35
+                  headline:
+                    type: string
+                    description: The headline of the news article.
+                    example: API reward for publiq
+                  inLanguage:
+                    title: language
+                    description: The language of the news article
+                    type: string
+                    example: nl
+                    enum:
+                    - nl
+                    - fr
+                    - de
+                    - en
+                  text:
+                    type: string
+                    example: This year publiq won an API reward for it's innovative RESTful API
+                    description: The text of the news article.
+                  about:
+                    type: string
+                    example: 17284745-7bcf-461a-aad0-d3ad54880e75
+                    description: The id of the event linked to the news article.
+                  publisher:
+                    type: string
+                    example: BILL
+                    description: The publisher of the news article.
+                  publisherLogo:
+                    title: uri
+                    description: The url pointing to the logo of the publisher of the news article.
+                    type: string
+                    format: uri
+                    pattern: ^http[s]?:\/\/\w
+                    examples:
+                    - https://www.example.com
+                  url:
+                    title: uri
+                    description: The link pointing to the published news article itself.
+                    type: string
+                    format: uri
+                    pattern: ^http[s]?:\/\/\w
+                    examples:
+                    - https://www.example.com
+                  image:
+                    title: uri
+                    type: object
+                    format: uri
+                    examples:
+                    - image:
+                        url: https://example.com/sample.jpeg
+                        copyrightHolder: Publiq vzw
+                    description: A URI which links to a valid image.
+                    properties:
+                      url:
+                        title: uri
+                        type: string
+                        pattern: ^http(s?):([/|.|\w|%20|-])*\.(?:jpeg|jpg|gif|png)$
+                        examples:
+                        - https://www.example.com/sample.jpeg
+                        description: A URI which links to a valid image.
+                      copyrightHolder:
+                        title: copyrightHolder
+                        description: Name of the copyright holder of a specific media file.
+                        type: string
+                        example: publiq
+                        minLength: 2
+                        maxLength: 250
+                        pattern: \S
+                    required:
+                    - url
+                    - copyrightHolder
+                required:
+                - id
+                - headline
+                - inLanguage
+                - text
+                - about
+                - publisher
+                - publisherLogo
+                - url
               examples:
                 Example:
                   value:
@@ -235,10 +991,230 @@ paths:
           content:
             application/ld+json:
               schema:
-                $ref: ../models/newsArticle.json
+                x-internal: true
+                title: newsArticle
+                type: object
+                description: A news article that is linked to an event.
+                examples:
+                - id: 7ef7075c-e2da-4837-af92-a5176e3a348f
+                  headline: The headline of the news article.
+                  inLanguage: en
+                  text: This year publiq won an API reward for it's innovative RESTful API
+                  about: 17284745-7bcf-461a-aad0-d3ad54880e75
+                  publisher: BILL
+                  publisherLogo: https://www.bill.be/img/favicon.png
+                  url: https://www.bill.be/blog/publiq-award
+                - id: 5796bacc-1134-4711-9586-38722f78d2e5
+                  headline: The headline of the news article.
+                  inLanguage: en
+                  text: These are some exhibitions worth visiting.
+                  about: cfa29b53-0eb6-4bf1-8c7a-6394af5c8731
+                  publisher: UiTinVlaanderen
+                  publisherLogo: https://www.uitinvlaanderen.be/img/favicon.png
+                  url: https://www.uitinvlaanderen.be/tip/article
+                  image:
+                    url: https://www.uitinvlaanderen.be/public/image.jpeg
+                    copyrightHolder: publiq vzw
+                properties:
+                  id:
+                    title: uuid
+                    type: string
+                    format: uuid
+                    description: The uuid of the news article.
+                    examples:
+                    - 46e9ea9f-fc42-4759-a81b-4308467b7c35
+                  headline:
+                    type: string
+                    description: The headline of the news article.
+                    example: API reward for publiq
+                  inLanguage:
+                    title: language
+                    description: The language of the news article
+                    type: string
+                    example: nl
+                    enum:
+                    - nl
+                    - fr
+                    - de
+                    - en
+                  text:
+                    type: string
+                    example: This year publiq won an API reward for it's innovative RESTful API
+                    description: The text of the news article.
+                  about:
+                    type: string
+                    example: 17284745-7bcf-461a-aad0-d3ad54880e75
+                    description: The id of the event linked to the news article.
+                  publisher:
+                    type: string
+                    example: BILL
+                    description: The publisher of the news article.
+                  publisherLogo:
+                    title: uri
+                    description: The url pointing to the logo of the publisher of the news article.
+                    type: string
+                    format: uri
+                    pattern: ^http[s]?:\/\/\w
+                    examples:
+                    - https://www.example.com
+                  url:
+                    title: uri
+                    description: The link pointing to the published news article itself.
+                    type: string
+                    format: uri
+                    pattern: ^http[s]?:\/\/\w
+                    examples:
+                    - https://www.example.com
+                  image:
+                    title: uri
+                    type: object
+                    format: uri
+                    examples:
+                    - image:
+                        url: https://example.com/sample.jpeg
+                        copyrightHolder: Publiq vzw
+                    description: A URI which links to a valid image.
+                    properties:
+                      url:
+                        title: uri
+                        type: string
+                        pattern: ^http(s?):([/|.|\w|%20|-])*\.(?:jpeg|jpg|gif|png)$
+                        examples:
+                        - https://www.example.com/sample.jpeg
+                        description: A URI which links to a valid image.
+                      copyrightHolder:
+                        title: copyrightHolder
+                        description: Name of the copyright holder of a specific media file.
+                        type: string
+                        example: publiq
+                        minLength: 2
+                        maxLength: 250
+                        pattern: \S
+                    required:
+                    - url
+                    - copyrightHolder
+                required:
+                - id
+                - headline
+                - inLanguage
+                - text
+                - about
+                - publisher
+                - publisherLogo
+                - url
             application/json:
               schema:
-                $ref: ../models/newsArticle.json
+                x-internal: true
+                title: newsArticle
+                type: object
+                description: A news article that is linked to an event.
+                examples:
+                - id: 7ef7075c-e2da-4837-af92-a5176e3a348f
+                  headline: The headline of the news article.
+                  inLanguage: en
+                  text: This year publiq won an API reward for it's innovative RESTful API
+                  about: 17284745-7bcf-461a-aad0-d3ad54880e75
+                  publisher: BILL
+                  publisherLogo: https://www.bill.be/img/favicon.png
+                  url: https://www.bill.be/blog/publiq-award
+                - id: 5796bacc-1134-4711-9586-38722f78d2e5
+                  headline: The headline of the news article.
+                  inLanguage: en
+                  text: These are some exhibitions worth visiting.
+                  about: cfa29b53-0eb6-4bf1-8c7a-6394af5c8731
+                  publisher: UiTinVlaanderen
+                  publisherLogo: https://www.uitinvlaanderen.be/img/favicon.png
+                  url: https://www.uitinvlaanderen.be/tip/article
+                  image:
+                    url: https://www.uitinvlaanderen.be/public/image.jpeg
+                    copyrightHolder: publiq vzw
+                properties:
+                  id:
+                    title: uuid
+                    type: string
+                    format: uuid
+                    description: The uuid of the news article.
+                    examples:
+                    - 46e9ea9f-fc42-4759-a81b-4308467b7c35
+                  headline:
+                    type: string
+                    description: The headline of the news article.
+                    example: API reward for publiq
+                  inLanguage:
+                    title: language
+                    description: The language of the news article
+                    type: string
+                    example: nl
+                    enum:
+                    - nl
+                    - fr
+                    - de
+                    - en
+                  text:
+                    type: string
+                    example: This year publiq won an API reward for it's innovative RESTful API
+                    description: The text of the news article.
+                  about:
+                    type: string
+                    example: 17284745-7bcf-461a-aad0-d3ad54880e75
+                    description: The id of the event linked to the news article.
+                  publisher:
+                    type: string
+                    example: BILL
+                    description: The publisher of the news article.
+                  publisherLogo:
+                    title: uri
+                    description: The url pointing to the logo of the publisher of the news article.
+                    type: string
+                    format: uri
+                    pattern: ^http[s]?:\/\/\w
+                    examples:
+                    - https://www.example.com
+                  url:
+                    title: uri
+                    description: The link pointing to the published news article itself.
+                    type: string
+                    format: uri
+                    pattern: ^http[s]?:\/\/\w
+                    examples:
+                    - https://www.example.com
+                  image:
+                    title: uri
+                    type: object
+                    format: uri
+                    examples:
+                    - image:
+                        url: https://example.com/sample.jpeg
+                        copyrightHolder: Publiq vzw
+                    description: A URI which links to a valid image.
+                    properties:
+                      url:
+                        title: uri
+                        type: string
+                        pattern: ^http(s?):([/|.|\w|%20|-])*\.(?:jpeg|jpg|gif|png)$
+                        examples:
+                        - https://www.example.com/sample.jpeg
+                        description: A URI which links to a valid image.
+                      copyrightHolder:
+                        title: copyrightHolder
+                        description: Name of the copyright holder of a specific media file.
+                        type: string
+                        example: publiq
+                        minLength: 2
+                        maxLength: 250
+                        pattern: \S
+                    required:
+                    - url
+                    - copyrightHolder
+                required:
+                - id
+                - headline
+                - inLanguage
+                - text
+                - about
+                - publisher
+                - publisherLogo
+                - url
         '400':
           description: 'Bad Request. Possible error types:
 
@@ -273,7 +1249,103 @@ paths:
         content:
           application/json:
             schema:
-              $ref: ../models/newsArticle-post.json
+              title: newsArticle.post
+              type: object
+              x-internal: true
+              examples:
+              - headline: The headline of the news article.
+                inLanguage: en
+                text: This year publiq won an API reward for it's innovative RESTful API
+                about: 17284745-7bcf-461a-aad0-d3ad54880e75
+                publisher: BILL
+                publisherLogo: https://www.bill.be/img/favicon.png
+                url: https://www.bill.be/blog/publiq-award
+              - headline: The headline of the news article.
+                inLanguage: en
+                text: These are some exhibitions worth visiting.
+                about: cfa29b53-0eb6-4bf1-8c7a-6394af5c8731
+                publisher: UiTinVlaanderen
+                publisherLogo: https://www.uitinvlaanderen.be/img/favicon.png
+                url: https://www.uitinvlaanderen.be/tip/article
+                image:
+                  url: https://www.uitinvlaanderen.be/public/image.jpeg
+                  copyrightHolder: publiq vzw
+              properties:
+                headline:
+                  type: string
+                  description: The headline of the news article.
+                  example: API reward for publiq
+                inLanguage:
+                  title: language
+                  description: The language of the news article
+                  type: string
+                  example: nl
+                  enum:
+                  - nl
+                  - fr
+                  - de
+                  - en
+                text:
+                  type: string
+                  description: The text of the news article.
+                about:
+                  type: string
+                  description: The id of the event linked to the news article.
+                publisher:
+                  type: string
+                  description: The publisher of the news article.
+                publisherLogo:
+                  title: uri
+                  description: The url pointing to the logo of the publisher of the news article.
+                  type: string
+                  format: uri
+                  pattern: ^http[s]?:\/\/\w
+                  examples:
+                  - https://www.example.com
+                url:
+                  title: uri
+                  description: The link pointing to the published news article itself.
+                  type: string
+                  format: uri
+                  pattern: ^http[s]?:\/\/\w
+                  examples:
+                  - https://www.example.com
+                image:
+                  title: uri
+                  type: object
+                  format: uri
+                  examples:
+                  - image:
+                      url: https://example.com/sample.jpeg
+                      copyrightHolder: Publiq vzw
+                  description: A URI which links to a valid image.
+                  properties:
+                    url:
+                      title: uri
+                      type: string
+                      pattern: ^http(s?):([/|.|\w|%20|-])*\.(?:jpeg|jpg|gif|png)$
+                      examples:
+                      - https://www.example.com/sample.jpeg
+                      description: A URI which links to a valid image.
+                    copyrightHolder:
+                      title: copyrightHolder
+                      description: Name of the copyright holder of a specific media file.
+                      type: string
+                      example: publiq
+                      minLength: 2
+                      maxLength: 250
+                      pattern: \S
+                  required:
+                  - url
+                  - copyrightHolder
+              required:
+              - headline
+              - inLanguage
+              - text
+              - about
+              - publisher
+              - publisherLogo
+              - url
       tags:
       - News articles
     delete:
@@ -289,11 +1361,6 @@ paths:
       x-internal: true
       tags:
       - News articles
-    servers:
-    - url: https://io-test.uitdatabank.be
-      description: Testing
-    - url: https://io.uitdatabank.be
-      description: Production
 components:
   responses:
     NotFound:
@@ -328,8 +1395,6 @@ components:
                 detail: The resource with id "76C6AC08-763C-492E-A68C-CBC43A857229" was not found.
   schemas:
     Error:
-      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
-    Error_2:
       title: Error
       type: object
       description: RFC7807 error model for all publiq APIs.
@@ -404,6 +1469,3 @@ components:
       type: oauth2
       flows: {}
       description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
-x-refined-from:
-- uitdatabank-entry.json
-- publiq-uitdatabank-entry-openapi.yml

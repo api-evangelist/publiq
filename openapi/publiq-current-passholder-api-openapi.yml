@@ -1,14 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Publiq Current Passholder API
+  title: UiTPAS Current Passholder API
   version: '4.0'
   contact:
     name: publiq helpdesk
     email: technical-support@publiq.be
     url: https://docs.publiq.be
-  x-refined-note:
-  - x-source differs across the merged source definitions and was not carried
-  description: 'Operations tagged Current Passholder across 2 of this provider''s published API definitions: uitpas-uitpas.json, publiq-uitpas-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: With UiTPAS API 4.0 you can retrieve ticket prices and register ticket sales for passholders. You can also save UiTPAS points and exchange them for rewards for a passholder, and much more.
+  x-source: https://raw.githubusercontent.com/cultuurnet/apidocs/main/../../../private/tmp/publiq-src/apidocs-main/projects/uitpas/reference/uitpas.json
 servers:
 - url: https://api-test.uitpas.be
   description: Testing
@@ -110,11 +109,6 @@ paths:
         required: true
       tags:
       - Current Passholder
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /passholders/me/uitid/status:
     parameters: []
     get:
@@ -230,11 +224,6 @@ paths:
         required: true
       tags:
       - Current Passholder
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /passholders/me/uitid:
     parameters: []
     put:
@@ -281,11 +270,6 @@ paths:
         required: true
       tags:
       - Current Passholder
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /passholders/me:
     parameters: []
     get:
@@ -489,69 +473,8 @@ paths:
       - USER_ACCESS_TOKEN: []
       tags:
       - Current Passholder
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
 components:
-  responses:
-    Unauthorized:
-      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
-
-
-        * type: https://api.publiq.be/probs/auth/unauthorized
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          x-examples:
-            Unauthorized:
-              value:
-                type: https://api.publiq.be/probs/auth/unauthorized
-                title: Unauthorized
-                status: 401
-    Forbidden:
-      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
-
-
-        * type: https://api.publiq.be/probs/auth/forbidden
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          x-examples:
-            Forbidden:
-              value:
-                type: https://api.publiq.be/probs/auth/forbidden
-                title: Forbidden
-                status: 403
-                detail: user must be admin of organiser abcd1234
   schemas:
-    Error:
-      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
-    City:
-      title: City
-      type: object
-      x-tags:
-      - Models
-      example:
-        postalCode: '9300'
-        name: Aalst
-      properties:
-        postalCode:
-          type: string
-          description: Postalcode of the city
-        name:
-          type: string
-          description: Name of the city
-      required:
-      - postalCode
-      - name
     CardSystemMembershipCard:
       title: CardSystemMembershipCard
       x-stoplight:
@@ -584,64 +507,182 @@ components:
       required:
       - uitpasNumber
       - status
-    CardSystemMembership:
-      title: CardSystemMembership
-      description: Membership info of an individual passholder in a specific card system.
+    PassholderSelfRegistration:
+      title: PassholderSelfRegistration
+      type: object
+      example:
+        name: Lastname
+        firstName: Firstname
+        cardSystem:
+          id: 27
+        email: firstname.lastname@example.com
+        dateOfBirth: '1980-01-01'
+        postalCode: '9000'
+        city: Gent
+        registrationOrganizer:
+          id: d2f898b1-455e-44ee-b08a-c4c05b1ab900
+      properties:
+        name:
+          type: string
+          description: Last name of the new passholder.
+        firstName:
+          type: string
+          description: First name of the new passholder.
+        dateOfBirth:
+          type: string
+          format: date
+          description: Date that the new passholder was born.
+        email:
+          type: string
+          description: Email address of the new passholder. Must be unique.
+        postalCode:
+          type: string
+          description: Postal code of the Belgian municipality that the new passholder lives in.
+        city:
+          type: string
+          description: Human-readable name of the Belgian municipality that the new passholder lives in.
+        cardSystem:
+          $ref: '#/components/schemas/CardSystem'
+        registrationOrganizer:
+          $ref: '#/components/schemas/Organizer'
+      required:
+      - name
+      - firstName
+      - dateOfBirth
+      - postalCode
+      - city
+      - cardSystem
+      - registrationOrganizer
+      x-tags:
+      - Models
+    Error:
+      title: Error
+      type: object
+      description: RFC7807 error model for all publiq APIs.
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
+      required:
+      - type
+      - title
+      - status
+      x-internal: false
+    CardSystem:
+      title: CardSystem
+      description: A region, usually one or multiple municipalities in Belgium, that uses UiTPAS and provides discounts and/or rewards. For example "Paspartoe" (Brussels), UiTPAS Leuven, UiTPAS Hasselt, UiTPAS Gent, and so on.
       type: object
       x-tags:
       - Models
+      example:
+        id: 1
+        name: UiTPAS Dender
+        branding:
+          logo: https://www.uitpas.be/_nuxt/img/1351557.svg
+          primaryColor: rgba(0,0,0,1.0)
+          secondaryColor: rgba(97,166,14,1.0)
+        links:
+          website: https://www.uitpas.be
+        cities:
+        - postalCode: '9300'
+          name: Aalst
+        - postalCode: '9400'
+          name: Ninove
+        permanent: true
       properties:
-        cardSystem:
-          $ref: '#/components/schemas/CardSystem'
-        uitpasNumber:
+        id:
+          type: integer
+          description: ID of the card system
+        name:
           type: string
-          description: This is a convenience propery that contains the uitpasNumber of the `currentCard` if there is a current card and that card is `ACTIVE`.
-        currentCard:
-          $ref: '#/components/schemas/CardSystemMembershipCard'
-        status:
-          type: string
-          enum:
-          - ACTIVE
-          - BLOCKED
-          description: Whether the membership is active or blocked.
-          readOnly: true
-        socialTariff:
+          description: Name of the card system. This field is always available in responses.
+        branding:
           type: object
-          description: 'If the passholder has (or had) right to a social tariff, this object contains details like the  end date. Check the `status` of the `socialTariff`: the passholder is only currently entitled to a social tariff is `status` is `ACTIVE`. '
+          description: Branding information of the card system
           properties:
-            status:
+            logo:
               type: string
-              enum:
-              - ACTIVE
-              - EXPIRED
-              - SUSPENDED
-              description: 'Status of the social tariff:
-
-                - `ACTIVE`: the passholder is entitled to social tariff
-
-                - `EXPIRED`: the passholder is NOT entitled to social tariff anymore
-
-                - `SUSPENDED`: the passholder is temporarily NOT entitled to social tariff. In this case a extra property `suspendedUntilDate` will also be available.'
-            endDate:
+              description: URL to the logo of the card system
+            primaryColor:
               type: string
-              format: date-time
-              description: Exact moment the passholder's right to a social tariff expires.
-            inGracePeriod:
-              type: boolean
-              description: When the end date of the right to a social tariff has passed, the passholder may still be in a grace period that they can buy tickets at a social tariff until their right to a social tariff has been renewed.
-            suspendedUntilDate:
+              description: Color code of the primary branding color.
+            secondaryColor:
               type: string
-              format: date-time
-              description: Date until this social tarif is suspended (only available when status is `SUSPENDED`)
-            expired:
-              type: boolean
-              description: If true, the passholder's right to a social tariff has completely expired (the end date has passed and the passholder is no longer in a grace period). **This property is deprecated.** Please use the `status` property instead.
-              deprecated: true
-          required:
-          - status
-          - endDate
+              description: Color code of the secondary branding color.
+        links:
+          type: object
+          description: Links of the card system
+          properties:
+            website:
+              type: string
+              description: URL of the website of the card system
+        cities:
+          type: array
+          description: List of cities that are part of this card system
+          items:
+            $ref: '#/components/schemas/City'
+        permanent:
+          type: boolean
+          description: Indicates whether this is a permanent card system
+        allowsCardlessRegistration:
+          type: boolean
+          description: Indicates if cardless registration is enabled
+        cardlessRegistrationType:
+          type: string
+          description: Indicates the types of online cardless registrations this cardsystem supports.
+          enum:
+          - ALL
+          - REGULAR
+          - SOCIALTARIFF
+          - NONE
+        socialTariffInfo:
+          type: string
+          description: Optional information about social tariff entitlement in this card system.
       required:
-      - cardSystem
+      - id
     Passholder:
       title: Passholder
       type: object
@@ -830,126 +871,64 @@ components:
       - dateOfBirth
       - registrationOrganizer
       - address
-    CardSystem:
-      title: CardSystem
-      description: A region, usually one or multiple municipalities in Belgium, that uses UiTPAS and provides discounts and/or rewards. For example "Paspartoe" (Brussels), UiTPAS Leuven, UiTPAS Hasselt, UiTPAS Gent, and so on.
+    CardSystemMembership:
+      title: CardSystemMembership
+      description: Membership info of an individual passholder in a specific card system.
       type: object
       x-tags:
       - Models
-      example:
-        id: 1
-        name: UiTPAS Dender
-        branding:
-          logo: https://www.uitpas.be/_nuxt/img/1351557.svg
-          primaryColor: rgba(0,0,0,1.0)
-          secondaryColor: rgba(97,166,14,1.0)
-        links:
-          website: https://www.uitpas.be
-        cities:
-        - postalCode: '9300'
-          name: Aalst
-        - postalCode: '9400'
-          name: Ninove
-        permanent: true
       properties:
-        id:
-          type: integer
-          description: ID of the card system
-        name:
-          type: string
-          description: Name of the card system. This field is always available in responses.
-        branding:
-          type: object
-          description: Branding information of the card system
-          properties:
-            logo:
-              type: string
-              description: URL to the logo of the card system
-            primaryColor:
-              type: string
-              description: Color code of the primary branding color.
-            secondaryColor:
-              type: string
-              description: Color code of the secondary branding color.
-        links:
-          type: object
-          description: Links of the card system
-          properties:
-            website:
-              type: string
-              description: URL of the website of the card system
-        cities:
-          type: array
-          description: List of cities that are part of this card system
-          items:
-            $ref: '#/components/schemas/City'
-        permanent:
-          type: boolean
-          description: Indicates whether this is a permanent card system
-        allowsCardlessRegistration:
-          type: boolean
-          description: Indicates if cardless registration is enabled
-        cardlessRegistrationType:
-          type: string
-          description: Indicates the types of online cardless registrations this cardsystem supports.
-          enum:
-          - ALL
-          - REGULAR
-          - SOCIALTARIFF
-          - NONE
-        socialTariffInfo:
-          type: string
-          description: Optional information about social tariff entitlement in this card system.
-      required:
-      - id
-    PassholderSelfRegistration:
-      title: PassholderSelfRegistration
-      type: object
-      example:
-        name: Lastname
-        firstName: Firstname
-        cardSystem:
-          id: 27
-        email: firstname.lastname@example.com
-        dateOfBirth: '1980-01-01'
-        postalCode: '9000'
-        city: Gent
-        registrationOrganizer:
-          id: d2f898b1-455e-44ee-b08a-c4c05b1ab900
-      properties:
-        name:
-          type: string
-          description: Last name of the new passholder.
-        firstName:
-          type: string
-          description: First name of the new passholder.
-        dateOfBirth:
-          type: string
-          format: date
-          description: Date that the new passholder was born.
-        email:
-          type: string
-          description: Email address of the new passholder. Must be unique.
-        postalCode:
-          type: string
-          description: Postal code of the Belgian municipality that the new passholder lives in.
-        city:
-          type: string
-          description: Human-readable name of the Belgian municipality that the new passholder lives in.
         cardSystem:
           $ref: '#/components/schemas/CardSystem'
-        registrationOrganizer:
-          $ref: '#/components/schemas/Organizer'
+        uitpasNumber:
+          type: string
+          description: This is a convenience propery that contains the uitpasNumber of the `currentCard` if there is a current card and that card is `ACTIVE`.
+        currentCard:
+          $ref: '#/components/schemas/CardSystemMembershipCard'
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - BLOCKED
+          description: Whether the membership is active or blocked.
+          readOnly: true
+        socialTariff:
+          type: object
+          description: 'If the passholder has (or had) right to a social tariff, this object contains details like the  end date. Check the `status` of the `socialTariff`: the passholder is only currently entitled to a social tariff is `status` is `ACTIVE`. '
+          properties:
+            status:
+              type: string
+              enum:
+              - ACTIVE
+              - EXPIRED
+              - SUSPENDED
+              description: 'Status of the social tariff:
+
+                - `ACTIVE`: the passholder is entitled to social tariff
+
+                - `EXPIRED`: the passholder is NOT entitled to social tariff anymore
+
+                - `SUSPENDED`: the passholder is temporarily NOT entitled to social tariff. In this case a extra property `suspendedUntilDate` will also be available.'
+            endDate:
+              type: string
+              format: date-time
+              description: Exact moment the passholder's right to a social tariff expires.
+            inGracePeriod:
+              type: boolean
+              description: When the end date of the right to a social tariff has passed, the passholder may still be in a grace period that they can buy tickets at a social tariff until their right to a social tariff has been renewed.
+            suspendedUntilDate:
+              type: string
+              format: date-time
+              description: Date until this social tarif is suspended (only available when status is `SUSPENDED`)
+            expired:
+              type: boolean
+              description: If true, the passholder's right to a social tariff has completely expired (the end date has passed and the passholder is no longer in a grace period). **This property is deprecated.** Please use the `status` property instead.
+              deprecated: true
+          required:
+          - status
+          - endDate
       required:
-      - name
-      - firstName
-      - dateOfBirth
-      - postalCode
-      - city
       - cardSystem
-      - registrationOrganizer
-      x-tags:
-      - Models
     Organizer:
       title: Organizer
       type: object
@@ -990,62 +969,60 @@ components:
           readOnly: true
       required:
       - id
-    Error_2:
-      title: Error
+    City:
+      title: City
       type: object
-      description: RFC7807 error model for all publiq APIs.
+      x-tags:
+      - Models
+      example:
+        postalCode: '9300'
+        name: Aalst
       properties:
-        type:
+        postalCode:
           type: string
-          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
-        title:
+          description: Postalcode of the city
+        name:
           type: string
-          description: A short, human-readable summary of the problem type (for developers).
-        status:
-          type: integer
-          description: The HTTP status code.
-        detail:
-          type: string
-          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
-        endUserMessage:
-          type: object
-          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
-          properties:
-            nl:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
-            fr:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
-            de:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
-            en:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
-          required:
-          - nl
-        schemaErrors:
-          type: array
-          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
-          items:
-            type: object
-            properties:
-              jsonPointer:
-                type: string
-                format: json-pointer
-                description: RFC6901 compliant pointer that indicates what property/value was invalid.
-              error:
-                type: string
-                description: A human-readable (but often technical) reason why the property was invalid.
-            required:
-            - jsonPointer
-            - error
+          description: Name of the city
       required:
-      - type
-      - title
-      - status
-      x-internal: false
+      - postalCode
+      - name
+  responses:
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
   securitySchemes:
     USER_ACCESS_TOKEN:
       type: oauth2
@@ -1063,6 +1040,3 @@ components:
       name: x-custom-token
       type: apiKey
       in: header
-x-refined-from:
-- uitpas-uitpas.json
-- publiq-uitpas-openapi.yml

@@ -1,14 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Publiq Cards API
+  title: UiTPAS Cards API
   version: '4.0'
   contact:
     name: publiq helpdesk
     email: technical-support@publiq.be
     url: https://docs.publiq.be
-  x-refined-note:
-  - x-source differs across the merged source definitions and was not carried
-  description: 'Operations tagged Cards across 2 of this provider''s published API definitions: uitpas-uitpas.json, publiq-uitpas-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: With UiTPAS API 4.0 you can retrieve ticket prices and register ticket sales for passholders. You can also save UiTPAS points and exchange them for rewards for a passholder, and much more.
+  x-source: https://raw.githubusercontent.com/cultuurnet/apidocs/main/../../../private/tmp/publiq-src/apidocs-main/projects/uitpas/reference/uitpas.json
 servers:
 - url: https://api-test.uitpas.be
   description: Testing
@@ -111,11 +110,6 @@ paths:
         in: query
         name: chipNumber
         description: The chip number of the card to search
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /cards/social-tariff/{cardSystemId}/active:
     parameters:
     - schema:
@@ -211,112 +205,64 @@ paths:
       - CLIENT_ACCESS_TOKEN: []
       - USER_ACCESS_TOKEN: []
       parameters: []
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
 components:
-  responses:
-    Unauthorized:
-      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
-
-
-        * type: https://api.publiq.be/probs/auth/unauthorized
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          x-examples:
-            Unauthorized:
-              value:
-                type: https://api.publiq.be/probs/auth/unauthorized
-                title: Unauthorized
-                status: 401
-    Forbidden:
-      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
-
-
-        * type: https://api.publiq.be/probs/auth/forbidden
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          x-examples:
-            Forbidden:
-              value:
-                type: https://api.publiq.be/probs/auth/forbidden
-                title: Forbidden
-                status: 403
-                detail: user must be admin of organiser abcd1234
   schemas:
     Error:
-      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
-    Card:
-      title: Card
-      x-stoplight:
-        id: zqvfbrdvemv9g
+      title: Error
       type: object
-      description: Representation of an UiTPAS card.
+      description: RFC7807 error model for all publiq APIs.
       properties:
-        uitpasNumber:
+        type:
           type: string
-          x-stoplight:
-            id: wt5795os9zlly
-          description: UiTPAS number of this card.
-        cardSystem:
-          $ref: '#/components/schemas/CardSystem'
-        cardType:
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
           type: string
-          x-stoplight:
-            id: 0wg00e7ok83tp
-          enum:
-          - NFC_CARD
-          - DIGITAL
-          description: Type of this card.
+          description: A short, human-readable summary of the problem type (for developers).
         status:
+          type: integer
+          description: The HTTP status code.
+        detail:
           type: string
-          x-stoplight:
-            id: ic0htdaaq5wmr
-          description: Status of this card.
-          enum:
-          - PROVISIONED
-          - LOCAL_STOCK
-          - ACTIVE
-          - BLOCKED
-          - DELETED
-        socialTariff:
-          type: boolean
-          x-stoplight:
-            id: k6sdxxpe9zvpe
-          description: Indicated the social tariff status of this card.
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
+          type: object
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
+          properties:
+            nl:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
+            en:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
+          required:
+          - nl
+        schemaErrors:
+          type: array
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          items:
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
       required:
-      - uitpasNumber
-      - cardSystem
+      - type
+      - title
       - status
-      - socialTariff
-    City:
-      title: City
-      type: object
-      x-tags:
-      - Models
-      example:
-        postalCode: '9300'
-        name: Aalst
-      properties:
-        postalCode:
-          type: string
-          description: Postalcode of the city
-        name:
-          type: string
-          description: Name of the city
-      required:
-      - postalCode
-      - name
+      x-internal: false
     CardSystem:
       title: CardSystem
       description: A region, usually one or multiple municipalities in Belgium, that uses UiTPAS and provides discounts and/or rewards. For example "Paspartoe" (Brussels), UiTPAS Leuven, UiTPAS Hasselt, UiTPAS Gent, and so on.
@@ -389,62 +335,103 @@ components:
           description: Optional information about social tariff entitlement in this card system.
       required:
       - id
-    Error_2:
-      title: Error
+    Card:
+      title: Card
+      x-stoplight:
+        id: zqvfbrdvemv9g
       type: object
-      description: RFC7807 error model for all publiq APIs.
+      description: Representation of an UiTPAS card.
       properties:
-        type:
+        uitpasNumber:
           type: string
-          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
-        title:
+          x-stoplight:
+            id: wt5795os9zlly
+          description: UiTPAS number of this card.
+        cardSystem:
+          $ref: '#/components/schemas/CardSystem'
+        cardType:
           type: string
-          description: A short, human-readable summary of the problem type (for developers).
+          x-stoplight:
+            id: 0wg00e7ok83tp
+          enum:
+          - NFC_CARD
+          - DIGITAL
+          description: Type of this card.
         status:
-          type: integer
-          description: The HTTP status code.
-        detail:
           type: string
-          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
-        endUserMessage:
-          type: object
-          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
-          properties:
-            nl:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
-            fr:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
-            de:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
-            en:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
-          required:
-          - nl
-        schemaErrors:
-          type: array
-          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
-          items:
-            type: object
-            properties:
-              jsonPointer:
-                type: string
-                format: json-pointer
-                description: RFC6901 compliant pointer that indicates what property/value was invalid.
-              error:
-                type: string
-                description: A human-readable (but often technical) reason why the property was invalid.
-            required:
-            - jsonPointer
-            - error
+          x-stoplight:
+            id: ic0htdaaq5wmr
+          description: Status of this card.
+          enum:
+          - PROVISIONED
+          - LOCAL_STOCK
+          - ACTIVE
+          - BLOCKED
+          - DELETED
+        socialTariff:
+          type: boolean
+          x-stoplight:
+            id: k6sdxxpe9zvpe
+          description: Indicated the social tariff status of this card.
       required:
-      - type
-      - title
+      - uitpasNumber
+      - cardSystem
       - status
-      x-internal: false
+      - socialTariff
+    City:
+      title: City
+      type: object
+      x-tags:
+      - Models
+      example:
+        postalCode: '9300'
+        name: Aalst
+      properties:
+        postalCode:
+          type: string
+          description: Postalcode of the city
+        name:
+          type: string
+          description: Name of the city
+      required:
+      - postalCode
+      - name
+  responses:
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
   securitySchemes:
     USER_ACCESS_TOKEN:
       type: oauth2
@@ -462,6 +449,3 @@ components:
       name: x-custom-token
       type: apiKey
       in: header
-x-refined-from:
-- uitpas-uitpas.json
-- publiq-uitpas-openapi.yml

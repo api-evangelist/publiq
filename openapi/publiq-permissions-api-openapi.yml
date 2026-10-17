@@ -1,14 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Publiq Permissions API
+  title: UiTPAS Permissions API
   version: '4.0'
   contact:
     name: publiq helpdesk
     email: technical-support@publiq.be
     url: https://docs.publiq.be
-  x-refined-note:
-  - x-source differs across the merged source definitions and was not carried
-  description: 'Operations tagged Permissions across 2 of this provider''s published API definitions: uitpas-uitpas.json, publiq-uitpas-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: With UiTPAS API 4.0 you can retrieve ticket prices and register ticket sales for passholders. You can also save UiTPAS points and exchange them for rewards for a passholder, and much more.
+  x-source: https://raw.githubusercontent.com/cultuurnet/apidocs/main/../../../private/tmp/publiq-src/apidocs-main/projects/uitpas/reference/uitpas.json
 servers:
 - url: https://api-test.uitpas.be
   description: Testing
@@ -123,11 +122,6 @@ paths:
       - CLIENT_ACCESS_TOKEN: []
       tags:
       - Permissions
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /permissions/{clientId}:
     parameters:
     - schema:
@@ -272,227 +266,80 @@ paths:
         description: Full set of organizer permissions for the client
       tags:
       - Permissions
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
 components:
-  responses:
-    Unauthorized:
-      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
-
-
-        * type: https://api.publiq.be/probs/auth/unauthorized
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          x-examples:
-            Unauthorized:
-              value:
-                type: https://api.publiq.be/probs/auth/unauthorized
-                title: Unauthorized
-                status: 401
-    Forbidden:
-      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
-
-
-        * type: https://api.publiq.be/probs/auth/forbidden
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          x-examples:
-            Forbidden:
-              value:
-                type: https://api.publiq.be/probs/auth/forbidden
-                title: Forbidden
-                status: 403
-                detail: user must be admin of organiser abcd1234
   schemas:
-    PermissionDetail:
+    Error:
+      title: Error
       type: object
-      title: PermissionDetail
-      description: Permission details
+      description: RFC7807 error model for all publiq APIs.
       properties:
-        id:
-          $ref: '#/components/schemas/Permission'
-        label:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type (for developers).
+        status:
+          type: integer
+          description: The HTTP status code.
+        detail:
+          type: string
+          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
+        endUserMessage:
           type: object
-          description: Human-readable label of the permission
+          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
           properties:
             nl:
               type: string
-              description: Human-readable label of the permission in Dutch
+              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
+            fr:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
+            de:
+              type: string
+              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
             en:
               type: string
-              description: Human-readable label of the permission in English
+              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
           required:
           - nl
-        cardSystemIds:
+        schemaErrors:
           type: array
-          description: IDs of the card systems to which this permission applies
+          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
           items:
-            type: integer
-            readOnly: true
+            type: object
+            properties:
+              jsonPointer:
+                type: string
+                format: json-pointer
+                description: RFC6901 compliant pointer that indicates what property/value was invalid.
+              error:
+                type: string
+                description: A human-readable (but often technical) reason why the property was invalid.
+            required:
+            - jsonPointer
+            - error
       required:
-      - id
-    Error:
-      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
-    City:
-      title: City
+      - type
+      - title
+      - status
+      x-internal: false
+    LinkedOrganizerPermissions:
+      title: LinkedOrganizerPermissions
       type: object
       x-tags:
       - Models
-      example:
-        postalCode: '9300'
-        name: Aalst
-      properties:
-        postalCode:
-          type: string
-          description: Postalcode of the city
-        name:
-          type: string
-          description: Name of the city
-      required:
-      - postalCode
-      - name
-    Permission:
-      title: Permission
-      type: string
-      x-tags:
-      - Models
-      enum:
-      - TARIFFS_READ
-      - TICKETSALES_SEARCH
-      - TICKETSALES_REGISTER
-      - EVENTS_UPDATE
-      - EVENTS_READ
-      - EVENT_SETTINGS_READ
-      - EVENT_SETTINGS_UPDATE
-      - EVENTS_UPDATE_ALL
-      - EVENTS_READ_ALL
-      - EVENT_SETTINGS_READ_ALL
-      - EVENT_SETTINGS_UPDATE_ALL
-      - EVENTS_QR_CHECKINCODE
-      - CHECKINS_READ
-      - CHECKINS_WRITE
-      - ORGANIZERS_SEARCH
-      - ORGANIZERS_REPORTS
-      - ORGANIZERS_ADMINS_READ
-      - ORGANIZERS_ADMINS_WRITE
-      - PASSHOLDERS_PICTURE_READ
-      - PASSHOLDERS_PICTURE_WRITE
-      - PASSHOLDERS_PRIVATE_READ
-      - PASSHOLDERS_PRIVATE_WRITE
-      - PASSHOLDERS_SEARCH
-      - PASSHOLDERS_SEARCH_ALL
-      - PASSHOLDERS_SEARCH_BY_ID
-      - GROUPPASSES_SEARCH
-      - PASSHOLDERS_WRITE
-      - PASSHOLDERS_WRITE_SOCIALTARIFF_FULL_CARDSYSTEM
-      - PASSHOLDERS_WRITE_FOREIGN_COUNTRY
-      - PASSHOLDERS_WRITE_SOCIALTARIFF
-      - PASSHOLDERS_UPDATE
-      - PASSHOLDERS_DELETE
-      - PASSHOLDER_COUPONS_READ
-      - GROUPPASS_COUPONS_READ
-      - MEMBERSHIP_PRICES_READ
-      - PASSES_READ
-      - PASSES_INSZNUMBERS_READ
-      - PASSES_CHIPNUMBERS_READ
-      - REWARDS_WRITE
-      - REWARDS_READ
-      - REWARDS_REDEEM
-      - REWARDS_PASSHOLDERS_READ
-      - PASSHOLDERS_SELF_REGISTRATION
-      - PASSHOLDERS_SELF_CHECKIN
-      - PASSHOLDERS_SELF_READ
-      - PASSHOLDERS_REGISTER_UITID
-      - PASSHOLDERS_TRANSACTION_HISTORY
-      - PASSHOLDERS_FAMILY_MEMBERS
-      - ORDERS_READ
-      - ORDERS_CREATE
-      - PERMISSIONS_READ
-      - PERMISSIONS_WRITE
-      - CARDS_READ
-      - ASSOCIATIONS
-      - SOCIALTARIFF_EXPORT
-      - KIOSKS_READ
-      - KIOSKS_WRITE
-      description: ID of the permission
-    OrganizerPermissions:
-      title: OrganizerPermissions
-      type: object
-      x-tags:
-      - Models
-      description: Combination of organizer and its permissions
       properties:
         organizer:
           $ref: '#/components/schemas/Organizer'
-        permissions:
-          type: array
-          description: Permissions of the calling client for this organizer. This field is deprecated. Please use `permissionDetails`, which includes a user-readable label, instead.
-          deprecated: true
-          items:
-            $ref: '#/components/schemas/Permission'
         permissionDetails:
           description: Permissions of the calling client for this organizer.
           type: array
           items:
             $ref: '#/components/schemas/PermissionDetail'
-        linkedOrganizers:
-          type: array
-          description: Organizers linked to this organizer.
-          items:
-            $ref: '#/components/schemas/LinkedOrganizerPermissions'
       required:
       - organizer
-    Organizer:
-      title: Organizer
-      type: object
-      description: An organisation that partners with UiTPAS to provide discounts and/or rewards, and/or allows points to be collected at their events.
-      x-tags:
-      - Models
-      properties:
-        id:
-          type: string
-          description: Unique ID of an UiTPAS organizer. (Same as its ID in UiTdatabank)
-        name:
-          type: string
-          description: Human-readable name of an UiTPAS organizer.
-        cardSystems:
-          type: array
-          description: Card systems linked to this organizer
-          items:
-            $ref: '#/components/schemas/CardSystem'
-        linkedLocationId:
-          type: string
-          description: ID of the location linked to this organizer.
-          readOnly: true
-        address:
-          type: object
-          description: Address of this organizer. This property is alway available in responses.
-          required:
-          - city
-          properties:
-            street:
-              type: string
-              description: Street address of this organizer
-            postalCode:
-              type: string
-              description: Postal code of this organizer
-            city:
-              type: string
-              description: City of this organizer
-          readOnly: true
-      required:
-      - id
+      description: Combination of organizer and its permissions, specifically targetted to be used when linked to another organizer.
     CardSystem:
       title: CardSystem
       description: A region, usually one or multiple municipalities in Belgium, that uses UiTPAS and provides discounts and/or rewards. For example "Paspartoe" (Brussels), UiTPAS Leuven, UiTPAS Hasselt, UiTPAS Gent, and so on.
@@ -565,78 +412,218 @@ components:
           description: Optional information about social tariff entitlement in this card system.
       required:
       - id
-    LinkedOrganizerPermissions:
-      title: LinkedOrganizerPermissions
+    Permission:
+      title: Permission
+      type: string
+      x-tags:
+      - Models
+      enum:
+      - TARIFFS_READ
+      - TICKETSALES_SEARCH
+      - TICKETSALES_REGISTER
+      - EVENTS_UPDATE
+      - EVENTS_READ
+      - EVENT_SETTINGS_READ
+      - EVENT_SETTINGS_UPDATE
+      - EVENTS_UPDATE_ALL
+      - EVENTS_READ_ALL
+      - EVENT_SETTINGS_READ_ALL
+      - EVENT_SETTINGS_UPDATE_ALL
+      - EVENTS_QR_CHECKINCODE
+      - CHECKINS_READ
+      - CHECKINS_WRITE
+      - ORGANIZERS_SEARCH
+      - ORGANIZERS_REPORTS
+      - ORGANIZERS_ADMINS_READ
+      - ORGANIZERS_ADMINS_WRITE
+      - PASSHOLDERS_PICTURE_READ
+      - PASSHOLDERS_PICTURE_WRITE
+      - PASSHOLDERS_PRIVATE_READ
+      - PASSHOLDERS_PRIVATE_WRITE
+      - PASSHOLDERS_SEARCH
+      - PASSHOLDERS_SEARCH_ALL
+      - PASSHOLDERS_SEARCH_BY_ID
+      - GROUPPASSES_SEARCH
+      - PASSHOLDERS_WRITE
+      - PASSHOLDERS_WRITE_SOCIALTARIFF_FULL_CARDSYSTEM
+      - PASSHOLDERS_WRITE_FOREIGN_COUNTRY
+      - PASSHOLDERS_WRITE_SOCIALTARIFF
+      - PASSHOLDERS_UPDATE
+      - PASSHOLDERS_DELETE
+      - PASSHOLDER_COUPONS_READ
+      - GROUPPASS_COUPONS_READ
+      - MEMBERSHIP_PRICES_READ
+      - PASSES_READ
+      - PASSES_INSZNUMBERS_READ
+      - PASSES_CHIPNUMBERS_READ
+      - REWARDS_WRITE
+      - REWARDS_READ
+      - REWARDS_REDEEM
+      - REWARDS_PASSHOLDERS_READ
+      - PASSHOLDERS_SELF_REGISTRATION
+      - PASSHOLDERS_SELF_CHECKIN
+      - PASSHOLDERS_SELF_READ
+      - PASSHOLDERS_REGISTER_UITID
+      - PASSHOLDERS_TRANSACTION_HISTORY
+      - PASSHOLDERS_FAMILY_MEMBERS
+      - ORDERS_READ
+      - ORDERS_CREATE
+      - PERMISSIONS_READ
+      - PERMISSIONS_WRITE
+      - CARDS_READ
+      - ASSOCIATIONS
+      - SOCIALTARIFF_EXPORT
+      - KIOSKS_READ
+      - KIOSKS_WRITE
+      description: ID of the permission
+    PermissionDetail:
+      type: object
+      title: PermissionDetail
+      description: Permission details
+      properties:
+        id:
+          $ref: '#/components/schemas/Permission'
+        label:
+          type: object
+          description: Human-readable label of the permission
+          properties:
+            nl:
+              type: string
+              description: Human-readable label of the permission in Dutch
+            en:
+              type: string
+              description: Human-readable label of the permission in English
+          required:
+          - nl
+        cardSystemIds:
+          type: array
+          description: IDs of the card systems to which this permission applies
+          items:
+            type: integer
+            readOnly: true
+      required:
+      - id
+    OrganizerPermissions:
+      title: OrganizerPermissions
       type: object
       x-tags:
       - Models
+      description: Combination of organizer and its permissions
       properties:
         organizer:
           $ref: '#/components/schemas/Organizer'
+        permissions:
+          type: array
+          description: Permissions of the calling client for this organizer. This field is deprecated. Please use `permissionDetails`, which includes a user-readable label, instead.
+          deprecated: true
+          items:
+            $ref: '#/components/schemas/Permission'
         permissionDetails:
           description: Permissions of the calling client for this organizer.
           type: array
           items:
             $ref: '#/components/schemas/PermissionDetail'
+        linkedOrganizers:
+          type: array
+          description: Organizers linked to this organizer.
+          items:
+            $ref: '#/components/schemas/LinkedOrganizerPermissions'
       required:
       - organizer
-      description: Combination of organizer and its permissions, specifically targetted to be used when linked to another organizer.
-    Error_2:
-      title: Error
+    Organizer:
+      title: Organizer
       type: object
-      description: RFC7807 error model for all publiq APIs.
+      description: An organisation that partners with UiTPAS to provide discounts and/or rewards, and/or allows points to be collected at their events.
+      x-tags:
+      - Models
       properties:
-        type:
+        id:
           type: string
-          description: A URI reference that identifies the problem type. Can be used to recognize specific errors in your application code by comparing the complete URI.
-        title:
+          description: Unique ID of an UiTPAS organizer. (Same as its ID in UiTdatabank)
+        name:
           type: string
-          description: A short, human-readable summary of the problem type (for developers).
-        status:
-          type: integer
-          description: The HTTP status code.
-        detail:
-          type: string
-          description: 'A human-readable explanation specific to this occurrence of the problem (for developers). '
-        endUserMessage:
-          type: object
-          description: A human-readable explanation of the problem, specifically for end-users, in one or more languages. Typically available for domain errors, but not for errors caused by a technical issue in the integration (for example invalid JSON syntax in a request body). An `nl` value is always provided, other languages may be provided depending on the API and its intended audience. When this property is included, it is strongly encouraged to show this to the end-user.
-          properties:
-            nl:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in Dutch.
-            fr:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in French.
-            de:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in German.
-            en:
-              type: string
-              description: A human-readable explanation of the problem, specifically for end-users, localized in English.
-          required:
-          - nl
-        schemaErrors:
+          description: Human-readable name of an UiTPAS organizer.
+        cardSystems:
           type: array
-          description: A list of one or more schema validation errors (usually used for error type https://api.publiq.be/probs/body/invalid-data).
+          description: Card systems linked to this organizer
           items:
-            type: object
-            properties:
-              jsonPointer:
-                type: string
-                format: json-pointer
-                description: RFC6901 compliant pointer that indicates what property/value was invalid.
-              error:
-                type: string
-                description: A human-readable (but often technical) reason why the property was invalid.
-            required:
-            - jsonPointer
-            - error
+            $ref: '#/components/schemas/CardSystem'
+        linkedLocationId:
+          type: string
+          description: ID of the location linked to this organizer.
+          readOnly: true
+        address:
+          type: object
+          description: Address of this organizer. This property is alway available in responses.
+          required:
+          - city
+          properties:
+            street:
+              type: string
+              description: Street address of this organizer
+            postalCode:
+              type: string
+              description: Postal code of this organizer
+            city:
+              type: string
+              description: City of this organizer
+          readOnly: true
       required:
-      - type
-      - title
-      - status
-      x-internal: false
+      - id
+    City:
+      title: City
+      type: object
+      x-tags:
+      - Models
+      example:
+        postalCode: '9300'
+        name: Aalst
+      properties:
+        postalCode:
+          type: string
+          description: Postalcode of the city
+        name:
+          type: string
+          description: Name of the city
+      required:
+      - postalCode
+      - name
+  responses:
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
   securitySchemes:
     USER_ACCESS_TOKEN:
       type: oauth2
@@ -654,6 +641,3 @@ components:
       name: x-custom-token
       type: apiKey
       in: header
-x-refined-from:
-- uitpas-uitpas.json
-- publiq-uitpas-openapi.yml

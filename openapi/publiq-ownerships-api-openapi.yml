@@ -1,14 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Publiq Ownerships API
+  title: Entry Ownerships API
   version: '3.0'
+  description: With UiTdatabank's Entry API you can create new events, places and organizers, and add extra info to them with specific requests to add/update properties. For example there are operations to add a label, remove a label, add an image, and so on.
   contact:
     name: publiq helpdesk
     email: technical-support@publiq.be
     url: https://docs.publiq.be
-  x-refined-note:
-  - x-source differs across the merged source definitions and was not carried
-  description: 'Operations tagged Ownerships across 2 of this provider''s published API definitions: uitdatabank-entry.json, publiq-uitdatabank-entry-openapi.yml. Each path carries the servers of the definition it was published in.'
+  x-source: https://raw.githubusercontent.com/cultuurnet/apidocs/main/../../../private/tmp/publiq-src/apidocs-main/projects/uitdatabank/reference/entry.json
 servers:
 - url: https://io-test.uitdatabank.be
   description: Testing
@@ -66,7 +65,58 @@ paths:
         content:
           application/json:
             schema:
-              $ref: ../models/ownership-post.json
+              type: object
+              x-internal: true
+              properties:
+                itemId:
+                  title: legacy.uuid
+                  type: string
+                  format: string
+                  description: The unique id of a resource. For historical reasons, the last hyphen is sometimes missing.
+                  pattern: '[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-?[0-9A-Fa-f]{12}'
+                  examples:
+                  - 11fe97ba-060f-4859-ad35-f202ea9d2e72
+                  - 692CC7D8-AAA7-4CC7-B8C02840528CA2E1
+                itemType:
+                  title: itemType
+                  description: The possible resource types used in UiTdatabank.
+                  type: string
+                  example: event
+                  enum:
+                  - event
+                  - place
+                  - organizer
+                ownerId:
+                  title: creator
+                  type: string
+                  description: The unique identifier of a user or API client.
+                  examples:
+                  - auth0|45c0d021-c78f-445f-adef-be3355b23e4f
+                  - rLlc90TSFBDRQbZwzP5vm2niDXI1CZef@clients
+                  - a9363e98-8a24-46a9-ad29-f175d7181138
+                  - google-oauth2|108326107941662286958
+                  - example@emails-are-legacy-but-may-occur.com
+                  minLength: 1
+                  pattern: \S
+                  readOnly: true
+                ownerEmail:
+                  type: string
+                  description: The email of the owner
+                  format: email
+                  example: info@example.com
+                  readOnly: true
+              required:
+              - itemId
+              - itemType
+              examples:
+              - itemId: e1a58cbd-cd4b-4295-bea0-baf123c77fd4
+                itemType: organizer
+              - itemId: e1a58cbd-cd4b-4295-bea0-baf123c77fd4
+                itemType: organizer
+                ownerId: 7a583ed3-cbc1-481d-93b1-d80fff0174dd
+              - itemId: e1a58cbd-cd4b-4295-bea0-baf123c77fd4
+                itemType: organizer
+                ownerEmail: foo@bar.com
       security:
       - USER_ACCESS_TOKEN: []
       - CLIENT_ACCESS_TOKEN: []
@@ -94,7 +144,109 @@ paths:
                     type: array
                     description: Search results (paginated).
                     items:
-                      $ref: ../models/ownership.json
+                      title: ownership
+                      type: object
+                      description: An ownership request between an owner and an item
+                      properties:
+                        id:
+                          title: uuid
+                          type: string
+                          format: uuid
+                          description: UUID
+                          examples:
+                          - 46e9ea9f-fc42-4759-a81b-4308467b7c35
+                        itemId:
+                          title: legacy.uuid
+                          type: string
+                          format: string
+                          description: The unique id of a resource. For historical reasons, the last hyphen is sometimes missing.
+                          pattern: '[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-?[0-9A-Fa-f]{12}'
+                          examples:
+                          - 11fe97ba-060f-4859-ad35-f202ea9d2e72
+                          - 692CC7D8-AAA7-4CC7-B8C02840528CA2E1
+                        itemType:
+                          title: itemType
+                          description: The possible resource types used in UiTdatabank.
+                          type: string
+                          example: event
+                          enum:
+                          - event
+                          - place
+                          - organizer
+                        ownerId:
+                          title: creator
+                          type: string
+                          description: The unique identifier of a user or API client.
+                          examples:
+                          - auth0|45c0d021-c78f-445f-adef-be3355b23e4f
+                          - rLlc90TSFBDRQbZwzP5vm2niDXI1CZef@clients
+                          - a9363e98-8a24-46a9-ad29-f175d7181138
+                          - google-oauth2|108326107941662286958
+                          - example@emails-are-legacy-but-may-occur.com
+                          minLength: 1
+                          pattern: \S
+                          readOnly: true
+                        ownerEmail:
+                          type: string
+                          description: Email address of the owner.
+                          format: email
+                          example: info@example.com
+                          readOnly: true
+                        requesterId:
+                          title: creator
+                          type: string
+                          description: The unique identifier of a user or API client.
+                          examples:
+                          - auth0|45c0d021-c78f-445f-adef-be3355b23e4f
+                          - rLlc90TSFBDRQbZwzP5vm2niDXI1CZef@clients
+                          - a9363e98-8a24-46a9-ad29-f175d7181138
+                          - google-oauth2|108326107941662286958
+                          - example@emails-are-legacy-but-may-occur.com
+                          minLength: 1
+                          pattern: \S
+                          readOnly: true
+                        requesterEmail:
+                          type: string
+                          description: Email address of the requester.
+                          format: email
+                          example: info@example.com
+                          readOnly: true
+                        state:
+                          type: string
+                          enum:
+                          - requested
+                          - approved
+                          - rejected
+                          - deleted
+                          description: The state of an ownership request
+                          example: requested
+                        created:
+                          title: datetime.readOnly
+                          description: Datetime in ISO-8601 format.
+                          type: string
+                          format: date-time
+                          readOnly: true
+                          examples:
+                          - '2021-05-17T22:00:00+00:00'
+                        modified:
+                          title: datetime.readOnly
+                          description: Datetime in ISO-8601 format.
+                          type: string
+                          format: date-time
+                          readOnly: true
+                          examples:
+                          - '2021-05-17T22:00:00+00:00'
+                      required:
+                      - id
+                      - itemId
+                      - itemType
+                      - ownerId
+                      - ownerEmail
+                      - requesterId
+                      - requesterEmail
+                      - state
+                      - created
+                      - modified
                 required:
                 - itemsPerPage
                 - totalItems
@@ -116,18 +268,32 @@ paths:
         name: itemId
         description: The UUID of the item to get the ownerships from
       - schema:
-          $ref: ../models/ownership-state.json
+          type: string
+          enum:
+          - requested
+          - approved
+          - rejected
+          - deleted
+          description: The state of an ownership request
+          example: requested
         in: query
         name: state
         description: Filter ownership requests by a given state
-      - $ref: ../../uitpas/reference/uitpas.json#/components/parameters/start
-      - $ref: ../../uitpas/reference/uitpas.json#/components/parameters/limit
+      - schema:
+          type: integer
+          minimum: 0
+          default: 0
+        in: query
+        name: start
+        description: Position to start returning results from. When set to `0` the results starting from the very first position will be returned. When set to for example `10` the results 0-9 will be skipped and the ones starting from position 10 will be returned. Can be used in combination with `limit` for pagination.
+      - schema:
+          type: integer
+          default: 20
+          minimum: 0
+        in: query
+        name: limit
+        description: 'Maximum amount of results to return. Can be used in combination with `start` for pagination. **Important**: the maximum value for `limit` is `500`. Exceeding this value will result in an error.'
       x-internal: true
-    servers:
-    - url: https://io-test.uitdatabank.be
-      description: Testing
-    - url: https://io.uitdatabank.be
-      description: Production
   /ownerships/{ownershipId}:
     parameters:
     - $ref: '#/components/parameters/ownershipId'
@@ -150,11 +316,6 @@ paths:
       security:
       - USER_ACCESS_TOKEN: []
       - CLIENT_ACCESS_TOKEN: []
-    servers:
-    - url: https://io-test.uitdatabank.be
-      description: Testing
-    - url: https://io.uitdatabank.be
-      description: Production
   /ownerships/{ownershipId}/approve:
     parameters:
     - $ref: '#/components/parameters/ownershipId'
@@ -177,11 +338,6 @@ paths:
       - CLIENT_ACCESS_TOKEN: []
       description: Approve a given ownership
       x-internal: true
-    servers:
-    - url: https://io-test.uitdatabank.be
-      description: Testing
-    - url: https://io.uitdatabank.be
-      description: Production
   /ownerships/{ownershipId}/reject:
     parameters:
     - $ref: '#/components/parameters/ownershipId'
@@ -204,82 +360,19 @@ paths:
       - CLIENT_ACCESS_TOKEN: []
       description: Reject a given ownership
       x-internal: true
-    servers:
-    - url: https://io-test.uitdatabank.be
-      description: Testing
-    - url: https://io.uitdatabank.be
-      description: Production
 components:
-  responses:
-    Unauthorized:
-      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
-
-
-        * type: https://api.publiq.be/probs/auth/unauthorized
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            Example:
-              value:
-                type: https://api.publiq.be/probs/auth/unauthorized
-                title: Unauthorized
-                status: 401
-    Forbidden:
-      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
-
-
-        * type: https://api.publiq.be/probs/auth/forbidden
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            Example:
-              value:
-                type: https://api.publiq.be/probs/auth/forbidden
-                title: Forbidden
-                status: 403
-                detail: user must be admin of organizer abcd1234
-    NotFound:
-      description: 'The requested resource (URL) could not be found.
-
-        This can be due to one of multiple reasons:
-
-
-        * The endpoint has a typo and/or does not exist on the API
-
-        * One of the path parameters contains a value that is invalid or does not exist
-
-        * One of the required query parameters is missing
-
-        * One of the query parameters has an invalid value
-
-
-        The `detail` property of the response should contain more specific information.
-
-
-        The `type` will always be `https://api.publiq.be/probs/url/not-found`.'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            Example:
-              value:
-                type: https://api.publiq.be/probs/url/not-found
-                title: URL not found
-                status: 404
-                detail: The resource with id "76C6AC08-763C-492E-A68C-CBC43A857229" was not found.
+  parameters:
+    ownershipId:
+      name: ownershipId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: F2D5D20C-CC98-4979-9CD2-453ABAD979B5
+      description: Unique id of an ownership, in the format of a UUID
   schemas:
     Error:
-      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
-    Error_2:
       title: Error
       type: object
       description: RFC7807 error model for all publiq APIs.
@@ -335,16 +428,72 @@ components:
       - title
       - status
       x-internal: false
-  parameters:
-    ownershipId:
-      name: ownershipId
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-        example: F2D5D20C-CC98-4979-9CD2-453ABAD979B5
-      description: Unique id of an ownership, in the format of a UUID
+  responses:
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organizer abcd1234
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
+    NotFound:
+      description: 'The requested resource (URL) could not be found.
+
+        This can be due to one of multiple reasons:
+
+
+        * The endpoint has a typo and/or does not exist on the API
+
+        * One of the path parameters contains a value that is invalid or does not exist
+
+        * One of the required query parameters is missing
+
+        * One of the query parameters has an invalid value
+
+
+        The `detail` property of the response should contain more specific information.
+
+
+        The `type` will always be `https://api.publiq.be/probs/url/not-found`.'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example:
+              value:
+                type: https://api.publiq.be/probs/url/not-found
+                title: URL not found
+                status: 404
+                detail: The resource with id "76C6AC08-763C-492E-A68C-CBC43A857229" was not found.
   securitySchemes:
     USER_ACCESS_TOKEN:
       type: oauth2
@@ -354,6 +503,3 @@ components:
       type: oauth2
       flows: {}
       description: A client access token, obtained by exchanging your client id and client secret for a token via an HTTP request to publiq's authorization server using the **Client Credentials OAuth Flow**. See the [authentication docs about client access tokens](https://docs.publiq.be/docs/authentication/methods/user-access-token) for more info.
-x-refined-from:
-- uitdatabank-entry.json
-- publiq-uitdatabank-entry-openapi.yml

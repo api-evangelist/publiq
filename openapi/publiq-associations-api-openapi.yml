@@ -1,14 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Publiq Associations API
+  title: UiTPAS Associations API
   version: '4.0'
   contact:
     name: publiq helpdesk
     email: technical-support@publiq.be
     url: https://docs.publiq.be
-  x-refined-note:
-  - x-source differs across the merged source definitions and was not carried
-  description: 'Operations tagged Associations across 2 of this provider''s published API definitions: uitpas-uitpas.json, publiq-uitpas-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: With UiTPAS API 4.0 you can retrieve ticket prices and register ticket sales for passholders. You can also save UiTPAS points and exchange them for rewards for a passholder, and much more.
+  x-source: https://raw.githubusercontent.com/cultuurnet/apidocs/main/../../../private/tmp/publiq-src/apidocs-main/projects/uitpas/reference/uitpas.json
 servers:
 - url: https://api-test.uitpas.be
   description: Testing
@@ -84,11 +83,6 @@ paths:
         description: Type of association permission
       tags:
       - Associations
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /passholders/{passholderId}/association-memberships:
     parameters:
     - schema:
@@ -227,11 +221,6 @@ paths:
         name: organizerId
         description: ID of the organizer used to make this request
         required: true
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
   /passholders/{passholderId}/association-memberships/{associationId}:
     parameters:
     - schema:
@@ -278,48 +267,7 @@ paths:
         name: organizerId
         description: ID of the organizer.
         required: true
-    servers:
-    - url: https://api-test.uitpas.be
-      description: Testing
-    - url: https://api.uitpas.be
-      description: Production
 components:
-  responses:
-    Unauthorized:
-      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
-
-
-        * type: https://api.publiq.be/probs/auth/unauthorized
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          x-examples:
-            Unauthorized:
-              value:
-                type: https://api.publiq.be/probs/auth/unauthorized
-                title: Unauthorized
-                status: 401
-    Forbidden:
-      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
-
-
-        * type: https://api.publiq.be/probs/auth/forbidden
-
-        * detail: might contain a developer-readable explanation of the reason'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          x-examples:
-            Forbidden:
-              value:
-                type: https://api.publiq.be/probs/auth/forbidden
-                title: Forbidden
-                status: 403
-                detail: user must be admin of organiser abcd1234
   schemas:
     AssociationMembership:
       title: AssociationMembership
@@ -362,54 +310,6 @@ components:
       required:
       - association
     Error:
-      $ref: https://raw.githubusercontent.com/cultuurnet/apidocs/main/projects/errors/models/Error.json
-    Association:
-      title: Association
-      x-stoplight:
-        id: 0cqmy2cuzwux0
-      type: object
-      description: Association
-      x-examples: {}
-      properties:
-        id:
-          type: string
-          description: ID of the association
-        name:
-          type: string
-          x-stoplight:
-            id: bl1hgz5y2wooc
-          description: Name of the association. This field is always available in responses
-          readOnly: true
-        endDateType:
-          type: string
-          x-stoplight:
-            id: siqftnrb8ax7e
-          description: Indicates how end dates are set for memberships of this association. This field is always available in responses.
-          enum:
-          - CUSTOM
-          - BASED_ON_DATE_OF_BIRTH
-          - BASED_ON_REGISTRATION_DATE
-          readOnly: true
-      required:
-      - id
-    AssociationsPaginatedResponse:
-      title: AssociationsPaginatedResponse
-      x-stoplight:
-        id: ytc6u5zzkcfmv
-      type: object
-      x-tags:
-      - Models
-      description: Paginated response object for associations
-      properties:
-        totalItems:
-          type: integer
-          description: Total number of association results (can be more than the amount of results in the response).
-        member:
-          type: array
-          description: List of association results for this specific (paginated) request.
-          items:
-            $ref: '#/components/schemas/Association'
-    Error_2:
       title: Error
       type: object
       description: RFC7807 error model for all publiq APIs.
@@ -465,6 +365,88 @@ components:
       - title
       - status
       x-internal: false
+    Association:
+      title: Association
+      x-stoplight:
+        id: 0cqmy2cuzwux0
+      type: object
+      description: Association
+      x-examples: {}
+      properties:
+        id:
+          type: string
+          description: ID of the association
+        name:
+          type: string
+          x-stoplight:
+            id: bl1hgz5y2wooc
+          description: Name of the association. This field is always available in responses
+          readOnly: true
+        endDateType:
+          type: string
+          x-stoplight:
+            id: siqftnrb8ax7e
+          description: Indicates how end dates are set for memberships of this association. This field is always available in responses.
+          enum:
+          - CUSTOM
+          - BASED_ON_DATE_OF_BIRTH
+          - BASED_ON_REGISTRATION_DATE
+          readOnly: true
+      required:
+      - id
+    AssociationsPaginatedResponse:
+      title: AssociationsPaginatedResponse
+      x-stoplight:
+        id: ytc6u5zzkcfmv
+      type: object
+      x-tags:
+      - Models
+      description: Paginated response object for associations
+      properties:
+        totalItems:
+          type: integer
+          description: Total number of association results (can be more than the amount of results in the response).
+        member:
+          type: array
+          description: List of association results for this specific (paginated) request.
+          items:
+            $ref: '#/components/schemas/Association'
+  responses:
+    Forbidden:
+      description: 'Forbidden. Your request was successfully authenticated but you do not have permission to perform this particular request.
+
+
+        * type: https://api.publiq.be/probs/auth/forbidden
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Forbidden:
+              value:
+                type: https://api.publiq.be/probs/auth/forbidden
+                title: Forbidden
+                status: 403
+                detail: user must be admin of organiser abcd1234
+    Unauthorized:
+      description: 'Unauthorized. Your request is missing the required credentials to authenticate. See the Authentication documentation for more info.
+
+
+        * type: https://api.publiq.be/probs/auth/unauthorized
+
+        * detail: might contain a developer-readable explanation of the reason'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          x-examples:
+            Unauthorized:
+              value:
+                type: https://api.publiq.be/probs/auth/unauthorized
+                title: Unauthorized
+                status: 401
   securitySchemes:
     USER_ACCESS_TOKEN:
       type: oauth2
@@ -482,6 +464,3 @@ components:
       name: x-custom-token
       type: apiKey
       in: header
-x-refined-from:
-- uitpas-uitpas.json
-- publiq-uitpas-openapi.yml
