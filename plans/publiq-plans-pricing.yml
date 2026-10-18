@@ -33,3 +33,23 @@ plans:
 free_usage: De vermelde prijzen gelden alleen voor onze publicatietools Search API en widgets. Data toevoegen aan de UiTdatabank (via de user interface of onze Entry API) en het gebruiken van de UiTPAS
   API is volledig gratis.
 note: Members of the UiTnetwerk may be entitled to a free integration ("Dan heb je wellicht recht op een gratis integratie."). Page is in Dutch.
+x-canonical:
+  generated: '2026-10-18'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - negotiated
+  - subscription
+  units: []
+  plans:
+  - name: Basic plan
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods: []
+  - name: Custom plan
+    access: other
+    model: negotiated
+    model_how: derived
+    units: []
+    periods: []
