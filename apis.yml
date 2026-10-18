@@ -26,6 +26,15 @@ modified: '2026-10-09'
 tags:
 - Company
 - Culture
+- Event
+- Leisure
+- Belgium
+- Non-Profit
+- Open Data
+- Loyalty Programs
+tags_raw:
+- Company
+- Culture
 - Events
 - Leisure
 - Belgium
@@ -288,6 +297,8 @@ apis:
   humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
   baseURL: https://io.uitdatabank.be
   tags:
+  - Event
+  tags_raw:
   - Events
   properties:
   - type: OpenAPI
@@ -360,6 +371,8 @@ apis:
   humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
   baseURL: https://io.uitdatabank.be
   tags:
+  - External Cards
+  tags_raw:
   - External cards
   properties:
   - type: OpenAPI
@@ -396,6 +409,8 @@ apis:
   humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
   baseURL: https://io.uitdatabank.be
   tags:
+  - Financial Reports
+  tags_raw:
   - Financial reports
   properties:
   - type: OpenAPI
@@ -468,6 +483,8 @@ apis:
   humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
   baseURL: https://io.uitdatabank.be
   tags:
+  - Image
+  tags_raw:
   - Images
   properties:
   - type: OpenAPI
@@ -540,6 +557,8 @@ apis:
   humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
   baseURL: https://io.uitdatabank.be
   tags:
+  - Kiosk
+  tags_raw:
   - Kiosks
   properties:
   - type: OpenAPI
@@ -648,6 +667,8 @@ apis:
   humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
   baseURL: https://io.uitdatabank.be
   tags:
+  - Order
+  tags_raw:
   - Orders
   properties:
   - type: OpenAPI
@@ -720,6 +741,8 @@ apis:
   humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
   baseURL: https://io.uitdatabank.be
   tags:
+  - ownerships
+  tags_raw:
   - Ownerships
   properties:
   - type: OpenAPI
@@ -1188,6 +1211,8 @@ apis:
   humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
   baseURL: https://io.uitdatabank.be
   tags:
+  - User
+  tags_raw:
   - Users
   properties:
   - type: OpenAPI
@@ -1296,6 +1321,8 @@ apis:
   humanURL: https://docs.publiq.be/docs/uitdatabank/entry-api/introduction
   baseURL: https://io.uitdatabank.be
   tags:
+  - Check-in
+  tags_raw:
   - Check Ins
   properties:
   - type: OpenAPI
